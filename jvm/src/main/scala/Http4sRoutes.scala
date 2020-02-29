@@ -1,8 +1,11 @@
 //import cats.effect._
 
 import base.Paths
+import model.TestData._
 import org.http4s._
 import org.http4s.dsl.io._
+
+import scala.util.Random
 //
 //import scala.concurrent.ExecutionContext.Implicits.global
 //import cats.implicits._
@@ -48,6 +51,16 @@ object Http4sRoutes extends IOApp {
       Ok(Skeleton().toString, `Content-Type`(MediaType.text.html))
     case GET -> Root / "hello" / name =>
       Ok(s"Hello, $name.")
+    case GET -> Root / "random"  =>
+      Ok(new Random().nextInt().toString)
+    case GET -> Root / "testData"  =>
+      Ok{
+//        import io.circe._, io.circe.generic.auto._, io.circe.syntax._
+        val td:TestData = TestData("asdsad", new Random().nextInt())
+        import upickle.default._
+        write[TestData](td)
+//        td.asJson.toString
+      }
 
   }
 

@@ -6,6 +6,9 @@ val workdir = "workdir"
 
 val http4sVersion = "0.21.0"
 
+val circeVersion = "0.13.0"
+
+
 lazy val root = project.in(file(".")).
   aggregate(foo.js, foo.jvm).
   settings(
@@ -18,7 +21,12 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     name := "online-test-suite",
     version := "0.1-SNAPSHOT",
     libraryDependencies += "com.lihaoyi" %%% "scalatags" % "0.8.5",
-
+    libraryDependencies += "com.lihaoyi" %%% "upickle" % "1.0.0",
+//    libraryDependencies ++= Seq(
+//      "io.circe" %%% "circe-core",
+//      "io.circe" %%% "circe-generic",
+//      "io.circe" %%% "circe-parser"
+//    ).map(_ % circeVersion)
   ).
   jvmSettings(
     // Add JVM-specific settings here
@@ -41,7 +49,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   )
 
 
-
+//addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+  //
 // This is an application with a main method
 //scalaJSUseMainModuleInitializer := true
 //

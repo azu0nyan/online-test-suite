@@ -19,5 +19,11 @@
     <orderEntry type="library" name="sbt: com.lihaoyi:sourcecode_sjs1_2.13:0.2.1:jar" level="project" />
     <orderEntry type="library" name="sbt: com.lihaoyi:scalatags_sjs1_2.13:0.8.5:jar" level="project" />
     <orderEntry type="library" name="sbt: com.lihaoyi:geny_sjs1_2.13:0.5.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:ujson_sjs1_2.13:1.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upack_sjs1_2.13:1.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upickle-core_sjs1_2.13:1.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upickle-implicits_sjs1_2.13:1.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upickle_sjs1_2.13:1.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-collection-compat_sjs1_2.13:2.1.4:jar" level="project" />
   </component>
 </module>
