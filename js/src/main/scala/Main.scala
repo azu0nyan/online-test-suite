@@ -14,7 +14,7 @@ object Main {
 
   @JSExportTopLevel("addClickedMessage")
   def addClickedMessage(): Unit = {
-    appendPar(document.body, "You clicked the button!" + SomeClass("adadasd"))
+   // appendPar(document.body, "You clicked the button!" + SomeClass("adadasd"))
   }
   def setupUI():Unit = {
     val button = document.createElement("button")

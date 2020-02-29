@@ -23,7 +23,10 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   ).
   jvmSettings(
     // Add JVM-specific settings here
-    libraryDependencies += "com.lihaoyi" %% "cask" % "0.5.2"
+    libraryDependencies += "com.lihaoyi" %% "cask" % "0.5.2",
+    baseDirectory in reStart := file("workdir")
+//    fork in run := true,
+//    baseDirectory in run := file("workdir")
   ).
   jsSettings(
     // Add JS-specific settings here

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fooJS.iml" filepath="$PROJECT_DIR$/.idea/modules/fooJS.iml" group="online-test-suite" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fooJVM.iml" filepath="$PROJECT_DIR$/.idea/modules/fooJVM.iml" group="online-test-suite" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/online-test-suite-sources.iml" filepath="$PROJECT_DIR$/.idea/modules/online-test-suite-sources.iml" group="online-test-suite" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jvm.online-test-suite.iml" filepath="$PROJECT_DIR$/.idea/modules/jvm.online-test-suite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/online-test-suite.iml" filepath="$PROJECT_DIR$/.idea/modules/online-test-suite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/online-test-suite-sources.iml" filepath="$PROJECT_DIR$/.idea/modules/online-test-suite-sources.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/root.iml" filepath="$PROJECT_DIR$/.idea/modules/root.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/root-build.iml" filepath="$PROJECT_DIR$/.idea/modules/root-build.iml" />
     </modules>
