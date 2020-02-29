@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="online-test-suite-sources" external.linked.project.path="$MODULE_DIR$/../../shared" external.root.project.path="$MODULE_DIR$/../.." external.system.id="SBT" type="SHARED_SOURCES_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../shared">
+      <sourceFolder url="file://$MODULE_DIR$/../../shared/src/main/scala" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.13.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:sourcecode_2.13:0.2.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:scalatags_2.13:0.8.5:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:geny_2.13:0.5.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:cask-util_2.13:0.5.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:cask_2.13:0.5.2:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:castor_2.13:0.1.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:fansi_2.13:0.2.7:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:pprint_2.13:0.5.7:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:ujson_2.13:0.9.6:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upack_2.13:0.9.6:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upickle-core_2.13:0.9.6:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upickle-implicits_2.13:0.9.6:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.lihaoyi:upickle_2.13:0.9.6:jar" level="project" />
+    <orderEntry type="library" name="sbt: io.undertow:undertow-core:2.0.13.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.java-websocket:Java-WebSocket:1.4.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.jboss.logging:jboss-logging:3.3.2.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.jboss.xnio:xnio-api:3.3.8.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.jboss.xnio:xnio-nio:3.3.8.Final:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang:scala-reflect:2.13.1:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-collection-compat_2.13:2.0.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.slf4j:slf4j-api:1.7.25:jar" level="project" />
+  </component>
+</module>
