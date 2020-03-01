@@ -1,6 +1,6 @@
 //import cats.effect._
 
-import base.Paths
+import base.{Paths, Skeleton}
 import model.TestData._
 import org.http4s._
 import org.http4s.dsl.io._
@@ -10,8 +10,6 @@ import scala.util.Random
 //import scala.concurrent.ExecutionContext.Implicits.global
 //import cats.implicits._
 import java.util.concurrent.Executors
-
-import base.Skeleton
 import org.http4s.HttpApp
 import org.http4s.server.Router
 import org.http4s.headers._

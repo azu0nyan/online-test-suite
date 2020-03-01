@@ -45,6 +45,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     scalaJSUseMainModuleInitializer := true,
 //    artifactPath in fullOptJS in Compile := file(workdir),
 //    artifactPath in fastOptJS in Compile := file(workdir)
+    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "1.0.0",
     Compile / fastOptJS / artifactPath := file(workdir) / "main.js" //baseDirectory.value / "workdir" / "main.js"
   )
 
