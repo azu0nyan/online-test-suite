@@ -24,6 +24,8 @@ object MainPageGrid {
   )(
     Header(),
     TopMenu(),
+    LeftMenu(),
+    UserInfo(),
     Content(),
     Footer()
   )

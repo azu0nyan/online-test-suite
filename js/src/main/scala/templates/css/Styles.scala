@@ -8,12 +8,19 @@ import templates._
 object Styles {
   val topRowColor = "#6060FF"
   val topRowActiveColor = "#AAAAFF"
-  val topRowHoverColor = "#AA55FF"
+  val topMenuHoverColor = "#AA55FF"
   val topMenuTextColor = "#FFFFFF"
+
+  val leftMenuHoverColor = topMenuHoverColor
+  val leftMenuBGColor = "rgba(0, 0, 0, 0.1)"
+  val leftMenuScrollbarColor = "rgba(0, 0, 0, 0.8)"
+  val leftMenuActiveColor = "rgba(0, 0, 0, 0.45)"
 
   val contentBgColor = "#f0f0f0"
 
   val defaultPadding = "14px 16px"
+
+  val userInfoBGColor = topRowColor
 
   object CascadeStyles extends CascadingStyleSheet {
     initStyleSheet()
@@ -30,9 +37,8 @@ object Styles {
     )
     )
 
-    def toTagStyles: String = styleSheetText.split(" ").toSeq.flatMap(s => s.split("\n")).filter(!_.startsWith(".")).reduce(_ + " " +  _)
+    def toTagStyles: String = styleSheetText.split(" ").toSeq.flatMap(s => s.split("\n")).filter(!_.startsWith(".")).reduce(_ + " " + _)
   }
-
 
 
   object ElementStyles extends StyleSheet {
@@ -70,19 +76,34 @@ object Styles {
       "grid-column" := s"${MainPageGrid.middleColumnStart} / ${MainPageGrid.rightColumnEnd}"
     )
 
+    val leftMenu: Cls = cls(
+      //  backgroundColor := topRowColor,
+      "place-self" := "stretch",
+      "grid-row" := s"${MainPageGrid.contentRowStart} / ${MainPageGrid.contentEndRowStart}",
+      "grid-column" := s"${MainPageGrid.leftColumn}"
+    )
+
     val rightMenu: Cls = cls(
       backgroundColor := "#AAAAAA",
       "grid-row" := s"${MainPageGrid.contentRowStart} / ${MainPageGrid.contentEndRowStart}",
       "grid-column" := s"${MainPageGrid.leftColumn}"
     )
 
-
+    val userInfo: Cls = cls(
+      backgroundColor := userInfoBGColor,
+      "grid-row" := s"${MainPageGrid.contentRowStart} / ${MainPageGrid.contentEndRowStart}",
+      "grid-column" := s"${MainPageGrid.rightColumn}",
+      padding := defaultPadding,
+      margin := defaultPadding,
+      height := "fit-content"
+    )
 
     val content: Cls = cls(
       padding := defaultPadding,
       "grid-row" := s"${MainPageGrid.contentRowStart} / ${MainPageGrid.contentEndRowStart}",
       "grid-column" := MainPageGrid.middleColumnStart,
-      backgroundColor := contentBgColor
+      backgroundColor := contentBgColor,
+
     )
 
     val footer: Cls = cls(

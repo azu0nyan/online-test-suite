@@ -1,31 +1,28 @@
 package templates
+
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2._
 import _root_.base.Text
-import templates.css.HorizontalMenu
+import templates.css._
 import templates.css.Styles.ElementStyles
 
 object TopMenu {
 
   val topMenuId: String = "TopMenu"
 
-  val activeClass:String = "TopMenuActive"
+  val activeClass: String = "TopMenuActive"
 
   def apply(): Frag = nav(
     id := topMenuId,
     ElementStyles.topMenu)(
-    raw(s"""<style scoped>
-           |    ${HorizontalMenu.getCss(activeClass)}
-           |  </style>""".stripMargin
-
-    ),
+    scalatags.JsDom.tags2.style(TopMenuCss.getCss(ElementStyles.topMenu.name, activeClass))    ,
     ul(
-      li(h4("Some some")),
-      li(h4("Test test")),
-      li(`class` := activeClass)(h4("Menu menu")),
-      li(h4("Items item")),
-      li(h4("Items item")),
-      li(h4("Items item")),
+      li(h3(Text.menuMain)),
+      li(h3(Text.menuTest)),
+      li(h3(Text.menuCurrentTest)),
+      li(`class` := activeClass)(h3(Text.menuResults)),
+      li(h3(Text.menuFaq)),
+      li(h3(Text.menuAbout))
     )
   )
 }

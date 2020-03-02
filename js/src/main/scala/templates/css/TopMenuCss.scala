@@ -1,10 +1,11 @@
 package templates.css
 
-object HorizontalMenu {
+object TopMenuCss {
 
-  def getCss(activeClassName:String = "active"):String =
+  def getCss(outerClass:String, activeClassName:String = "active"):String =
     s"""
-       |ul {
+       |
+       |.$outerClass ul {
        |  list-style-type: none;
        |  margin: 0;
        |  padding: 0;
@@ -18,7 +19,7 @@ object HorizontalMenu {
        |}
        |
        |
-       | li {
+       |.$outerClass li {
        |  float: left;
        |  display: flex;
        |  flex-direction: column;
@@ -29,11 +30,11 @@ object HorizontalMenu {
        |  text-decoration: none;
        |}
        |
-       | li:hover:not(.$activeClassName) {
-       |  background-color: ${Styles.topRowHoverColor};
+       |.$outerClass li:hover:not(.$activeClassName) {
+       |  background-color: ${Styles.topMenuHoverColor};
        |}
        |
-       |.$activeClassName {
+       |.$outerClass .$activeClassName {
        |  background-color: ${Styles.topRowActiveColor};
        |  border-bottom: solid;
        |  border-bottom-color: ${Styles.contentBgColor};
