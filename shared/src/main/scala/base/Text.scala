@@ -7,7 +7,7 @@ object Text {
 
   val footerText:String = "Test footer text 2049-present"
 
-
+  val loading:String = "Loading..."
 
   val menuMain:String = "Главная"
 

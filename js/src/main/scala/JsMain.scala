@@ -4,11 +4,12 @@ import org.scalajs.dom
 import scalatags.JsDom.all._
 import dom.ext.Ajax
 import model.TestData._
+import templates.TopMenu.{MenuItem, rebuildMenu}
 import templates.css.Styles
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 import scala.concurrent.ExecutionContext.Implicits.global
-import templates.{Footer, MainPageGrid, Header}
+import templates.{Footer, Header, MainPageGrid, TopMenu}
 
 
 object JsMain {
@@ -40,6 +41,16 @@ object JsMain {
     document.head.appendChild(tag("style")(Styles.CascadeStyles.toTagStyles).render)
     document.head.appendChild(tag("style")(Styles.ElementStyles.styleSheetText).render)
     document.body.appendChild(containter)
+
+
+
+
+
+
+
+
+
+
 
 //    document.body.className = Styles.CascadeStyles.toTagStyles
 //    containter.appendChild(Header().render)

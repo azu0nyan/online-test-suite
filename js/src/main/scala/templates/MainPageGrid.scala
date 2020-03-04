@@ -23,7 +23,7 @@ object MainPageGrid {
     id := gridContainerId
   )(
     Header(),
-    TopMenu(),
+    TopMenu.placeholder(),
     LeftMenu(),
     UserInfo(),
     Content(),
