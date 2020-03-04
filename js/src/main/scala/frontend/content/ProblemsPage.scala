@@ -1,17 +1,69 @@
 package frontend.content
 
 import frontend.css.Styles
-import frontend.path
+import frontend.templates.MenuItem
+import frontend.{Content, JsMain, LeftMenu, path}
 import generators.binaryCountingOfAncientRussians.BinaryCountingOfAncientRussians
+import model.Problem._
+import model.Problem.Problem
+import model.ProblemSet.ProblemSet
+import newtwork.Verificator
+import org.scalajs.dom
 import org.scalajs.dom.Element
-import scalatags.JsDom.all._
+import scalatags.JsDom.all.{input, _}
 import scalatags.JsDom.tags2.section
 
 object ProblemsPage {
-  val problems = Some(BinaryCountingOfAncientRussians.template.generate(0))
 
-  
-  def placeholder:Element = section(
-    h4("Выберите тест для прохождения на странице \"тесты\"")
-  ).render
+
+  var problems: Option[ProblemSet] = None
+
+
+  def select(p: Problem):Unit = {
+    Content.setContent{section(
+      h3(p.title),
+      div(raw(p.problemHtml)),
+      p.answerFieldType match {
+        case DoubleNumberField() =>
+          val inputField = input(`type` := "text").render
+          val button = input(`type` := "submit", value := "Ответить").render
+          val afterAnswerAction:Option[() => Unit ] = problems.flatMap{ps =>
+            val n = ps.problems.indexOf(p)
+            if(n < ps.problems.size - 1){
+              Some(() => select(ps.problems(n + 1)))
+            }  else None
+          }
+          button.addEventListener("click", (e: dom.MouseEvent) => {
+            Verificator.verify(p,inputField.value)
+            afterAnswerAction.foreach(a => a())
+          })
+          div(
+            inputField,
+            button
+          )
+        case IntNumberField() =>
+        case TextField() =>
+        case ProgramField(allowedLanguages) =>
+        case SelectOneField(variants) =>
+        case SelectManyField(variants) =>
+      }
+      ).render
+    }
+  }
+
+  def loadPage(): Unit = {
+    problems match {
+      case Some(value) =>
+        val items = value.problems.map(i => MenuItem(i.title, false, () => select(i), () => ()))
+        LeftMenu.menuBinding.rebuildMenu(items)
+        LeftMenu.menuBinding.setSelected(items.head, true)
+        LeftMenu.show()
+      case None =>
+        Content.setContent(h4("Выберите тест для прохождения на странице \"тесты\"").render)
+    }
+  }
+
+  def hidePage(): Unit = {
+    LeftMenu.hide()
+  }
 }

@@ -4,7 +4,7 @@ import scala.concurrent.Future
 
 object Problem {
 
-  trait ProblemStatus
+  sealed trait ProblemStatus
   case class Verified(answer: String, correct: Boolean, additionalInfo: Option[String] = None) extends ProblemStatus
   case class BeingVerified(answer: String) extends ProblemStatus
   case class NotAnswered() extends ProblemStatus
@@ -13,7 +13,7 @@ object Problem {
   type ProgrammingLanguage = String
   case class ProgramAnswer(program: String, language: ProgrammingLanguage)
 
-  trait AnswerFieldType[ANSWER_TYPE]
+  sealed trait AnswerFieldType[ANSWER_TYPE]
   case class DoubleNumberField() extends AnswerFieldType[Double]
   case class IntNumberField() extends AnswerFieldType[Int]
   case class TextField() extends AnswerFieldType[String]
@@ -26,6 +26,7 @@ object Problem {
 
   case class Problem(
                       id: Long,
+                      title:String,
                       problemHtml: String,
                       status: ProblemStatus,
                       answerFieldType: AnswerFieldType[_])

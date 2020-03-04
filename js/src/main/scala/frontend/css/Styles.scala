@@ -21,6 +21,7 @@ object Styles {
   val defaultPadding = "14px 16px"
 
   val userInfoBGColor = topRowColor
+  val buttonColor = topRowColor
 
   object CascadeStyles extends CascadingStyleSheet {
     initStyleSheet()
@@ -112,14 +113,18 @@ object Styles {
     )
 
 
-    val contentImage:Cls = cls(
-      width:= "350px",
+    val contentImage: Cls = cls(
+      width := "350px",
       float.right,
       padding := defaultPadding
     )
+
+    val buttonStyle:Cls = cls(
+      color := "#ffffff",
+      backgroundColor := buttonColor,
+      width := "fit-content"
+    )
   }
-
-
 
 
 }
