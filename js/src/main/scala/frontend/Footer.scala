@@ -1,7 +1,7 @@
 package frontend
 
 import scalatags.JsDom.all._
-import _root_.base.Text
+import _root_.constants.Text
 import frontend.css.Styles.ElementStyles
 
 

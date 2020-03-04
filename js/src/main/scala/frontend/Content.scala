@@ -1,19 +1,31 @@
 package frontend
 
-import base.Text
+import constants.Text
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2._
 import frontend.css.Styles.ElementStyles
+import org.scalajs.dom.Element
 
 
 object Content {
   val contentId: String = "content"
 
-  def apply(): Frag = main(
+  def setContent(element: Element):Element = {
+    contentDiv.removeChilds()
+    contentDiv.appendChild(element)
+    contentDiv
+  }
+
+  def setHtmlContent(innerHtml:String) :Element = {
+    contentDiv.innerHTML = innerHtml
+    contentDiv
+  }
+
+  val contentDiv:Element = main(
     id := contentId,
     ElementStyles.content)(
-    h1("Some placeholder here"),
-    p((for(i <- 0 to 100) yield i.toString + " ").toString()),
-    p((for(i <- 0 to 100) yield i.toString + " ").toString()),
-  )
+
+  ).render
+
+  def placeholder(): Element = setHtmlContent(Text.loading)
 }

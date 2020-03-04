@@ -1,4 +1,4 @@
-package base
+package constants
 
 object Paths {
   val staticFilesPrefix = "/files"

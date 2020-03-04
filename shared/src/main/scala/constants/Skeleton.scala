@@ -1,4 +1,4 @@
-package base
+package constants
 
 import scalatags.Text.all._
 

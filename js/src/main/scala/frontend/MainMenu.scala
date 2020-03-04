@@ -3,7 +3,7 @@ package frontend
 import org.scalajs.dom
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2._
-import _root_.base.Text
+import _root_.constants.Text
 import org.scalajs.dom.Node
 import org.scalajs.dom.html.{Element, UList}
 import frontend.css._
@@ -33,30 +33,30 @@ object MainMenu {
     menuUL
   ).render
 
-  def rebuildMenu(items: MenuItem*): Element = {
+  def rebuildMenuVarArg(items: MenuItem*): Element = rebuildMenu(items)
+
+  def rebuildMenu(items: Seq[MenuItem]): Element = {
     println()
     menuItems.foreach(i => menuUL.removeChild(i._2))
     menuItems.clear()
     items.foreach { item: MenuItem =>
       val element = (if (item.active) li(`class` := activeClass) else li()) (h3(item.text)).render
-      element.addEventListener("click", (e: dom.MouseEvent) => {
-        setSelected(item)
-        item.onClickAction()
-      })
+      element.addEventListener("click", (e: dom.MouseEvent) => setSelected(item, true))
       menuItems += (item -> element)
       menuUL.appendChild(element)
     }
     menu
   }
 
-  def setSelected(item: MenuItem): Unit = {
+  def setSelected(item: MenuItem, triggerAction: Boolean): Unit = {
     menuItems.values.foreach(_.className = "")
     menuItems.get(item).foreach(_.className = activeClass)
+    if (triggerAction) item.onClickAction()
   }
 
 
-  def placeholder(): Element = rebuildMenu(
-    MenuItem(Text.loading, true, () => println ("debug clicked on loading"))
+  def placeholder(): Element = rebuildMenuVarArg(
+    MenuItem(Text.loading, true, () => println("debug clicked on loading"))
   )
 
   /*nav(

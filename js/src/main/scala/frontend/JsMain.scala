@@ -1,5 +1,6 @@
 package frontend
 
+import constants.Text
 import org.scalajs.dom.document
 import org.scalajs.dom.ext._
 import org.scalajs.dom
@@ -7,11 +8,12 @@ import scalatags.JsDom.all._
 import dom.ext.Ajax
 import model.TestData._
 import frontend.MainMenu.{MenuItem, rebuildMenu}
+import frontend.content.{FaqPage, MainPage}
 import frontend.css.Styles
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 import scala.concurrent.ExecutionContext.Implicits.global
-import frontend.{Footer, Header, MainPageGrid, MainMenu}
+import frontend.{Footer, Header, MainMenu, MainPageGrid}
 
 object JsMain {
 
@@ -42,7 +44,13 @@ object JsMain {
     document.head.appendChild(tag("style")(Styles.CascadeStyles.toTagStyles).render)
     document.head.appendChild(tag("style")(Styles.ElementStyles.styleSheetText).render)
     document.body.appendChild(containter)
-
+    val menuItems:Seq[MenuItem] = Seq(
+      MenuItem(Text.menuMain, true, () => Content.setContent(MainPage.text)),
+      MenuItem(Text.menuTest, false, () => Content.setHtmlContent("OLOLO")),
+      MenuItem(Text.menuCurrentTest, false, () => Content.setContent(MainPage.text)),
+      MenuItem(Text.menuFaq, false, () => Content.setContent(FaqPage.text)),
+    )
+    MainMenu.rebuildMenu(menuItems)
 
 
 

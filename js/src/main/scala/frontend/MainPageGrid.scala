@@ -26,7 +26,7 @@ object MainPageGrid {
     MainMenu.placeholder(),
     LeftMenu(),
     UserInfo(),
-    Content(),
+    Content.placeholder(),
     Footer()
   )
 }

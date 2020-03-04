@@ -112,7 +112,14 @@ object Styles {
     )
 
 
+    val contentImage:Cls = cls(
+      width:= "350px",
+      float.right,
+      padding := defaultPadding
+    )
   }
+
+
 
 
 }
