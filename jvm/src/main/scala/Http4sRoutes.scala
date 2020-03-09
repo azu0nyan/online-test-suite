@@ -1,6 +1,7 @@
 //import cats.effect._
 
 import constants.{Paths, Skeleton}
+import db.DBInit
 import model.TestData._
 import org.http4s._
 import org.http4s.dsl.io._
@@ -68,7 +69,8 @@ object Http4sRoutes extends IOApp {
   val httpApp = Router("/" -> mainRoutesService, Paths.staticFilesPrefix -> staticFilesService).orNotFound
 
 
-  override def run(args: List[String]): IO[ExitCode] =
+  override def run(args: List[String]): IO[ExitCode] = {
+    DBInit.initDB()
     BlazeServerBuilder[IO]
       .bindHttp(8080, "localhost")
       .withHttpApp(httpApp)
@@ -76,5 +78,6 @@ object Http4sRoutes extends IOApp {
       .compile
       .drain
       .as(ExitCode.Success)
+  }
 
 }

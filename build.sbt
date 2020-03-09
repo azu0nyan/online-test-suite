@@ -2,6 +2,8 @@ ThisBuild /scalaVersion := "2.13.1"
 
 cancelable in Global := true
 
+enablePlugins(ScalikejdbcPlugin)
+
 val workdir = "workdir"
 
 val http4sVersion = "0.21.0"
@@ -27,6 +29,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
 //      "io.circe" %%% "circe-generic",
 //      "io.circe" %%% "circe-parser"
 //    ).map(_ % circeVersion)
+
   ).
   jvmSettings(
     // Add JVM-specific settings here
@@ -35,6 +38,12 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
       "org.http4s" %% "http4s-blaze-server" % http4sVersion,
       "org.http4s" %% "http4s-blaze-client" % http4sVersion,
       "org.http4s" %% "http4s-dsl" % http4sVersion
+    ),
+    libraryDependencies ++= Seq(
+      "org.scalikejdbc" %% "scalikejdbc"         % "3.4.0",
+      "org.scalikejdbc" %% "scalikejdbc-config"  % "3.4.0",
+      "com.h2database"  %  "h2"                  % "1.4.200",
+      "ch.qos.logback"  %  "logback-classic"     % "1.2.3"
     ),
     baseDirectory in reStart := file(workdir)
 //    fork in run := true,
