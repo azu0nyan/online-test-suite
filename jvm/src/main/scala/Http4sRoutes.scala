@@ -72,7 +72,7 @@ object Http4sRoutes extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
     DBInit.initDB()
     BlazeServerBuilder[IO]
-      .bindHttp(8080, "localhost")
+      .bindHttp(8080, "0.0.0.0")
       .withHttpApp(httpApp)
       .serve
       .compile

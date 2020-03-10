@@ -20,7 +20,7 @@ object BinaryCountingOfAncientRussians {
       BCORProblem("золотничок", 1 / 128d),
       BCORProblem("сто двадцать восемь пар", 256),
     )
-    override def problemSetTitle(): String = "Двоичный счет древних русов. Базовые понятия"
+    override val problemSetTitle: String = "Двоичный счет древних русов. Базовые понятия"
   }
 
   // ноль-0, целковый-1, полушка-1/2, четвертушка-1/4, осьмушка-1/8, пудовичок-1/16, медячок-1/32, серебрячок-1/64, золотничок-1/128;
