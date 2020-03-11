@@ -1,7 +1,8 @@
-package model
+package db.model
+
+import java.time.ZonedDateTime
 
 import scalikejdbc._
-import java.time.{ZonedDateTime}
 
 case class User(
   id: Int,

@@ -1,9 +1,10 @@
-package model
+package db.model
+
+import java.sql.Clob
 
 import scalikejdbc._
-import java.sql.{Clob}
 
-case class Probleminstance(
+case class ProblemInstance(
   id: Int,
   templateid: Int,
   problemsetid: Int,
@@ -12,21 +13,21 @@ case class Probleminstance(
   answer: Option[Clob] = None,
   score: Int) {
 
-  def save()(implicit session: DBSession = Probleminstance.autoSession): Probleminstance = Probleminstance.save(this)(session)
+  def save()(implicit session: DBSession = ProblemInstance.autoSession): ProblemInstance = ProblemInstance.save(this)(session)
 
-  def destroy()(implicit session: DBSession = Probleminstance.autoSession): Int = Probleminstance.destroy(this)(session)
+  def destroy()(implicit session: DBSession = ProblemInstance.autoSession): Int = ProblemInstance.destroy(this)(session)
 
 }
 
 
-object Probleminstance extends SQLSyntaxSupport[Probleminstance] {
+object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
 
   override val tableName = "PROBLEMINSTANCE"
 
   override val columns = Seq("ID", "TEMPLATEID", "PROBLEMSETID", "SEED", "STATUS", "ANSWER", "SCORE")
 
-  def apply(p: SyntaxProvider[Probleminstance])(rs: WrappedResultSet): Probleminstance = apply(p.resultName)(rs)
-  def apply(p: ResultName[Probleminstance])(rs: WrappedResultSet): Probleminstance = new Probleminstance(
+  def apply(p: SyntaxProvider[ProblemInstance])(rs: WrappedResultSet): ProblemInstance = apply(p.resultName)(rs)
+  def apply(p: ResultName[ProblemInstance])(rs: WrappedResultSet): ProblemInstance = new ProblemInstance(
     id = rs.get(p.id),
     templateid = rs.get(p.templateid),
     problemsetid = rs.get(p.problemsetid),
@@ -36,39 +37,39 @@ object Probleminstance extends SQLSyntaxSupport[Probleminstance] {
     score = rs.get(p.score)
   )
 
-  val p = Probleminstance.syntax("p")
+  val p = ProblemInstance.syntax("p")
 
   override val autoSession = AutoSession
 
-  def find(id: Int)(implicit session: DBSession = autoSession): Option[Probleminstance] = {
+  def find(id: Int)(implicit session: DBSession = autoSession): Option[ProblemInstance] = {
     withSQL {
-      select.from(Probleminstance as p).where.eq(p.id, id)
-    }.map(Probleminstance(p.resultName)).single.apply()
+      select.from(ProblemInstance as p).where.eq(p.id, id)
+    }.map(ProblemInstance(p.resultName)).single.apply()
   }
 
-  def findAll()(implicit session: DBSession = autoSession): List[Probleminstance] = {
-    withSQL(select.from(Probleminstance as p)).map(Probleminstance(p.resultName)).list.apply()
+  def findAll()(implicit session: DBSession = autoSession): List[ProblemInstance] = {
+    withSQL(select.from(ProblemInstance as p)).map(ProblemInstance(p.resultName)).list.apply()
   }
 
   def countAll()(implicit session: DBSession = autoSession): Long = {
-    withSQL(select(sqls.count).from(Probleminstance as p)).map(rs => rs.long(1)).single.apply().get
+    withSQL(select(sqls.count).from(ProblemInstance as p)).map(rs => rs.long(1)).single.apply().get
   }
 
-  def findBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Option[Probleminstance] = {
+  def findBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Option[ProblemInstance] = {
     withSQL {
-      select.from(Probleminstance as p).where.append(where)
-    }.map(Probleminstance(p.resultName)).single.apply()
+      select.from(ProblemInstance as p).where.append(where)
+    }.map(ProblemInstance(p.resultName)).single.apply()
   }
 
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[Probleminstance] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[ProblemInstance] = {
     withSQL {
-      select.from(Probleminstance as p).where.append(where)
-    }.map(Probleminstance(p.resultName)).list.apply()
+      select.from(ProblemInstance as p).where.append(where)
+    }.map(ProblemInstance(p.resultName)).list.apply()
   }
 
   def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
     withSQL {
-      select(sqls.count).from(Probleminstance as p).where.append(where)
+      select(sqls.count).from(ProblemInstance as p).where.append(where)
     }.map(_.long(1)).single.apply().get
   }
 
@@ -78,9 +79,9 @@ object Probleminstance extends SQLSyntaxSupport[Probleminstance] {
     seed: Int,
     status: Int,
     answer: Option[Clob] = None,
-    score: Int)(implicit session: DBSession = autoSession): Probleminstance = {
+    score: Int)(implicit session: DBSession = autoSession): ProblemInstance = {
     val generatedKey = withSQL {
-      insert.into(Probleminstance).namedValues(
+      insert.into(ProblemInstance).namedValues(
         column.templateid -> templateid,
         column.problemsetid -> problemsetid,
         column.seed -> seed,
@@ -90,7 +91,7 @@ object Probleminstance extends SQLSyntaxSupport[Probleminstance] {
       )
     }.updateAndReturnGeneratedKey.apply()
 
-    Probleminstance(
+    ProblemInstance(
       id = generatedKey.toInt,
       templateid = templateid,
       problemsetid = problemsetid,
@@ -100,7 +101,7 @@ object Probleminstance extends SQLSyntaxSupport[Probleminstance] {
       score = score)
   }
 
-  def batchInsert(entities: collection.Seq[Probleminstance])(implicit session: DBSession = autoSession): List[Int] = {
+  def batchInsert(entities: collection.Seq[ProblemInstance])(implicit session: DBSession = autoSession): List[Int] = {
     val params: collection.Seq[Seq[(Symbol, Any)]] = entities.map(entity =>
       Seq(
         Symbol("templateid") -> entity.templateid,
@@ -126,9 +127,9 @@ object Probleminstance extends SQLSyntaxSupport[Probleminstance] {
     )""").batchByName(params.toSeq: _*).apply[List]()
   }
 
-  def save(entity: Probleminstance)(implicit session: DBSession = autoSession): Probleminstance = {
+  def save(entity: ProblemInstance)(implicit session: DBSession = autoSession): ProblemInstance = {
     withSQL {
-      update(Probleminstance).set(
+      update(ProblemInstance).set(
         column.id -> entity.id,
         column.templateid -> entity.templateid,
         column.problemsetid -> entity.problemsetid,
@@ -141,8 +142,8 @@ object Probleminstance extends SQLSyntaxSupport[Probleminstance] {
     entity
   }
 
-  def destroy(entity: Probleminstance)(implicit session: DBSession = autoSession): Int = {
-    withSQL { delete.from(Probleminstance).where.eq(column.id, entity.id) }.update.apply()
+  def destroy(entity: ProblemInstance)(implicit session: DBSession = autoSession): Int = {
+    withSQL { delete.from(ProblemInstance).where.eq(column.id, entity.id) }.update.apply()
   }
 
 }

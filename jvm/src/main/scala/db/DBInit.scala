@@ -4,8 +4,7 @@ package db
 
 import java.time.ZonedDateTime
 
-import model.ProblemSet._
-import model.{Problemsettemplatealias, User}
+import model.{ProblemTemplateAlias,  User}
 import org.h2.jdbcx.JdbcDataSource
 import scalikejdbc._
 import scalikejdbc.config._
@@ -39,15 +38,17 @@ object DBInit {
 
 
   def initAliases() = {
-    val psts = Problemsettemplatealias.p
-    print("Loading aliases for problem set templates...")
+    val psts = ProblemTemplateAlias.p
+    println("Loading aliases for problem set templates...")
     problemSetTemplates.map {
       pst =>
         print(s"Found pst ${pst}")
         pst
-    }.filter(pst => Problemsettemplatealias.findBy(sqls.eq(psts.alias, pst.alias)).isEmpty).foreach { pst =>
-      println(pst)
     }
+      .filter(pst => Problemsettemplatealias.findBy(sqls.eq(psts.alias, pst.alias)).isEmpty)
+      .foreach { pst =>
+        println(pst)
+      }
   }
 
 

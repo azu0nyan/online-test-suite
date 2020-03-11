@@ -3,10 +3,9 @@ package frontend.content
 import frontend.css.Styles
 import frontend.templates.MenuItem
 import frontend.{Content, JsMain, LeftMenu, path}
-import generators.binaryCountingOfAncientRussians.BinaryCountingOfAncientRussians
-import model.Problem._
-import model.Problem.Problem
-import model.ProblemSet.ProblemSet
+import model.ProblemView._
+import model.ProblemView.ProblemView
+import model.ProblemSetView.ProblemSetView
 import newtwork.Verificator
 import org.scalajs.dom
 import org.scalajs.dom.Element
@@ -16,10 +15,10 @@ import scalatags.JsDom.tags2.section
 object ProblemsPage {
 
 
-  var problems: Option[ProblemSet] = None
+  var problems: Option[ProblemSetView] = None
 
 
-  def select(p: Problem):Unit = {
+  def select(p: ProblemView):Unit = {
     Content.setContent{section(
       h3(p.title),
       div(raw(p.problemHtml)),

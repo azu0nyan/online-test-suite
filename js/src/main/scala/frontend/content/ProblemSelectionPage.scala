@@ -4,21 +4,20 @@ package frontend.content
 
 import frontend.css.Styles
 import frontend.{JsMain, path}
-import generators.binaryCountingOfAncientRussians.BinaryCountingOfAncientRussians
-import model.ProblemSet.ProblemSet
+import model.ProblemSetView.ProblemSetView
 import org.scalajs.dom
 import org.scalajs.dom.Element
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
 
 object ProblemSelectionPage {
-  def tests:Seq[ProblemSet] = Seq(
+  def tests:Seq[ProblemSetView] = Seq(
     BinaryCountingOfAncientRussians.template.generate(0),
     BinaryCountingOfAncientRussians.template.generate(1),
     BinaryCountingOfAncientRussians.template.generate(2),
   )
 
-  def onProblemSetSelected(ps:ProblemSet):Unit = {
+  def onProblemSetSelected(ps:ProblemSetView):Unit = {
     println(s"selected $ps")
     ProblemsPage.problems = Some(ps)
     JsMain.mainMenu.setSelected(JsMain.currentPronlemItem, true)
