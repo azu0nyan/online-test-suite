@@ -7,8 +7,10 @@ import scala.concurrent.Future
 
 object BinaryCountingOfAncientRussians {
 
+
+
   val template: ProblemSetTemplate = new ProblemSetTemplate {
-    override val problemTemplates: Seq[ProblemTemplate] = Seq(
+    override val uniqueTemplates: Set[ProblemTemplate] = Set(
       BCORProblem("целковый", 1),
       BCORProblem("полушка", 1 / 2d),
       BCORProblem("четвертушка", 1 / 4d),
@@ -20,10 +22,11 @@ object BinaryCountingOfAncientRussians {
       BCORProblem("сто двадцать восемь пар", 256),
     )
     override val problemSetTitle: String = "Двоичный счет древних русов. Базовые понятия"
+    override val uniqueAlias: String = "BinaryCountingOfAncientRussians"
   }
 
   // ноль-0, целковый-1, полушка-1/2, четвертушка-1/4, осьмушка-1/8, пудовичок-1/16, медячок-1/32, серебрячок-1/64, золотничок-1/128;
-  case class BCORProblem(name: String, value: Double) extends ProblemTemplate {
+  private case class BCORProblem(name: String, value: Double) extends ProblemTemplate {
 
     override def generateProblem(seed: Int): ProblemView =
       ProblemView(seed, seed.toString + ") "  + name  ,
@@ -35,6 +38,7 @@ object BinaryCountingOfAncientRussians {
         case None => Verified(answer, false, Some("wrong format"))
       })
     }
+    override val alias: String = s"BCIORProblem $name"
   }
 
 }

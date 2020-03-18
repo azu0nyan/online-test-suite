@@ -4,7 +4,9 @@ package db
 
 import java.time.ZonedDateTime
 
-import model.{ProblemTemplateAlias,  User}
+import controller.ProblemSetTemplate
+import impl.BinaryCountingOfAncientRussians
+import model.{ProblemTemplateAlias, User}
 import org.h2.jdbcx.JdbcDataSource
 import scalikejdbc._
 import scalikejdbc.config._
@@ -22,7 +24,7 @@ object DBInit {
     DBs.setupAll()
 
 
-    //schema()
+    schema()
     initAliases()
     //    User.create("User1", "Pass", None, ZonedDateTime.now())
     //    User.create("User2", "Pass", None, ZonedDateTime.now())
@@ -39,16 +41,9 @@ object DBInit {
 
   def initAliases() = {
     val psts = ProblemTemplateAlias.p
-    println("Loading aliases for problem set templates...")
-    problemSetTemplates.map {
-      pst =>
-        print(s"Found pst ${pst}")
-        pst
-    }
-      .filter(pst => Problemsettemplatealias.findBy(sqls.eq(psts.alias, pst.alias)).isEmpty)
-      .foreach { pst =>
-        println(pst)
-      }
+    log.info(s"Loading aliases for problem set templates...")
+    ProblemSetTemplate.registerProblemSetTemplate(BinaryCountingOfAncientRussians.template)
+
   }
 
 

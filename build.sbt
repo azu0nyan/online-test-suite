@@ -33,6 +33,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   ).
   jvmSettings(
     // Add JVM-specific settings here
+    libraryDependencies += "ch.qos.logback"  %  "logback-classic"     % "1.2.3",
+    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
     libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-dsl" % http4sVersion,
       "org.http4s" %% "http4s-blaze-server" % http4sVersion,
@@ -42,10 +44,10 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies ++= Seq(
       "org.scalikejdbc" %% "scalikejdbc"         % "3.4.0",
       "org.scalikejdbc" %% "scalikejdbc-config"  % "3.4.0",
-      "com.h2database"  %  "h2"                  % "1.4.200",
-      "ch.qos.logback"  %  "logback-classic"     % "1.2.3"
+      "com.h2database"  %  "h2"                  % "1.4.200"
     ),
-    baseDirectory in reStart := file(workdir)
+      mainClass in reStart := Some("db.DBInit"),
+      baseDirectory in reStart := file(workdir)
 //    fork in run := true,
 //    baseDirectory in run := file("workdir")
   ).
