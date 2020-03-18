@@ -1,7 +1,7 @@
 package controller
 
-import db.model.{ProblemSetTemplateAlias, ProblemTemplateAlias}
-import model.ProblemView.{ProblemView, Verified}
+import db.model.{ProblemInstance, ProblemSetInstance, ProblemSetTemplateAlias, ProblemTemplateAlias}
+import model.ProblemView.{AnswerFieldType, ProblemView, Verified}
 import scalikejdbc.sqls
 
 import scala.concurrent.Future
@@ -24,12 +24,17 @@ object ProblemTemplate{
     aliasToTemplate += (alias.alias -> pt)
     log.info(s"Registered problem template id: ${alias.id} alias: ${alias.alias}")
   }
+
+
 }
 
 trait ProblemTemplate {
   val alias:String
-  //    def answerFromString[AT](field: AnswerFieldType[AT]): Option[AT] = ???
-  def generateProblem(seed: Int): ProblemView
+  //def answerFromString[AT](field: AnswerFieldType[AT]): Option[AT] = ???
+  //def generateProblem(seed: Int): ProblemInstance = ProblemInstance.create()
+  def generateProblemHtml(seed:Int):String
+  def answerFieldType(seed:Int):AnswerFieldType
   def verifyProblem(problemId: Long, answer: String): Future[Verified]
+
 }
 

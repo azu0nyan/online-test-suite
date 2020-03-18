@@ -13,13 +13,13 @@ object ProblemView {
   type ProgrammingLanguage = String
   case class ProgramAnswer(program: String, language: ProgrammingLanguage)
 
-  sealed trait AnswerFieldType[ANSWER_TYPE]
-  case class DoubleNumberField() extends AnswerFieldType[Double]
-  case class IntNumberField() extends AnswerFieldType[Int]
-  case class TextField() extends AnswerFieldType[String]
-  case class ProgramField(allowedLanguages: Set[ProgrammingLanguage]) extends AnswerFieldType[ProgramAnswer]
-  case class SelectOneField(variants: Set[String]) extends AnswerFieldType[String]
-  case class SelectManyField(variants: Set[String]) extends AnswerFieldType[Set[String]]
+  sealed trait AnswerFieldType
+  case class DoubleNumberField() extends AnswerFieldType
+  case class IntNumberField() extends AnswerFieldType
+  case class TextField() extends AnswerFieldType
+  case class ProgramField(allowedLanguages: Set[ProgrammingLanguage]) extends AnswerFieldType
+  case class SelectOneField(variants: Set[String]) extends AnswerFieldType
+  case class SelectManyField(variants: Set[String]) extends AnswerFieldType
 
 
 

@@ -26,6 +26,11 @@ object DBInit {
 
     schema()
     initAliases()
+
+    User.create("root", "pass", registeredat = ZonedDateTime.now())
+    User.create("user", "123", registeredat = ZonedDateTime.now())
+    User.create("azu", "123", registeredat = ZonedDateTime.now())
+    User.create("uza", "123", registeredat = ZonedDateTime.now())
     //    User.create("User1", "Pass", None, ZonedDateTime.now())
     //    User.create("User2", "Pass", None, ZonedDateTime.now())
     //
