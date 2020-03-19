@@ -1,7 +1,7 @@
 package controller
 
 import db.model.{ProblemInstance, ProblemSetInstance, ProblemSetTemplateAlias, ProblemTemplateAlias}
-import model.ProblemView.{AnswerFieldType, ProblemView, Verified}
+import model.Problem.{AnswerFieldType, ProblemView, Verified}
 import scalikejdbc.sqls
 
 import scala.concurrent.Future

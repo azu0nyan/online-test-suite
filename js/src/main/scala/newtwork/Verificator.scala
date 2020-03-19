@@ -1,6 +1,6 @@
 package newtwork
 
-import model.ProblemView.{ProblemView, Verified}
+import model.Problem.{ProblemView, Verified}
 
 import scala.concurrent.Future
 

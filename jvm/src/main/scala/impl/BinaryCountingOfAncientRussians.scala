@@ -1,6 +1,6 @@
 package impl
 
-import model.ProblemView.{DoubleNumberField, NotAnswered, ProblemView, Verified}
+import model.Problem.{DoubleNumberField, NotAnswered, ProblemView, Verified}
 import controller.{ProblemSetTemplate, ProblemTemplate}
 
 import scala.concurrent.Future

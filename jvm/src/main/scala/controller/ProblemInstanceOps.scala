@@ -1,7 +1,7 @@
 package controller
 
 import db.model.ProblemInstance
-import model.ProblemView.ProblemView
+import model.Problem.ProblemView
 
 object ProblemInstanceOps {
   def toView(instance:ProblemInstance):ProblemView = {

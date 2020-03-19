@@ -2,12 +2,20 @@ package model
 
 import scala.concurrent.Future
 
-object ProblemView {
+object Problem {
 
-  sealed trait ProblemViewStatus
-  case class Verified(answer: String, correct: Boolean, additionalInfo: Option[String] = None) extends ProblemViewStatus
-  case class BeingVerified(answer: String) extends ProblemViewStatus
-  case class NotAnswered() extends ProblemViewStatus
+  sealed trait ProblemScore
+  case class BinaryScore(passed:Boolean) extends ProblemScore
+  case class IntScore(score:Int) extends ProblemScore
+  case class DoubleScore(score:Int) extends ProblemScore
+  case class XOutOfYScore(score:Int, maxScore:Int) extends ProblemScore
+  case class ScoreWithReview[S <: ProblemScore](score:S, review:Option[String]) extends ProblemScore
+
+
+  sealed trait ProblemStatus
+  case class Verified(answer: String, score:ProblemScore) extends ProblemStatus
+  case class BeingVerified(answer: String) extends ProblemStatus
+  case class NotAnswered() extends ProblemStatus
 
 
   type ProgrammingLanguage = String
@@ -28,8 +36,8 @@ object ProblemView {
                           id: Long,
                           title:String,
                           problemHtml: String,
-                          status: ProblemViewStatus,
-                          answerFieldType: AnswerFieldType[_])
+                          status: ProblemStatus,
+                          answerFieldType: AnswerFieldType)
 
   type ProblemTemplateAlias = String
 

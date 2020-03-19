@@ -3,8 +3,8 @@ package frontend.content
 import frontend.css.Styles
 import frontend.templates.MenuItem
 import frontend.{Content, JsMain, LeftMenu, path}
-import model.ProblemView._
-import model.ProblemView.ProblemView
+import model.Problem._
+import model.Problem.ProblemView
 import model.ProblemSetView.ProblemSetView
 import newtwork.Verificator
 import org.scalajs.dom
