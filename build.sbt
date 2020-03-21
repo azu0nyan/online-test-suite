@@ -11,6 +11,7 @@ val http4sVersion = "0.21.0"
 val circeVersion = "0.13.0"
 
 
+
 lazy val root = project.in(file(".")).
   aggregate(foo.js, foo.jvm).
   settings(
@@ -59,6 +60,15 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "1.0.0",
     Compile / fastOptJS / artifactPath := file(workdir) / "main.js" //baseDirectory.value / "workdir" / "main.js"
   )
+
+
+
+lazy val dbViewer = project.in(file("dbviewer")).settings(
+  libraryDependencies += "com.h2database"  %  "h2"      % "1.4.200",
+  baseDirectory in reStart := file(workdir),
+  baseDirectory in run  := file(workdir)
+)
+
 
 
 //addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)

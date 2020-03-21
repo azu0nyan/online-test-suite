@@ -4,7 +4,7 @@ package db
 
 import java.time.ZonedDateTime
 
-import controller.ProblemSetTemplate
+import controller.{ProblemSetTemplate, ProblemSetTemplateOps}
 import impl.BinaryCountingOfAncientRussians
 import model.{ProblemTemplateAlias, User}
 import org.h2.jdbcx.JdbcDataSource
@@ -24,7 +24,8 @@ object DBInit {
     DBs.setupAll()
 
 
-    schema()
+
+    //schema()
     initAliases()
 
     User.create("root", "pass", registeredat = ZonedDateTime.now())
@@ -47,7 +48,8 @@ object DBInit {
   def initAliases() = {
     val psts = ProblemTemplateAlias.p
     log.info(s"Loading aliases for problem set templates...")
-    ProblemSetTemplate.registerProblemSetTemplate(BinaryCountingOfAncientRussians.template)
+
+    ProblemSetTemplateOps.registerProblemSetTemplate(BinaryCountingOfAncientRussians.template)
 
   }
 
@@ -94,7 +96,7 @@ object DBInit {
          |  userId int not null,
          |  createdAt timestamp not null default 'CURRENT_TIMESTAMP',
          |  expiresAt timestamp null,
-         |  status int null,
+         |  status int not null,
          |  score int not null default '0',
          |  primary key (id)
          |);
@@ -103,9 +105,7 @@ object DBInit {
          |  templateId int not null,
          |  problemSetId int not null,
          |  seed int not null,
-         |  status int not null,
-         |  answer clob null,
-         |  score int not null default '0',
+         |  allowedAnswers int not null default '1',
          |  primary key (id)
          |);
          |create table if not exists ProblemTemplateAlias(
@@ -113,14 +113,13 @@ object DBInit {
          |  alias varchar(255) not null,
          |  primary key (id)
          |);
-         |create table if not exists ProblemSetStatusAlias(
+         |create table if not exists ProblemInstanceAnswer(
          |  id int not null auto_increment,
-         |  alias varchar(64) not null,
-         |  primary key (id)
-         |);
-         |create table if not exists ProblemInstanceStatusAlias(
-         |  id int not null auto_increment,
-         |  alias varchar(255) not null,
+         |  problemInstanceId int not null,
+         |  answeredAt timestamp not null,
+         |  answer clob not null,
+         |  score int null,
+         |  review varchar(8192) null,
          |  primary key (id)
          |);
          |alter table ProblemSetTemplateForUser
@@ -143,10 +142,6 @@ object DBInit {
          |  add constraint ProblemSetInstance_fk_0_userId
          |    foreign key (userId)
          |    references User (id);
-         |alter table ProblemSetInstance
-         |  add constraint ProblemSetInstance_fk_0_status
-         |    foreign key (status)
-         |    references ProblemSetStatusAlias (id);
          |alter table ProblemInstance
          |  add constraint ProblemInstance_fk_0_templateId
          |    foreign key (templateId)
@@ -155,10 +150,10 @@ object DBInit {
          |  add constraint ProblemInstance_fk_0_problemSetId
          |    foreign key (problemSetId)
          |    references ProblemSetInstance (id);
-         |alter table ProblemInstance
-         |  add constraint ProblemInstance_fk_0_status
-         |    foreign key (status)
-         |    references ProblemInstanceStatusAlias (id);
+         |alter table ProblemInstanceAnswer
+         |  add constraint ProblemInstanceAnswer_fk_0_problemInstanceId
+         |    foreign key (problemInstanceId)
+         |    references ProblemInstance (id);
          |""".stripMargin.update().apply()
 
 }

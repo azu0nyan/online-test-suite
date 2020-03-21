@@ -12,10 +12,19 @@ object Problem {
   case class ScoreWithReview[S <: ProblemScore](score:S, review:Option[String]) extends ProblemScore
 
 
-  sealed trait ProblemStatus
-  case class Verified(answer: String, score:ProblemScore) extends ProblemStatus
-  case class BeingVerified(answer: String) extends ProblemStatus
-  case class NotAnswered() extends ProblemStatus
+
+  sealed trait ProblemStatus {
+    val id:Int
+  }
+  case class Verified( answer: String, score:ProblemScore) extends ProblemStatus {
+    override val id: Int = 2
+  }
+  case class BeingVerified(answer: String) extends ProblemStatus {
+    override val id: Int = 1
+  }
+  case class NotAnswered() extends ProblemStatus {
+    override val id: Int = 0
+  }
 
 
   type ProgrammingLanguage = String

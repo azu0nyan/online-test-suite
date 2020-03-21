@@ -1,7 +1,5 @@
 package db.model
 
-import java.sql.Clob
-
 import scalikejdbc._
 
 case class ProblemInstance(
@@ -9,9 +7,7 @@ case class ProblemInstance(
   templateid: Int,
   problemsetid: Int,
   seed: Int,
-  status: Int,
-  answer: Option[Clob] = None,
-  score: Int) {
+  allowedanswers: Int) {
 
   def save()(implicit session: DBSession = ProblemInstance.autoSession): ProblemInstance = ProblemInstance.save(this)(session)
 
@@ -24,7 +20,7 @@ object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
 
   override val tableName = "PROBLEMINSTANCE"
 
-  override val columns = Seq("ID", "TEMPLATEID", "PROBLEMSETID", "SEED", "STATUS", "ANSWER", "SCORE")
+  override val columns = Seq("ID", "TEMPLATEID", "PROBLEMSETID", "SEED", "ALLOWEDANSWERS")
 
   def apply(p: SyntaxProvider[ProblemInstance])(rs: WrappedResultSet): ProblemInstance = apply(p.resultName)(rs)
   def apply(p: ResultName[ProblemInstance])(rs: WrappedResultSet): ProblemInstance = new ProblemInstance(
@@ -32,9 +28,7 @@ object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
     templateid = rs.get(p.templateid),
     problemsetid = rs.get(p.problemsetid),
     seed = rs.get(p.seed),
-    status = rs.get(p.status),
-    answer = rs.get(p.answer),
-    score = rs.get(p.score)
+    allowedanswers = rs.get(p.allowedanswers)
   )
 
   val p = ProblemInstance.syntax("p")
@@ -77,17 +71,13 @@ object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
     templateid: Int,
     problemsetid: Int,
     seed: Int,
-    status: Int,
-    answer: Option[Clob] = None,
-    score: Int)(implicit session: DBSession = autoSession): ProblemInstance = {
+    allowedanswers: Int)(implicit session: DBSession = autoSession): ProblemInstance = {
     val generatedKey = withSQL {
       insert.into(ProblemInstance).namedValues(
         column.templateid -> templateid,
         column.problemsetid -> problemsetid,
         column.seed -> seed,
-        column.status -> status,
-        column.answer -> answer,
-        column.score -> score
+        column.allowedanswers -> allowedanswers
       )
     }.updateAndReturnGeneratedKey.apply()
 
@@ -96,9 +86,7 @@ object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
       templateid = templateid,
       problemsetid = problemsetid,
       seed = seed,
-      status = status,
-      answer = answer,
-      score = score)
+      allowedanswers = allowedanswers)
   }
 
   def batchInsert(entities: collection.Seq[ProblemInstance])(implicit session: DBSession = autoSession): List[Int] = {
@@ -107,23 +95,17 @@ object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
         Symbol("templateid") -> entity.templateid,
         Symbol("problemsetid") -> entity.problemsetid,
         Symbol("seed") -> entity.seed,
-        Symbol("status") -> entity.status,
-        Symbol("answer") -> entity.answer,
-        Symbol("score") -> entity.score))
+        Symbol("allowedanswers") -> entity.allowedanswers))
     SQL("""insert into PROBLEMINSTANCE(
       TEMPLATEID,
       PROBLEMSETID,
       SEED,
-      STATUS,
-      ANSWER,
-      SCORE
+      ALLOWEDANSWERS
     ) values (
       {templateid},
       {problemsetid},
       {seed},
-      {status},
-      {answer},
-      {score}
+      {allowedanswers}
     )""").batchByName(params.toSeq: _*).apply[List]()
   }
 
@@ -134,9 +116,7 @@ object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
         column.templateid -> entity.templateid,
         column.problemsetid -> entity.problemsetid,
         column.seed -> entity.seed,
-        column.status -> entity.status,
-        column.answer -> entity.answer,
-        column.score -> entity.score
+        column.allowedanswers -> entity.allowedanswers
       ).where.eq(column.id, entity.id)
     }.update.apply()
     entity

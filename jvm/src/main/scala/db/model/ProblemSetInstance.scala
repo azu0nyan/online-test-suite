@@ -10,7 +10,7 @@ case class ProblemSetInstance(
   userid: Int,
   createdat: ZonedDateTime,
   expiresat: Option[ZonedDateTime] = None,
-  status: Option[Int] = None,
+  status: Int,
   score: Int) {
 
   def save()(implicit session: DBSession = ProblemSetInstance.autoSession): ProblemSetInstance = ProblemSetInstance.save(this)(session)
@@ -78,7 +78,7 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
     userid: Int,
     createdat: ZonedDateTime,
     expiresat: Option[ZonedDateTime] = None,
-    status: Option[Int] = None,
+    status: Int,
     score: Int)(implicit session: DBSession = autoSession): ProblemSetInstance = {
     val generatedKey = withSQL {
       insert.into(ProblemSetInstance).namedValues(
