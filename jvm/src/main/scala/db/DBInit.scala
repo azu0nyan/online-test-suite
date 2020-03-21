@@ -4,7 +4,7 @@ package db
 
 import java.time.ZonedDateTime
 
-import controller.{ProblemSetTemplate, ProblemSetTemplateOps}
+import controller.ProblemSetTemplateOps
 import impl.BinaryCountingOfAncientRussians
 import model.{ProblemTemplateAlias, User}
 import org.h2.jdbcx.JdbcDataSource

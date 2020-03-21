@@ -1,12 +1,8 @@
-package controller
+package extensionsInterface
 
-import db.model.{ProblemInstance, ProblemSetInstance, ProblemSetTemplateAlias, ProblemTemplateAlias}
-import model.Problem.{AnswerFieldType, ProblemView, Verified}
-import scalikejdbc.sqls
+import model.Problem.{AnswerFieldType, Verified}
 
 import scala.concurrent.Future
-
-
 
 trait ProblemTemplate {
   val alias:String
@@ -17,4 +13,3 @@ trait ProblemTemplate {
   def verifyProblem(problemId: Long, answer: String): Future[Verified]
 
 }
-

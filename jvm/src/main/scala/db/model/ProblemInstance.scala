@@ -7,7 +7,7 @@ case class ProblemInstance(
   templateid: Int,
   problemsetid: Int,
   seed: Int,
-  allowedanswers: Int) {
+  allowedanswers: Option[Int] = None) {
 
   def save()(implicit session: DBSession = ProblemInstance.autoSession): ProblemInstance = ProblemInstance.save(this)(session)
 
@@ -71,7 +71,7 @@ object ProblemInstance extends SQLSyntaxSupport[ProblemInstance] {
     templateid: Int,
     problemsetid: Int,
     seed: Int,
-    allowedanswers: Int)(implicit session: DBSession = autoSession): ProblemInstance = {
+    allowedanswers: Option[Int] = None)(implicit session: DBSession = autoSession): ProblemInstance = {
     val generatedKey = withSQL {
       insert.into(ProblemInstance).namedValues(
         column.templateid -> templateid,

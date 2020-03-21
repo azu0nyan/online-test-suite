@@ -1,13 +1,14 @@
 package controller
 
 import db.model.{ProblemInstance, ProblemTemplateAlias}
+import extensionsInterface.ProblemTemplate
 import scalikejdbc._
 
 object ProblemTemplateOps {
 
-  def generateInstance(pt:ProblemTemplate,problemSetId:Int,  seed:Int):Option[ProblemInstance] = {
-    ProblemInstance.create(getId(pt), problemSetId, seed, 1, None, 1 )
-  }
+//  def generateInstance(pt:ProblemTemplate, allowedAnswers:Option[Int], problemSetId:Int,  seed:Int):ProblemInstance = {
+//    ProblemInstance.create(getId(pt), problemSetId, seed, allowedAnswers)
+//  }
 
   //problem template registry
   private var idToTemplate: Map[Int, ProblemTemplate] = Map()
@@ -18,6 +19,8 @@ object ProblemTemplateOps {
   def getId(pt:ProblemTemplate):Int = templateToId(pt)
 
   def getById(id: Int): ProblemTemplate = idToTemplate(id)
+
+  def getByIdOpt(id: Int): Option[ProblemTemplate] = idToTemplate.get(id)
 
   def getByAlias(alias: String): ProblemTemplate = aliasToTemplate(alias)
 

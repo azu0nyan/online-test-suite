@@ -11,7 +11,8 @@ case class ProblemSetInstance(
   createdat: ZonedDateTime,
   expiresat: Option[ZonedDateTime] = None,
   status: Int,
-  score: Int) {
+  score: Int,
+  seed: Int) {
 
   def save()(implicit session: DBSession = ProblemSetInstance.autoSession): ProblemSetInstance = ProblemSetInstance.save(this)(session)
 
@@ -24,7 +25,7 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
 
   override val tableName = "PROBLEMSETINSTANCE"
 
-  override val columns = Seq("ID", "TEMPLATEID", "USERID", "CREATEDAT", "EXPIRESAT", "STATUS", "SCORE")
+  override val columns = Seq("ID", "TEMPLATEID", "USERID", "CREATEDAT", "EXPIRESAT", "STATUS", "SCORE", "SEED")
 
   def apply(p: SyntaxProvider[ProblemSetInstance])(rs: WrappedResultSet): ProblemSetInstance = apply(p.resultName)(rs)
   def apply(p: ResultName[ProblemSetInstance])(rs: WrappedResultSet): ProblemSetInstance = new ProblemSetInstance(
@@ -34,7 +35,8 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
     createdat = rs.get(p.createdat),
     expiresat = rs.get(p.expiresat),
     status = rs.get(p.status),
-    score = rs.get(p.score)
+    score = rs.get(p.score),
+    seed = rs.get(p.seed)
   )
 
   val p = ProblemSetInstance.syntax("p")
@@ -79,7 +81,8 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
     createdat: ZonedDateTime,
     expiresat: Option[ZonedDateTime] = None,
     status: Int,
-    score: Int)(implicit session: DBSession = autoSession): ProblemSetInstance = {
+    score: Int,
+    seed: Int)(implicit session: DBSession = autoSession): ProblemSetInstance = {
     val generatedKey = withSQL {
       insert.into(ProblemSetInstance).namedValues(
         column.templateid -> templateid,
@@ -87,7 +90,8 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
         column.createdat -> createdat,
         column.expiresat -> expiresat,
         column.status -> status,
-        column.score -> score
+        column.score -> score,
+        column.seed -> seed
       )
     }.updateAndReturnGeneratedKey.apply()
 
@@ -98,7 +102,8 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
       createdat = createdat,
       expiresat = expiresat,
       status = status,
-      score = score)
+      score = score,
+      seed = seed)
   }
 
   def batchInsert(entities: collection.Seq[ProblemSetInstance])(implicit session: DBSession = autoSession): List[Int] = {
@@ -109,21 +114,24 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
         Symbol("createdat") -> entity.createdat,
         Symbol("expiresat") -> entity.expiresat,
         Symbol("status") -> entity.status,
-        Symbol("score") -> entity.score))
+        Symbol("score") -> entity.score,
+        Symbol("seed") -> entity.seed))
     SQL("""insert into PROBLEMSETINSTANCE(
       TEMPLATEID,
       USERID,
       CREATEDAT,
       EXPIRESAT,
       STATUS,
-      SCORE
+      SCORE,
+      SEED
     ) values (
       {templateid},
       {userid},
       {createdat},
       {expiresat},
       {status},
-      {score}
+      {score},
+      {seed}
     )""").batchByName(params.toSeq: _*).apply[List]()
   }
 
@@ -136,7 +144,8 @@ object ProblemSetInstance extends SQLSyntaxSupport[ProblemSetInstance] {
         column.createdat -> entity.createdat,
         column.expiresat -> entity.expiresat,
         column.status -> entity.status,
-        column.score -> entity.score
+        column.score -> entity.score,
+        column.seed -> entity.seed
       ).where.eq(column.id, entity.id)
     }.update.apply()
     entity

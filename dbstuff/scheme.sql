@@ -1,5 +1,3 @@
-
-
 create table if not exists User(
   id int not null auto_increment,
   login varchar(64) not null,
@@ -42,6 +40,7 @@ create table if not exists ProblemSetInstance(
   expiresAt timestamp null,
   status int not null,
   score int not null default '0',
+  seed int not null,
   primary key (id)
 );
 create table if not exists ProblemInstance(
@@ -49,7 +48,7 @@ create table if not exists ProblemInstance(
   templateId int not null,
   problemSetId int not null,
   seed int not null,
-  allowedAnswers int not null default '1',
+  allowedAnswers int null,
   primary key (id)
 );
 create table if not exists ProblemTemplateAlias(
