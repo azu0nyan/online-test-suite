@@ -9,10 +9,10 @@ import db._
 
 object ProblemInstanceOps {
 
-  def getById(id: Int): Option[ProblemInstance] = ProblemInstance.findBy(sqls.eq(ProblemInstance.p.id, id))
+  def byId(id: Int): Option[ProblemInstance] = ProblemInstance.findBy(sqls.eq(ProblemInstance.p.id, id))
 
   def submitAnswer(problemInstanceId: Int, answer: String) :Option[ProblemInstanceAnswer]= {
-    for (pi <- getById(problemInstanceId);
+    for (pi <- byId(problemInstanceId);
          pt <- ProblemTemplateOps.byIdOpt(pi.templateid)
          if pi.allowedanswers.isEmpty || ProblemInstanceAnswerOps.answersFor(pi).size < pi.allowedanswers.get
          ) {

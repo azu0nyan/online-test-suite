@@ -18,7 +18,7 @@ object ProblemTemplateOps {
 
   def getId(pt:ProblemTemplate):Int = templateToId(pt)
 
-  def getById(id: Int): ProblemTemplate = idToTemplate(id)
+  def byId(id: Int): ProblemTemplate = idToTemplate(id)
 
   def byIdOpt(id: Int): Option[ProblemTemplate] = idToTemplate.get(id)
 

@@ -10,6 +10,6 @@ trait ProblemTemplate {
   //def generateProblem(seed: Int): ProblemInstance = ProblemInstance.create()
   def generateProblemHtml(seed:Int):String
   def answerFieldType(seed:Int):AnswerFieldType
-  def verifyProblem(problemId: Long, answer: String): Future[Verified]
+  def verifyProblem(seed: Int, answer: String): Future[Verified]
 
 }
