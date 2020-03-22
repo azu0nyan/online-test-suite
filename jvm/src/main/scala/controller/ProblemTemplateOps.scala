@@ -20,7 +20,7 @@ object ProblemTemplateOps {
 
   def getById(id: Int): ProblemTemplate = idToTemplate(id)
 
-  def getByIdOpt(id: Int): Option[ProblemTemplate] = idToTemplate.get(id)
+  def byIdOpt(id: Int): Option[ProblemTemplate] = idToTemplate.get(id)
 
   def getByAlias(alias: String): ProblemTemplate = aliasToTemplate(alias)
 

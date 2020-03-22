@@ -8,7 +8,7 @@ package object db {
 
   implicit def stringToClob(s:String):Clob = new javax.sql.rowset.serial.SerialClob(s.toCharArray());
 
-  implicit def clobToString(c:Clob):String = new javax.sql.rowset.serial.SerialClob(s.toCharArray());
+//  implicit def clobToString(c:Clob):String = new javax.sql.rowset.serial.SerialClob(s.toCharArray());
 
 
 
