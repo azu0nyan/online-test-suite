@@ -8,7 +8,7 @@ object ProblemSetTemplateView {
   case class NotAvailable(availableFrom:Option[ZonedDateTime])extends Status
   case class Available(availableTo:Option[ZonedDateTime]) extends Status
   case class Passing(endsAt:Option[ZonedDateTime]) extends Status
-  case class Finished()
+  case class Finished(/*score*/)
 
 
 

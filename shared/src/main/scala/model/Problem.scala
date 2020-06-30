@@ -9,14 +9,15 @@ object Problem {
   case class IntScore(score:Int) extends ProblemScore
   case class DoubleScore(score:Int) extends ProblemScore
   case class XOutOfYScore(score:Int, maxScore:Int) extends ProblemScore
-  case class ScoreWithReview[S <: ProblemScore](score:S, review:Option[String]) extends ProblemScore
+//  case class ScoreWithReview[S <: ProblemScore](score:S, review:Option[String]) extends ProblemScore
 
 
-
+  //STATUS
   sealed trait ProblemStatus {
     val id:Int
   }
-  case class Verified( answer: String, score:ProblemScore) extends ProblemStatus {
+
+  case class Verified( answer: String, score:ProblemScore, review:Option[String] = None) extends ProblemStatus {
     override val id: Int = 2
   }
   case class BeingVerified(answer: String) extends ProblemStatus {

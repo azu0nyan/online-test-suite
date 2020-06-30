@@ -1,7 +1,6 @@
 package impl
 
-import model.Problem.{DoubleNumberField, NotAnswered, ProblemView, Verified}
-import controller.ProblemTemplate
+import model.Problem.{BinaryScore, DoubleNumberField, NotAnswered, ProblemView, Verified}
 import extensionsInterface.{ProblemSetTemplate, ProblemTemplate}
 
 import scala.concurrent.Future
@@ -35,8 +34,8 @@ object BinaryCountingOfAncientRussians {
 
     override def verifyProblem(problemId: Long, answer: String): Future[Verified] = {
       Future.successful(answer.toDoubleOption match {
-        case Some(x) => Verified(answer, x == value)
-        case None => Verified(answer, false, Some("wrong format"))
+        case Some(x) => Verified(answer, BinaryScore(x == value))
+        case None => Verified(answer, )
       })
     }
     override val alias: String = s"BCIORProblem $name"

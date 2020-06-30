@@ -55,9 +55,9 @@ object Http4sRoutes extends IOApp {
     case GET -> Root / "testData"  =>
       Ok{
 //        import io.circe._, io.circe.generic.auto._, io.circe.syntax._
-        val td:TestData = TestData("asdsad", new Random().nextInt())
-        import upickle.default._
-        write[TestData](td)
+//        val td:TestData = TestData("asdsad", new Random().nextInt())
+//        import upickle.default._
+//        write[TestData](td)
 //        td.asJson.toString
       }
 
@@ -70,7 +70,7 @@ object Http4sRoutes extends IOApp {
 
 
   override def run(args: List[String]): IO[ExitCode] = {
-    DBInit.initDB()
+ //   DBInit.initDB()
     BlazeServerBuilder[IO]
       .bindHttp(8080, "0.0.0.0")
       .withHttpApp(httpApp)
