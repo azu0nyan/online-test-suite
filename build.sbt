@@ -10,6 +10,12 @@ val http4sVersion = "0.21.0"
 
 val circeVersion = "0.13.0"
 
+val scalatagsVersion = "0.9.1"
+
+val udashVersion = "0.9.0-M2"
+
+val udashJQueryVersion = "3.0.4"
+
 
 
 lazy val root = project.in(file(".")).
@@ -23,19 +29,19 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   settings(
     name := "online-test-suite",
     version := "0.1-SNAPSHOT",
-    libraryDependencies += "com.lihaoyi" %%% "scalatags" % "0.8.5",
-    libraryDependencies += "com.lihaoyi" %%% "upickle" % "1.0.0",
-//    libraryDependencies ++= Seq(
-//      "io.circe" %%% "circe-core",
-//      "io.circe" %%% "circe-generic",
-//      "io.circe" %%% "circe-parser"
-//    ).map(_ % circeVersion)
-
+    libraryDependencies += "com.lihaoyi" %%% "scalatags" % scalatagsVersion,
+//    libraryDependencies += "com.lihaoyi" %%% "upickle" % "1.0.0",
+    libraryDependencies ++= Seq(
+      "io.circe" %%% "circe-core",
+      "io.circe" %%% "circe-generic",
+      "io.circe" %%% "circe-parser"
+    ).map(_ % circeVersion)
   ).
   jvmSettings(
     // Add JVM-specific settings here
     libraryDependencies += "ch.qos.logback"  %  "logback-classic"     % "1.2.3",
     libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+    libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0",
     libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-dsl" % http4sVersion,
       "org.http4s" %% "http4s-blaze-server" % http4sVersion,
@@ -43,9 +49,9 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
       "org.http4s" %% "http4s-dsl" % http4sVersion
     ),
     libraryDependencies ++= Seq(
-      "org.scalikejdbc" %% "scalikejdbc"         % "3.4.0",
-      "org.scalikejdbc" %% "scalikejdbc-config"  % "3.4.0",
-      "com.h2database"  %  "h2"                  % "1.4.200"
+//      "org.scalikejdbc" %% "scalikejdbc"         % "3.4.0",
+//      "org.scalikejdbc" %% "scalikejdbc-config"  % "3.4.0",
+//      "com.h2database"  %  "h2"                  % "1.4.200"
     ),
       mainClass in reStart := Some("db.DBInit"),
       baseDirectory in reStart := file(workdir)
@@ -53,6 +59,15 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
 //    baseDirectory in run := file("workdir")
   ).
   jsSettings(
+    libraryDependencies ++= Seq(
+      "io.udash" %%% "udash-core" % udashVersion,
+      "io.udash" %%% "udash-css" % udashVersion,
+      "io.udash" %%% "udash-i18n" % udashVersion,
+      "io.udash" %%% "udash-auth" % udashVersion,
+      "io.udash" %%% "udash-rest" % udashVersion,
+      "io.udash" %%% "udash-rpc" % udashVersion,
+      "io.udash" %%% "udash-bootstrap4" % udashVersion,
+      "io.udash" %%% "udash-jquery" % udashJQueryVersion),
     // Add JS-specific settings here
     scalaJSUseMainModuleInitializer := true,
 //    artifactPath in fullOptJS in Compile := file(workdir),
@@ -63,11 +78,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
 
 
 
-lazy val dbViewer = project.in(file("dbviewer")).settings(
-  libraryDependencies += "com.h2database"  %  "h2"      % "1.4.200",
-  baseDirectory in reStart := file(workdir),
-  baseDirectory in run  := file(workdir)
-)
+
 
 
 
