@@ -1,13 +1,13 @@
 package impl
 
-import model.Problem.{BinaryScore, DoubleNumberField, NotAnswered, ProblemView, Verified}
+import model.Problem.{BinaryScore, DoubleNumberField}
 import extensionsInterface.{ProblemSetTemplate, ProblemTemplate}
 
 import scala.concurrent.Future
 
 object BinaryCountingOfAncientRussians {
 
-
+/*
 
   val template: ProblemSetTemplate = new ProblemSetTemplate {
     override val uniqueTemplates: Set[ProblemTemplate] = Set(
@@ -40,5 +40,5 @@ object BinaryCountingOfAncientRussians {
     }
     override val alias: String = s"BCIORProblem $name"
   }
-
+*/
 }

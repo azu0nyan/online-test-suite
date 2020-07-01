@@ -5,27 +5,13 @@ import scala.concurrent.Future
 object Problem {
 
   sealed trait ProblemScore
-  case class BinaryScore(passed:Boolean) extends ProblemScore
-  case class IntScore(score:Int) extends ProblemScore
-  case class DoubleScore(score:Int) extends ProblemScore
-  case class XOutOfYScore(score:Int, maxScore:Int) extends ProblemScore
-//  case class ScoreWithReview[S <: ProblemScore](score:S, review:Option[String]) extends ProblemScore
+  case class BinaryScore(passed: Boolean) extends ProblemScore
+  case class IntScore(score: Int) extends ProblemScore
+  case class DoubleScore(score: Int) extends ProblemScore
+  case class XOutOfYScore(score: Int, maxScore: Int) extends ProblemScore
 
 
-  //STATUS
-  sealed trait ProblemStatus {
-    val id:Int
-  }
 
-  case class Verified( answer: String, score:ProblemScore, review:Option[String] = None) extends ProblemStatus {
-    override val id: Int = 2
-  }
-  case class BeingVerified(answer: String) extends ProblemStatus {
-    override val id: Int = 1
-  }
-  case class NotAnswered() extends ProblemStatus {
-    override val id: Int = 0
-  }
 
 
   type ProgrammingLanguage = String
@@ -40,16 +26,16 @@ object Problem {
   case class SelectManyField(variants: Set[String]) extends AnswerFieldType
 
 
-
-
-  case class ProblemView(
+  /*case class ProblemView(
                           id: Long,
-                          title:String,
+                          title: String,
                           problemHtml: String,
                           status: ProblemStatus,
-                          answerFieldType: AnswerFieldType)
+                          answerFieldType: AnswerFieldType)*/
 
   type ProblemTemplateAlias = String
+
+
 
 
 }

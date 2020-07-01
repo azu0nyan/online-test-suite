@@ -1,6 +1,5 @@
 package extensionsInterface
 
-import model.ProblemSetView.ProblemSetView
 
 trait ProblemSetTemplate {
   // registerProblemSetTemplate(this)
@@ -11,15 +10,17 @@ trait ProblemSetTemplate {
 
   val uniqueAlias: String
 
-  case class GeneratedProblem(template:ProblemTemplate, seed:Int, allowedAnswers:Option[Int])
+  case class GeneratedProblem(template:ProblemTemplate, seed:Int)
 
   type ProblemSetGeneratorOutput = Seq[GeneratedProblem]
 
   def generate(seed: Int): ProblemSetGeneratorOutput =
-    uniqueTemplates.zipWithIndex.map{case(pt, i) => GeneratedProblem(pt, seed + i, Some(1))}.toSeq
+    uniqueTemplates.zipWithIndex.map{case(pt, i) => GeneratedProblem(pt, seed + i)}.toSeq
 
 
   val timeLimitSeconds:Option[Int] = None
+
+  //def grade
 
 }
 

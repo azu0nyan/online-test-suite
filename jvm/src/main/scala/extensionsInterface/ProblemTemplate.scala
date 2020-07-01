@@ -1,6 +1,6 @@
 package extensionsInterface
 
-import model.Problem.{AnswerFieldType, ProblemStatus, Verified}
+import model.Problem.{AnswerFieldType}
 
 import scala.concurrent.Future
 

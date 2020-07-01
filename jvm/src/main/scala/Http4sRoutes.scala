@@ -1,8 +1,6 @@
 //import cats.effect._
 
 import constants.{Paths, Skeleton}
-import db.DBInit
-import model.TestData._
 import org.http4s._
 import org.http4s.dsl.io._
 
