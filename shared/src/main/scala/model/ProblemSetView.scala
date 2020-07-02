@@ -2,8 +2,8 @@ package model
 
 //import model.Problem.ProblemView
 //
-//object ProblemSetView {
+//object ProblemListView {
 //
-//  case class ProblemSetView(title:String, problems: Seq[ProblemView])
+//  case class ProblemListView(title:String, problems: Seq[ProblemView])
 //
 //}

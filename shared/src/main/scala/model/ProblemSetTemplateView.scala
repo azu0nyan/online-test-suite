@@ -2,7 +2,7 @@ package model
 
 import java.time.ZonedDateTime
 
-object ProblemSetTemplateView {
+object ProblemListTemplateView {
 
   sealed trait Status
   case class NotAvailable(availableFrom:Option[ZonedDateTime])extends Status

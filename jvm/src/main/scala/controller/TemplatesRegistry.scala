@@ -1,13 +1,13 @@
 package controller
 
 
-import extensionsInterface.{ProblemSetTemplate, ProblemTemplate}
+import extensionsInterface.{ProblemListTemplate, ProblemTemplate}
 
 object TemplatesRegistry {
 
   def getProblemTemplate(alias:String):Option[ProblemTemplate] = None
 
-  def getProblemSetTemplate(alias:String):Option[ProblemSetTemplate] = None
+  def getProblemListTemplate(alias:String):Option[ProblemListTemplate] = None
 
 
 }

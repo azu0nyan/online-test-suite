@@ -7,7 +7,7 @@ object ClientEvent {
   }
 
 //  case class ProblemInstanceStatusChanged(override val userId:Int, instanceId:Int, status:ProblemStatus) extends ClientEvent
-//  case class ProblemSetTimeExpired(override val userId:Int, problemSetID:Int) extends ClientEvent
+//  case class ProblemListTimeExpired(override val userId:Int, ProblemListID:Int) extends ClientEvent
 
 
 }

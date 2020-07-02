@@ -1,20 +1,20 @@
 package extensionsInterface
 
 
-trait ProblemSetTemplate {
-  // registerProblemSetTemplate(this)
+trait ProblemListTemplate {
+  // registerProblemListTemplate(this)
 
   val uniqueTemplates: Set[ProblemTemplate]
 
-  val problemSetTitle: String = "No title"
+  val ProblemListTitle: String = "No title"
 
   val uniqueAlias: String
 
   case class GeneratedProblem(template:ProblemTemplate, seed:Int)
 
-  type ProblemSetGeneratorOutput = Seq[GeneratedProblem]
+  type ProblemListGeneratorOutput = Seq[GeneratedProblem]
 
-  def generate(seed: Int): ProblemSetGeneratorOutput =
+  def generate(seed: Int): ProblemListGeneratorOutput =
     uniqueTemplates.zipWithIndex.map{case(pt, i) => GeneratedProblem(pt, seed + i)}.toSeq
 
 

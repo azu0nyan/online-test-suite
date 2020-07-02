@@ -5,7 +5,7 @@ import frontend.templates.MenuItem
 import frontend.{Content, JsMain, LeftMenu, path}
 import model.Problem._
 import model.Problem.ProblemView
-import model.ProblemSetView.ProblemSetView
+import model.ProblemListView.ProblemListView
 import newtwork.Verificator
 import org.scalajs.dom
 import org.scalajs.dom.Element
@@ -15,7 +15,7 @@ import scalatags.JsDom.tags2.section
 object ProblemsPage {
 
 
-  var problems: Option[ProblemSetView] = None
+  var problems: Option[ProblemListView] = None
 
 
   def select(p: ProblemView):Unit = {
@@ -26,10 +26,10 @@ object ProblemsPage {
         case DoubleNumberField() =>
           val inputField = input(`type` := "text").render
           val button = input(`type` := "submit", value := "Ответить").render
-          val afterAnswerAction:Option[() => Unit ] = problems.flatMap{ps =>
-            val n = ps.problems.indexOf(p)
-            if(n < ps.problems.size - 1){
-              Some(() => select(ps.problems(n + 1)))
+          val afterAnswerAction:Option[() => Unit ] = problems.flatMap{pl =>
+            val n = pl.problems.indexOf(p)
+            if(n < pl.problems.size - 1){
+              Some(() => select(pl.problems(n + 1)))
             }  else None
           }
           button.addEventListener("click", (e: dom.MouseEvent) => {

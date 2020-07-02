@@ -32,7 +32,7 @@ object User {
       Left(res)
     }
   /** blocking */
-  def byLogin(login:String):Option[User] = Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
+  def byLogin(login:String):Option[User] = users.byField("login", login)//Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
 
   /** blocking */
   def checkPassword(user:User, password:String):Boolean = PasswordHashingSalting.checkPassword(password, user.passwordHash, user.passwordSalt)
@@ -47,7 +47,8 @@ object User {
     val user = byLogin(login)
     user match {
       case Some(user) => if (checkPassword(user, password)) {
-        Await.result(users.updateOne(equal("login", login), set("lastLogin", Clock.systemUTC().instant())).headOption(), Duration.Inf)
+        users.updateFieldWhenMatches("login", login, "lastLogin", Clock.systemUTC().instant())
+//        Await.result(users.updateOne(equal("login", login), set("lastLogin", Clock.systemUTC().instant())).headOption(), Duration.Inf)
         Left(byLogin(login).get)
       } else {
         Right(WrongPassword(login, password))
@@ -65,4 +66,4 @@ case class User(_id: ObjectId,
                 lsatName: Option[String] = None,
                 email: Option[String] = None,
                 registeredAt: Option[Instant],
-                lastLogin: Option[Instant])
+                lastLogin: Option[Instant])  extends MongoObject

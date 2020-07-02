@@ -1,8 +1,8 @@
 package controller
 
-import controller.db.Problem.{NotAnswered, Problem}
-import controller.db.ProblemSet.Passing
-import controller.db.{ProblemSet, ProblemSetTemplateAvailableForUser}
+import controller.db.Problem.{NotAnswered}
+import controller.db.ProblemList.Passing
+import controller.db.{Problem, ProblemList, ProblemListTemplateAvailableForUser}
 import org.bson.types.ObjectId
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -10,21 +10,30 @@ import scala.concurrent.{Future, Promise}
 
 object Generator {
 
-  def generateProblemSetForUser(pstafu: ProblemSetTemplateAvailableForUser): Future[ProblemSet] =
-    generateProblemSetForUserUnsafe(pstafu.userId, pstafu.templateAlias, pstafu.userId.hashCode())
+  def generateProblemListForUser(pltafu: ProblemListTemplateAvailableForUser): ProblemList = {
+    //todo transactions
+    val res = generateProblemListForUserUnsafe(pltafu.userId, pltafu.templateAlias, pltafu.userId.hashCode())
+    if(pltafu.attempts <= 1) db.problemListAvailableForUser.delete(pltafu)
+    else pltafu.updateAttempts(pltafu.attempts - 1)
+    res
+  }
 
-  final case class ProblemSetTemplateAliasNotFoundException(alias:String) extends Exception
+  final case class ProblemListTemplateAliasNotFound(alias: String) extends Exception
 
-  def generateProblemSetForUserUnsafe(userId: ObjectId, templateAlias: String, seed: Int = 0): Future[ProblemSet] = {
-    val prom = Promise[ProblemSet]
-    TemplatesRegistry.getProblemSetTemplate(templateAlias) match {
-      case Some(pst) =>
-        val ps = ProblemSet(userId, templateAlias, Passing(None), pst.generate(seed).map(gp => Problem(gp.template.alias, gp.seed, NotAnswered())))
-        db.problemSet.insertOne(ps).subscribe(t => prom.failure(t), () =>  prom.success(ps))
+  /** blocking */
+  def generateProblemListForUserUnsafe(userId: ObjectId, templateAlias: String, seed: Int = 0): ProblemList = {
+    TemplatesRegistry.getProblemListTemplate(templateAlias) match {
+      case Some(plt) =>
+        val plId = new ObjectId()
+        val generated = plt.generate(seed)
+        val problems = generated.map(gp => Problem(plId, gp.template.alias, gp.seed, NotAnswered()))
+        val pl = ProblemList(plId, userId, templateAlias, Passing(None), problems.map(_._id))
+        db.problemList.insert(pl)
+        pl
+      //        db.ProblemList.insertOne(pl).subscribe(t => prom.failure(t), () =>  prom.success(pl))
       case None =>
-        prom.failure(ProblemSetTemplateAliasNotFoundException(templateAlias))
+        throw ProblemListTemplateAliasNotFound(templateAlias)
     }
-    prom.future
   }
 
 

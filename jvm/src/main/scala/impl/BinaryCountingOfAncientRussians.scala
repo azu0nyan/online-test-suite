@@ -1,7 +1,7 @@
 package impl
 
 import model.Problem.{BinaryScore, DoubleNumberField}
-import extensionsInterface.{ProblemSetTemplate, ProblemTemplate}
+import extensionsInterface.{ProblemListTemplate, ProblemTemplate}
 
 import scala.concurrent.Future
 
@@ -9,7 +9,7 @@ object BinaryCountingOfAncientRussians {
 
 /*
 
-  val template: ProblemSetTemplate = new ProblemSetTemplate {
+  val template: ProblemListTemplate = new ProblemListTemplate {
     override val uniqueTemplates: Set[ProblemTemplate] = Set(
       BCORProblem("целковый", 1),
       BCORProblem("полушка", 1 / 2d),
@@ -21,7 +21,7 @@ object BinaryCountingOfAncientRussians {
       BCORProblem("золотничок", 1 / 128d),
       BCORProblem("сто двадцать восемь пар", 256),
     )
-    override val problemSetTitle: String = "Двоичный счет древних русов. Базовые понятия"
+    override val ProblemListTitle: String = "Двоичный счет древних русов. Базовые понятия"
     override val uniqueAlias: String = "BinaryCountingOfAncientRussians"
   }
 
