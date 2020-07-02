@@ -10,5 +10,5 @@ object ProblemListTemplateAvailableForUser {
 }
 
 case class ProblemListTemplateAvailableForUser(_id:ObjectId, userId:ObjectId, templateAlias:String, attempts:Int)   extends MongoObject {
-  def updateAttempts(newAttempts:Int)
+  def updateAttempts(newAttempts:Int) = problemListAvailableForUser.updateField(this, "attemptsLeft", newAttempts)
 }

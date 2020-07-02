@@ -9,7 +9,7 @@ import org.mongodb.scala.bson.ObjectId
 object ProblemList {
   sealed trait ProblemListStatus
   case class Passing(endsAt: Option[Instant]) extends ProblemListStatus
-  case class Finished(score: Option[Double]) extends ProblemListStatus
+  case class Finished(/*score: Option[ProblemListScore]*/) extends ProblemListStatus
 
   def apply(userID: ObjectId, templateAlias: String, status: ProblemListStatus, problemIds: Seq[ObjectId]): ProblemList =
     ProblemList(new ObjectId(), userID, templateAlias, status, problemIds)
