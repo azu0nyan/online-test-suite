@@ -5,6 +5,7 @@ import org.http4s._
 import org.http4s.dsl.io._
 
 import scala.util.Random
+/*
 //
 //import scala.concurrent.ExecutionContext.Implicits.global
 //import cats.implicits._
@@ -78,4 +79,4 @@ object Http4sRoutes extends IOApp {
       .as(ExitCode.Success)
   }
 
-}
+}*/
