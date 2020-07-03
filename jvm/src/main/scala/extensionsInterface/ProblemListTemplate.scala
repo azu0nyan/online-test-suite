@@ -1,5 +1,7 @@
 package extensionsInterface
 
+import model.Problem
+
 
 trait ProblemListTemplate {
   // registerProblemListTemplate(this)
@@ -10,17 +12,18 @@ trait ProblemListTemplate {
 
   val uniqueAlias: String
 
-  case class GeneratedProblem(template:ProblemTemplate, seed:Int)
+  case class GeneratedProblem(template: ProblemTemplate, seed: Int, attempts: Int, initialScore: Problem.ProblemScore)
 
-  type ProblemListGeneratorOutput = Seq[GeneratedProblem]
+    type ProblemListGeneratorOutput = Seq[GeneratedProblem]
 
-  def generate(seed: Int): ProblemListGeneratorOutput =
-    uniqueTemplates.zipWithIndex.map{case(pt, i) => GeneratedProblem(pt, seed + i)}.toSeq
+    def generate(seed: Int): ProblemListGeneratorOutput =
+      uniqueTemplates.zipWithIndex.map { case (pt, i) => GeneratedProblem(pt, seed + i, pt.allowedAttempts, pt.initialScore) }.toSeq
 
 
-  val timeLimitSeconds:Option[Int] = None
+    val timeLimitSeconds: Option[Int] = None
 
-  //def grade
+    //def grade
+
 
 }
 

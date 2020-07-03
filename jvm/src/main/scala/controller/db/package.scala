@@ -1,9 +1,7 @@
 package controller
 
-import com.mongodb.async.SingleResultCallback
 import com.typesafe.scalalogging.Logger
 import controller.db.Answer.AnswerStatus
-import controller.db.Problem.ProblemStatus
 import controller.db.ProblemList.ProblemListStatus
 import model.Problem.ProblemScore
 import org.mongodb.scala.model.Updates._

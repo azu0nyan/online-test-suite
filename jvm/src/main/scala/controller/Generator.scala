@@ -1,6 +1,5 @@
 package controller
 
-import controller.db.Problem.{NotAnswered}
 import controller.db.ProblemList.Passing
 import controller.db.{Problem, ProblemList, ProblemListTemplateAvailableForUser}
 import org.bson.types.ObjectId
@@ -27,7 +26,7 @@ object Generator {
       case Some(plt) =>
         val plId = new ObjectId()
         val generated = plt.generate(seed)
-        val problems = generated.map(gp => Problem(plId, gp.template.uniqueAlias, gp.seed, NotAnswered()))
+        val problems = generated.map(gp => Problem(plId, gp.template.uniqueAlias, gp.seed, gp.attempts, gp.initialScore))
         val pl = ProblemList(plId, userId, templateAlias, Passing(None), problems.map(_._id))
         db.problemList.insert(pl)
         problems.foreach(db.problems.insert)

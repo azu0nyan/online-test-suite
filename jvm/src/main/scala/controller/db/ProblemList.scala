@@ -2,7 +2,6 @@ package controller.db
 
 import java.time.{Instant, ZonedDateTime}
 
-import controller.db.Problem.ProblemStatus
 import controller.db.ProblemList.ProblemListStatus
 import org.mongodb.scala.bson.ObjectId
 

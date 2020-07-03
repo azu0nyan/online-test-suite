@@ -1,7 +1,7 @@
 package impl
 
-import model.Problem.{BinaryScore, DoubleNumberField}
-import extensionsInterface.{ProblemListTemplate, ProblemTemplate, VerificationDelayed, SubmissionResult, Verified, WrongAnswerFormat}
+import model.Problem.{BinaryScore, DoubleNumberField, ProblemScore}
+import extensionsInterface.{ProblemListTemplate, ProblemTemplate, SubmissionResult, Verified, WrongAnswerFormat}
 import model.Problem
 
 import scala.concurrent.Future
@@ -23,11 +23,11 @@ object BinaryCountingOfAncientRussians {
     )
     override val ProblemListTitle: String = "Двоичный счет древних русов. Базовые понятия"
     override val uniqueAlias: String = "BinaryCountingOfAncientRussians"
+
   }
 
   // ноль-0, целковый-1, полушка-1/2, четвертушка-1/4, осьмушка-1/8, пудовичок-1/16, медячок-1/32, серебрячок-1/64, золотничок-1/128;
   private case class BCORProblem(name: String, value: Double) extends ProblemTemplate {
-
     /* override def generateProblem(seed: Int): ProblemView =
       ProblemView(seed, seed.toString + ") "  + name  ,
         s"<h4>Напишите точное значение следующей единицы измерения дрених русов: <i> ${name} </i> </h4>", NotAnswered(), DoubleNumberField())
@@ -40,6 +40,7 @@ object BinaryCountingOfAncientRussians {
     }
     override val alias: String = s"BCIORProblem $name"
   }*/
+
     override val uniqueAlias: String = s"BCIORProblem $name"
 
     override def generateProblemHtml(seed: Int): String = s"<h4>Напишите точное значение следующей единицы измерения дрених русов: <i> ${name} </i> </h4>"
@@ -47,9 +48,11 @@ object BinaryCountingOfAncientRussians {
 
     override def answerFieldType(seed: Int): Problem.AnswerFieldType = DoubleNumberField()
 
-    override def submitAnswer(seed: Int, answer: String): Future[SubmissionResult] = Future.successful(answer.toDoubleOption match {
-      case Some(x) => Verified(BinaryScore(x == value), None, None) //Verified(answer, BinaryScore(x == value))
-      case None => WrongAnswerFormat("Неправильный формат данных", None)
+    override val initialScore: ProblemScore = BinaryScore(false)
+
+    override def submitAnswer(seed: Int, answer: String, onComplete: SubmissionResult => Unit): Unit = onComplete(answer.toDoubleOption match {
+      case Some(x) => Verified(BinaryScore(x == value), None, None)
+      case None => WrongAnswerFormat(Some("Неправильный формат данных"))
     })
   }
 }

@@ -4,16 +4,14 @@ import frontend.css.Styles
 import frontend.templates.MenuItem
 import frontend.{Content, JsMain, LeftMenu, path}
 import model.Problem._
-import model.Problem.ProblemView
-import model.ProblemListView.ProblemListView
-import newtwork.Verificator
+import newtwork.AnswerSubmission
 import org.scalajs.dom
 import org.scalajs.dom.Element
 import scalatags.JsDom.all.{input, _}
 import scalatags.JsDom.tags2.section
 
 object ProblemsPage {
-
+/*
 
   var problems: Option[ProblemListView] = None
 
@@ -33,7 +31,7 @@ object ProblemsPage {
             }  else None
           }
           button.addEventListener("click", (e: dom.MouseEvent) => {
-            Verificator.verify(p,inputField.value)
+            AnswerSubmission.verify(p,inputField.value)
             afterAnswerAction.foreach(a => a())
           })
           div(
@@ -64,5 +62,5 @@ object ProblemsPage {
 
   def hidePage(): Unit = {
     LeftMenu.hide()
-  }
+  }*/
 }

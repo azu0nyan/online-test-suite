@@ -6,7 +6,6 @@ import org.scalajs.dom.ext._
 import org.scalajs.dom
 import scalatags.JsDom.all._
 import dom.ext.Ajax
-import model.TestData._
 import frontend.content.{FaqPage, MainPage, ProblemSelectionPage, ProblemsPage}
 import frontend.css.Styles
 import frontend.templates.{MenuBinding, MenuItem}
@@ -19,7 +18,7 @@ object JsMain {
 
   def main(args: Array[String]): Unit = {
     document.addEventListener("DOMContentLoaded", { (e: dom.Event) =>
-      setupUI()
+      //setupUI()
     })
   }
 
@@ -27,15 +26,15 @@ object JsMain {
   @JSExportTopLevel("addClickedMessage")
   def addClickedMessage(): Unit = {
     Ajax.get("http://localhost:8080/testData").foreach { x =>
-      import upickle.default._
-      val td = read[TestData](x.responseText)
-      appendPar(document.body, div(
-        h2(td.name),
-        h3(td.id.toString)
-      ).toString)
+//      import upickle.default._
+//      val td = read[TestData](x.responseText)
+//      appendPar(document.body, div(
+//        h2(td.name),
+//        h3(td.id.toString)
+//      ).toString)
     }
   }
-
+/*
 
   val containter = MainPageGrid().render
 
@@ -89,5 +88,5 @@ object JsMain {
     val parNode = document.createElement("p")
     parNode.textContent = text
     targetNode.appendChild(parNode)
-  }
+  }*/
 }

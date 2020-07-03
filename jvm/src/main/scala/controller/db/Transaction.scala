@@ -6,7 +6,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 object Transaction {
-  def apply(code : ClientSession => ()) :Unit = {
+  def apply(code : ClientSession => Unit) :Unit = {
     log.info(s"Starting transaction...")
     val session = mongoClient.startSession()
     val updateObs:SingleObservable[ClientSession] = session.map{clientSession =>

@@ -4,14 +4,13 @@ package frontend.content
 
 import frontend.css.Styles
 import frontend.{JsMain, path}
-import model.ProblemListView.ProblemListView
 import org.scalajs.dom
 import org.scalajs.dom.Element
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.section
 
 object ProblemSelectionPage {
-  def tests:Seq[ProblemListView] = Seq(
+ /* def tests:Seq[ProblemListView] = Seq(
     BinaryCountingOfAncientRussians.template.generate(0),
     BinaryCountingOfAncientRussians.template.generate(1),
     BinaryCountingOfAncientRussians.template.generate(2),
@@ -34,6 +33,6 @@ object ProblemSelectionPage {
         }
       )
       )
-  ).render
+  ).render*/
 }
 

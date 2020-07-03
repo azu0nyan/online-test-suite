@@ -5,6 +5,7 @@ import model.Problem.{AnswerFieldType, ProblemScore}
 import scala.concurrent.Future
 
 trait ProblemTemplate {
+  val initialScore: ProblemScore
   val uniqueAlias: String
   val allowedAttempts: Int = 1
   //def answerFromString[AT](field: AnswerFieldType[AT]): Option[AT] = ???
