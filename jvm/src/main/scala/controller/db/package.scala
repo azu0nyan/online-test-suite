@@ -1,24 +1,31 @@
 package controller
 
+import com.mongodb.async.SingleResultCallback
+import com.typesafe.scalalogging.Logger
 import controller.db.Answer.AnswerStatus
 import controller.db.Problem.ProblemStatus
 import controller.db.ProblemList.ProblemListStatus
 import model.Problem.ProblemScore
 import org.mongodb.scala.model.Updates._
 import org.bson.types.ObjectId
-import org.mongodb.scala.{MongoClient, MongoCollection, MongoDatabase, Observable, Observer, SingleObservable}
+import org.mongodb.scala.{ClientSession, Completed, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, ReadConcern, SingleObservable, TransactionOptions, WriteConcern}
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.result.UpdateResult
+import org.mongodb.scala._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future, Promise}
 import scala.reflect.ClassTag
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import org.slf4j.LoggerFactory
 
 
-package object db {
+package object db  {
+
+  val log: Logger = Logger(LoggerFactory.getLogger("db"))
+
   trait MongoObject {
     val _id: ObjectId
   }
@@ -69,5 +76,7 @@ package object db {
     def updateFieldWhenMatches[M, F](fieldToMatchName: String, matchValue: M, fieldName: String, f: F): Option[UpdateResult] =
       Await.result(col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f)).headOption(), Duration.Inf)
   }
+
+
 
 }
