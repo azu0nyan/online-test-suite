@@ -22,7 +22,7 @@ object TemplatesRegistry {
     aliasToPT += pt.uniqueAlias -> pt
   }
 
-  def getProblemTemplate(alias:String):Option[ProblemTemplate] = aliasToPT.get(alias)
+  def problemTemplate(alias:String):Option[ProblemTemplate] = aliasToPT.get(alias)
 
   def getProblemListTemplate(alias:String):Option[ProblemListTemplate] = aliasToPLT.get(alias)
 

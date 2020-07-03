@@ -22,7 +22,7 @@ import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistr
 import org.slf4j.LoggerFactory
 
 
-package object db  {
+package object db {
 
   val log: Logger = Logger(LoggerFactory.getLogger("db"))
 
@@ -38,10 +38,11 @@ package object db  {
     classOf[Answer],
     classOf[ProblemList],
     classOf[ProblemListStatus],
-    classOf[ProblemStatus],
+    classOf[ProblemScore],
+//    classOf[ProblemStatus],
     classOf[AnswerStatus],
     classOf[ProblemScore],
-//    classOf[ProblemSetScore],
+    //    classOf[ProblemSetScore],
     classOf[ProblemListTemplateAvailableForUser]
   ), DEFAULT_CODEC_REGISTRY)
 
@@ -61,7 +62,10 @@ package object db  {
     def delete(obj: MongoObject): Unit = Await.result(col.deleteOne(equal("_id", obj._id)).headOption(), Duration.Inf)
 
     /** blocking */
-    def insert(t: T): Unit = Await.result(col.insertOne(t).headOption(), Duration.Inf)
+    def insert(t: T): T = {
+      Await.result(col.insertOne(t).headOption(), Duration.Inf)
+      t
+    }
 
     /** blocking */
     def byId(id: ObjectId): Option[T] = byField("_id", id)
@@ -76,7 +80,6 @@ package object db  {
     def updateFieldWhenMatches[M, F](fieldToMatchName: String, matchValue: M, fieldName: String, f: F): Option[UpdateResult] =
       Await.result(col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f)).headOption(), Duration.Inf)
   }
-
 
 
 }

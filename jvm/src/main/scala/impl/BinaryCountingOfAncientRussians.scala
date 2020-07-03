@@ -1,7 +1,7 @@
 package impl
 
 import model.Problem.{BinaryScore, DoubleNumberField}
-import extensionsInterface.{ProblemListTemplate, ProblemTemplate, VerificationDelayed, VerificationResult, Verified, WrongAnswerFormat}
+import extensionsInterface.{ProblemListTemplate, ProblemTemplate, VerificationDelayed, SubmissionResult, Verified, WrongAnswerFormat}
 import model.Problem
 
 import scala.concurrent.Future
@@ -47,7 +47,7 @@ object BinaryCountingOfAncientRussians {
 
     override def answerFieldType(seed: Int): Problem.AnswerFieldType = DoubleNumberField()
 
-    override def validateAnswer(seed: Int, answer: String): Future[VerificationResult] = Future.successful(answer.toDoubleOption match {
+    override def submitAnswer(seed: Int, answer: String): Future[SubmissionResult] = Future.successful(answer.toDoubleOption match {
       case Some(x) => Verified(BinaryScore(x == value), None, None) //Verified(answer, BinaryScore(x == value))
       case None => WrongAnswerFormat("Неправильный формат данных", None)
     })

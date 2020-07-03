@@ -7,6 +7,7 @@ import scala.concurrent.duration.Duration
 
 object Transaction {
   def apply(code : ClientSession => ()) :Unit = {
+    log.info(s"Starting transaction...")
     val session = mongoClient.startSession()
     val updateObs:SingleObservable[ClientSession] = session.map{clientSession =>
       val transactionOptions = TransactionOptions.builder().readConcern(ReadConcern.SNAPSHOT).writeConcern(WriteConcern.MAJORITY).build()
@@ -17,16 +18,17 @@ object Transaction {
     val commitObs:SingleObservable[Completed] = updateObs.flatMap(clientSession => clientSession.commitTransaction())
     val commitAndRetryObs: SingleObservable[Completed] = commitAndRetry(commitObs)
     Await.result(commitAndRetryObs.headOption(), Duration.Inf)
+    log.info(s"Transaction finished...")
   }
 
   def commitAndRetry(observable: SingleObservable[Completed]): SingleObservable[Completed] = {
     observable.recoverWith({
       case e: MongoException if e.hasErrorLabel(MongoException.UNKNOWN_TRANSACTION_COMMIT_RESULT_LABEL) => {
-        println("UnknownTransactionCommitResult, retrying commit operation ...")
+        log.info(s"UnknownTransactionCommitResult, retrying commit operation ...")
         commitAndRetry(observable)
       }
       case e: Exception => {
-        println(s"Exception during commit ...: $e")
+        log.error(s"Exception during commit ...: $e", e)
         throw e
       }
     })
@@ -35,7 +37,7 @@ object Transaction {
   def runTransactionAndRetry(observable: SingleObservable[Completed]): SingleObservable[Completed] = {
     observable.recoverWith({
       case e: MongoException if e.hasErrorLabel(MongoException.TRANSIENT_TRANSACTION_ERROR_LABEL) => {
-        println("TransientTransactionError, aborting transaction and retrying ...")
+        log.info(s"TransientTransactionError, aborting transaction and retrying ...")
         runTransactionAndRetry(observable)
       }
     })

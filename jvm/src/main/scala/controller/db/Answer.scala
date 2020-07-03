@@ -15,6 +15,7 @@ object Answer {
                       verifiedAt: Instant) extends AnswerStatus
   case class Rejected(systemMessage: Option[String] = None, rejectedAt: Instant) extends AnswerStatus
   case class BeingVerified() extends AnswerStatus
+  def apply(problemId: ObjectId, answer: String, status: AnswerStatus, answeredAt: Instant): Answer = new Answer(new ObjectId(), problemId, answer, status, answeredAt)
 }
 
 
