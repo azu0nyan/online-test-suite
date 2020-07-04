@@ -37,25 +37,7 @@ object User {
   /** blocking */
   def checkPassword(user:User, password:String):Boolean = PasswordHashingSalting.checkPassword(password, user.passwordHash, user.passwordSalt)
 
-  /**do not expose concrete error to user for security*/
-  trait LoginError
-  final case class UserNotFound(login:String) extends Exception with LoginError
-  final case class WrongPassword(login:String, password:String) extends Exception with LoginError
 
-  /** blocking */
-  def loginUser(login:String, password:String):Either[User, LoginError] = {
-    val user = byLogin(login)
-    user match {
-      case Some(user) => if (checkPassword(user, password)) {
-        users.updateFieldWhenMatches("login", login, "lastLogin", Clock.systemUTC().instant())
-//        Await.result(users.updateOne(equal("login", login), set("lastLogin", Clock.systemUTC().instant())).headOption(), Duration.Inf)
-        Left(byLogin(login).get)
-      } else {
-        Right(WrongPassword(login, password))
-      }
-      case None => Right(UserNotFound(login))
-    }
-  }
 }
 
 case class User(_id: ObjectId,

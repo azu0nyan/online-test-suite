@@ -54,6 +54,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
     libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
     libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0",
     libraryDependencies += "com.sparkjava" % "spark-core" % "2.9.1",
+    libraryDependencies += "com.pauldijou" %% "jwt-core" % "4.2.0",
+
    /* libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-dsl" % http4sVersion,
       "org.http4s" %% "http4s-blaze-server" % http4sVersion,
