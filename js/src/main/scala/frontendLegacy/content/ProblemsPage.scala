@@ -1,8 +1,8 @@
-package frontend.content
+package frontendLegacy.content
 
-import frontend.css.Styles
-import frontend.templates.MenuItem
-import frontend.{Content, JsMain, LeftMenu, path}
+import frontendLegacy.css.Styles
+import frontendLegacy.templates.MenuItem
+import frontendLegacy.{Content, LeftMenu, path}
 import model.Problem._
 import newtwork.AnswerSubmission
 import org.scalajs.dom

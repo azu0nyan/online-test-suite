@@ -45,7 +45,7 @@ case class User(_id: ObjectId,
                 passwordHash: String,
                 passwordSalt: String,
                 firstName: Option[String] = None,
-                lsatName: Option[String] = None,
+                lastName: Option[String] = None,
                 email: Option[String] = None,
                 registeredAt: Option[Instant],
                 lastLogin: Option[Instant])  extends MongoObject

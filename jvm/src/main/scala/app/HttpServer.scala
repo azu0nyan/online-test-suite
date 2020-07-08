@@ -5,6 +5,8 @@ import spark.Spark._
 object HttpServer {
 
   def initRoutesAndStart(): Unit ={
+    externalStaticFileLocation("workdir")
+//    println(Spark.staticFiles.)
     port(8080)
     get("/", (request: Request, response: Response) => {Skeleton()})
     post("/login", (request: Request, response: Response) => {""})

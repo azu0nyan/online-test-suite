@@ -1,12 +1,16 @@
-import constants.Paths
-import org.scalajs.dom.Node
+import io.udash._
 
 package object frontend {
 
-  implicit class ChildOps(n: Node) {
-    def removeChilds(): Unit = while (n.hasChildNodes()) n.removeChild(n.firstChild)
-  }
 
-  def path(fileInWorkDir:String):String = Paths.staticFilesPrefix + "/" + fileInWorkDir
+  private val routingRegistry = new RoutingRegistryDef
+  private val viewFactoryRegistry = new StatesToViewFactoryDef
+  val applicationInstance = new Application[RoutingState](
+    routingRegistry, viewFactoryRegistry
+  )
+
+  val model: ModelProperty[AppViewData] = ModelProperty.blank[AppViewData]
+
+
 
 }

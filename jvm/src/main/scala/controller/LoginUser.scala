@@ -24,7 +24,7 @@ object LoginUser {
       case Some(user) => if (checkPassword(user, password)) {
         users.updateFieldWhenMatches("login", login, "lastLogin", Clock.systemUTC().instant())
         //        Await.result(users.updateOne(equal("login", login), set("lastLogin", Clock.systemUTC().instant())).headOption(), Duration.Inf)
-        implicit val c:Clock = Clock
+        implicit val c:Clock = java.time.Clock.systemUTC()
         val claim = JwtClaim(subject = Some(user._id.toHexString)).issuedNow.expiresIn(tokenExpiresSeconds)
         val token = Jwt.encode(claim, secretKey, JwtAlgorithm.HS256)
         Left(byLogin(login).get, token)
