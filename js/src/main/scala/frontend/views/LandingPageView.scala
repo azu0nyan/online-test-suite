@@ -1,9 +1,8 @@
 package frontend.views
 
-import frontend.{AppViewData, AvailableCourseViewData, LandingPageState, LoginPageState, RoutingState, UserViewData}
+import frontend.{AppViewData,  LandingPageState, LoginPageState, RoutingState}
 import io.udash._
 import io.udash.core.ContainerView
-import io.udash.properties.{Blank, ModelPropertyCreator}
 import org.scalajs.dom.{Element, Event}
 import scalatags.generic.Modifier
 import scalatags.JsDom.all._
@@ -14,24 +13,17 @@ class LandingPageView(
                        model: ModelProperty[AppViewData],
                        presenter: LandingPagePresenter) extends ContainerView {
 
-//  val name:Property[String] = model.subProp(_.currentUser).tra
-//   HasModelPropertyCreator[Option[UserViewData]]
-//  implicit val x:ModelPropertyCreator[Option[UserViewData]] =  ModelPropertyCreator.materialize[Option[UserViewData]]
 
   override def getTemplate: Modifier[Element] = div(
-    h1("WELCOME ", bind(model.subProp(_.currentUser).transform(_.flatMap(_.firstName).getOrElse("None")))),
+    h3("WELCOME ", bind(model.subProp(_.currentUser).transform(_.flatMap(_.firstName).getOrElse("None")))),
     h3("Some landing  page html"),
+    p("Some text about courses and gow good courses are, theay are really good you know? .. pss wanna some courses, if u can afford it."),
     button(onclick :+= ((_: Event) => {
-//      model.subModel(_.currentUser.)
-        model.set(model.get.copy(currentUser =  Some(UserViewData("login", Some("name"), Some("surname"), None))))
-//      model.subModel(_.currentUser).set(Some(UserViewData("login", Some("name"), Some("surname"), None)))
-      true // prevent default
-    }))("Smtj"),
-    button(onclick :+= ((_: Event) => {
-      presenter.login()
+      presenter.toLoginPage()
       true // prevent default
     }))("Login")
   )
+
 }
 
 class LandingPagePresenter(
@@ -42,7 +34,8 @@ class LandingPagePresenter(
     println(s"Landing page presenter,  handling state : $state")
   }
 
-  def login(): Unit = {
+  //noinspection AccessorLikeMethodIsUnit
+  def toLoginPage(): Unit = {
     app.goTo(LoginPageState)
   }
 }

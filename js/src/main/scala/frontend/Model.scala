@@ -3,6 +3,8 @@ package frontend
 import io.udash._
 import io.udash.properties.Blank
 
+case class UserCredentialsData(login:String, password:String)
+object UserCredentialsData extends HasModelPropertyCreator[UserCredentialsData]
 
 case class UserViewData(login:String, firstName:Option[String], lastName:Option[String], email:Option[String])
 object UserViewData extends HasModelPropertyCreator[UserViewData]

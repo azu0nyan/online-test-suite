@@ -19,6 +19,7 @@ class ErrorPageView( ) extends ContainerView {
     childViewContainer
   )
 }
+
 class ErrorPagePresenter() extends Presenter[RootState.type] {
   override def handleState(state: RootState.type): Unit = {
     println(s"Error page presenter,  handling state : $state")
