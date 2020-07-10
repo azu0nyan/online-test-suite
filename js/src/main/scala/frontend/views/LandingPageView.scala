@@ -43,7 +43,7 @@ class LandingPagePresenter(
 case object LandingPageViewFactory extends ViewFactory[LandingPageState.type] {
   override def create(): (View, Presenter[LandingPageState.type]) = {
     println(s"Landing  page view factory creating..")
-    val model = frontend.model
+    val model = frontend.appData
     val presenter = new LandingPagePresenter(model, frontend.applicationInstance)
     val view = new LandingPageView(model, presenter)
     (view, presenter)
