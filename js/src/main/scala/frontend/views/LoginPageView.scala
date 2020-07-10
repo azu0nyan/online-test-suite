@@ -8,7 +8,7 @@ import org.scalajs.dom.{Element, Event}
 import scalatags.generic.Modifier
 import scalatags.JsDom.all._
 import io.udash.css.CssView._
-import clientRequests.{LoginError, LoginFailureException, LoginFailureResponse, LoginRequest, LoginSuccessResponse}
+import clientRequests.{LoginFailure,  LoginFailureFrontendException,  LoginRequest, LoginSuccessResponse}
 import viewData.UserViewData
 
 import scala.util.{Failure, Success}
@@ -45,8 +45,8 @@ class LoginPagePresenter(
 
     frontend.sendRequest(clientRequests.Login, LoginRequest(login, pass)) onComplete {
       case Success(LoginSuccessResponse(data)) => onLoginSuccess(data)
-      case Success(r@LoginFailureResponse(_)) => onLoginFailure(r)
-      case Failure(exception) => onLoginFailure(LoginFailureException(exception))
+      case Success(r:LoginFailure) => onLoginFailure(r)
+      case Failure(exception) => onLoginFailure(LoginFailureFrontendException(exception))
     }
   }
 
@@ -54,7 +54,7 @@ class LoginPagePresenter(
     println(userViewData)
   }
 
-  def onLoginFailure(error: LoginError): Unit = {
+  def onLoginFailure(error: LoginFailure): Unit = {
     println(error)
   }
 

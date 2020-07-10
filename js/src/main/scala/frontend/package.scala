@@ -1,6 +1,6 @@
+import clientRequests.Route
 import io.udash._
 import org.scalajs.dom.ext.Ajax
-import clientRequests.RequestResponse
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -13,7 +13,7 @@ package object frontend {
 
   def sendRequest(path:String, data:String):Future[String] = Ajax.post(host + path, data).map(_.responseText)
 
-  def sendRequest[Request, Response](template:RequestResponse[Request, Response], request: Request):Future[Response] =
+  def sendRequest[Request, Response](template:Route[Request, Response], request: Request):Future[Response] =
     Ajax.post(host + template.route, template.encodeRequest(request)).map(_.responseText).map(template.decodeResponse)
 
   private val routingRegistry = new RoutingRegistryDef

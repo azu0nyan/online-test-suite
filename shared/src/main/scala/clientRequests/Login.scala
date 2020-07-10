@@ -1,26 +1,20 @@
 package clientRequests
 
-import io.circe._, io.circe.generic.semiauto._
 import viewData.UserViewData
-import io.circe._, io.circe.parser._
-import io.circe.generic.auto._, io.circe.syntax._
-import io.circe.generic.JsonCodec, io.circe.syntax._
+import io.circe.generic.auto._
 
-object Login extends RequestResponse[LoginRequest, LoginResponse] {
+object Login extends Route[LoginRequest, LoginResponse] {
   override val route: String = "login"
-
-//  override implicit val ee: Encoder[LoginRequest] = deriveEncoder[LoginRequest]
-//  override implicit val es: Encoder[LoginResponse] = deriveEncoder[LoginResponse]
-//  override implicit val de: Decoder[LoginRequest] = deriveDecoder[LoginRequest]
-//  override implicit val ds: Decoder[LoginResponse] = deriveDecoder[LoginResponse]
 }
 
- case class LoginRequest(login:String, password:String)
+case class LoginRequest(login:String, password:String)
 
 sealed trait LoginResponse
-trait LoginError
+trait LoginFailure
 case class LoginSuccessResponse(userData:UserViewData) extends LoginResponse
-case class LoginFailureResponse(message:Option[String]) extends LoginResponse with LoginError
-case class LoginFailureException(t:Throwable) extends LoginError
+case class LoginFailureUserNotFoundResponse() extends LoginResponse with LoginFailure
+case class LoginFailureWrongPasswordResponse() extends LoginResponse with LoginFailure
+case class LoginFailureUnknownErrorResponse() extends LoginResponse with LoginFailure
+case class LoginFailureFrontendException(t:Throwable) extends LoginFailure
 
 

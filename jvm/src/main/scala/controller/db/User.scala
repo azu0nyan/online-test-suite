@@ -48,4 +48,6 @@ case class User(_id: ObjectId,
                 lastName: Option[String] = None,
                 email: Option[String] = None,
                 registeredAt: Option[Instant],
-                lastLogin: Option[Instant])  extends MongoObject
+                lastLogin: Option[Instant])  extends MongoObject{
+  def  idAndLoginStr = s"[${_id} - $login]"
+}

@@ -1,8 +1,10 @@
 package app
-import clientRequests.RequestResponse
+import clientRequests.{LoginRequest, LoginSuccessResponse}
 import constants.Skeleton
+import controller.LoginUser
 import spark._
 import spark.Spark._
+import viewData.UserViewData
 object HttpServer {
 
   def initRoutesAndStart(): Unit ={
@@ -10,14 +12,14 @@ object HttpServer {
 //    println(Spark.staticFiles.)
     port(8080)
     get("/", (request: Request, response: Response) => {Skeleton()})
-    post("/login", (request: Request, response: Response) => {
-      println("login " + request.body())
-      "asdsadsadasd"})
+
+    addRoute(clientRequests.Login, LoginUser.loginUser)
+
     post("/register", (request: Request, response: Response) => {""})
   }
 
 
-  def addRoute[REQ, RES](reqRes:RequestResponse[REQ, RES], action: REQ => RES):Unit  =
+  def addRoute[REQ, RES](reqRes:clientRequests.Route[REQ, RES], action: REQ => RES):Unit  =
     post(reqRes.route,  (request: Request, response: Response) => {
       val req:REQ = reqRes.decodeRequest(request.body())
       val res:RES = action(req)
