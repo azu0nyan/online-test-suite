@@ -37,13 +37,15 @@ object LoginUser {
     user match {
       case Some(user) =>
         if (checkPassword(user, password)) {
+          val updatedUser = user.updateLastLogin()
           users.updateFieldWhenMatches("login", login, "lastLogin", Clock.systemUTC().instant())
-          //        Await.result(users.updateOne(equal("login", login), set("lastLogin", Clock.systemUTC().instant())).headOption(), Duration.Inf)
+
           implicit val c: Clock = java.time.Clock.systemUTC()
-          val claim = JwtClaim(subject = Some(user._id.toHexString)).issuedNow.expiresIn(tokenExpiresSeconds)
+          val claim = JwtClaim(subject = Some(updatedUser._id.toHexString)).issuedNow.expiresIn(tokenExpiresSeconds)
           val token = Jwt.encode(claim, secretKey, JwtAlgorithm.HS256)
-          log.info(s"User logged in ${user.idAndLoginStr}")
-          Left(byLogin(login).get, token)
+
+          log.info(s"User logged in ${updatedUser.idAndLoginStr}")
+          Left(updatedUser, token)
         } else {
           log.info(s"Cant log in ${user.idAndLoginStr} wrong password")
           Right(WrongPassword(login, password))

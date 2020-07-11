@@ -3,17 +3,17 @@ package controller
 
 import java.util.concurrent.ConcurrentHashMap
 
-import extensionsInterface.{ProblemListTemplate, ProblemTemplate}
+import extensionsInterface.{CourseTemplate, ProblemTemplate}
 
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 
 object TemplatesRegistry {
-  val aliasToPLT:mutable.Map[String, ProblemListTemplate] = new ConcurrentHashMap[String, ProblemListTemplate]().asScala
+  val aliasToPLT:mutable.Map[String, CourseTemplate] = new ConcurrentHashMap[String, CourseTemplate]().asScala
 
   val aliasToPT:mutable.Map[String, ProblemTemplate] = new ConcurrentHashMap[String, ProblemTemplate]().asScala
 
-  def registerProblemListTemplate(pl:ProblemListTemplate):Unit = {
+  def registerProblemListTemplate(pl:CourseTemplate):Unit = {
     aliasToPLT += pl.uniqueAlias -> pl
     pl.uniqueTemplates.foreach(registerProblemTemplate)
   }
@@ -24,7 +24,7 @@ object TemplatesRegistry {
 
   def problemTemplate(alias:String):Option[ProblemTemplate] = aliasToPT.get(alias)
 
-  def getProblemListTemplate(alias:String):Option[ProblemListTemplate] = aliasToPLT.get(alias)
+  def getProblemListTemplate(alias:String):Option[CourseTemplate] = aliasToPLT.get(alias)
 
 
 }

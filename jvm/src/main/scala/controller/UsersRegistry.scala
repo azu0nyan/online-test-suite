@@ -2,21 +2,26 @@ package controller
 
 import java.util.concurrent.ConcurrentHashMap
 
-import extensionsInterface.ProblemListTemplate
-import scala.jdk.CollectionConverters._
+import extensionsInterface.CourseTemplate
+import org.mongodb.scala.bson.ObjectId
 
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 
 object UsersRegistry {
 
-  private val hexIDToSyncObject:mutable.Map[String, Object] = new mutable.HashMap[String, Object]
+  private val hexIDToSyncObject: mutable.Map[ObjectId, Object] = new mutable.HashMap[ObjectId, Object]
 
-  def getSync(hexId:String):Object = hexIDToSyncObject.synchronized{
-    hexIDToSyncObject.get(hexId) match {
+  def getSync(objectId: ObjectId): Object = hexIDToSyncObject.synchronized {
+    hexIDToSyncObject.get(objectId) match {
       case Some(value) => value
       case None => val res = new Object
-        hexIDToSyncObject += hexId -> res
+        hexIDToSyncObject += objectId -> res
     }
+  }
+
+  def doSynchronized(objectId: ObjectId)(code: => Unit): Unit = getSync(objectId).synchronized{
+    code
   }
 
 }

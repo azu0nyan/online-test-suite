@@ -50,4 +50,11 @@ case class User(_id: ObjectId,
                 registeredAt: Option[Instant],
                 lastLogin: Option[Instant])  extends MongoObject{
   def  idAndLoginStr = s"[${_id} - $login]"
+
+  def updateLastLogin():User = {
+    users.updateField(this, "lastLogin", Clock.systemUTC().instant())
+    users.byId(this._id).get
+  }
+
+  def groups:Seq[Group] = UserToGroup.userGroups(this)
 }

@@ -2,7 +2,7 @@ package controller
 
 import com.typesafe.scalalogging.Logger
 import controller.db.Answer.AnswerStatus
-import controller.db.ProblemList.ProblemListStatus
+import controller.db.Course.CourseStatus
 import model.Problem.ProblemScore
 import org.mongodb.scala.model.Updates._
 import org.bson.types.ObjectId
@@ -20,7 +20,7 @@ import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistr
 import org.slf4j.LoggerFactory
 
 
-package object db {
+package object db extends CollectionOps {
 
   val log: Logger = Logger(LoggerFactory.getLogger("db"))
 
@@ -32,52 +32,27 @@ package object db {
 
   val codecRegistry = fromRegistries(fromProviders(
     classOf[User],
+    classOf[Group],
     classOf[Problem],
     classOf[Answer],
-    classOf[ProblemList],
-    classOf[ProblemListStatus],
+    classOf[Course],
+    classOf[CourseStatus],
     classOf[ProblemScore],
-//    classOf[ProblemStatus],
     classOf[AnswerStatus],
     classOf[ProblemScore],
     //    classOf[ProblemSetScore],
-    classOf[ProblemListTemplateAvailableForUser]
+    classOf[CourseTemplateAvailableForUser]
   ), DEFAULT_CODEC_REGISTRY)
 
   val mongoClient: MongoClient = MongoClient()
   val database: MongoDatabase = mongoClient.getDatabase(dbName).withCodecRegistry(codecRegistry)
 
   val users: MongoCollection[User] = database.getCollection("users")
+  val groups: MongoCollection[Group] = database.getCollection("groups")
+  val userToGroup: MongoCollection[UserToGroup] = database.getCollection("userToGroup")
   val answers: MongoCollection[Answer] = database.getCollection("answers")
   val problems: MongoCollection[Problem] = database.getCollection("problems")
-  val problemList: MongoCollection[ProblemList] = database.getCollection("problemLists")
-  val problemListAvailableForUser: MongoCollection[ProblemListTemplateAvailableForUser] = database.getCollection("problemListsAvailableForUser")
-
-  implicit class CollectionOps[T](col: MongoCollection[T])(implicit c: ClassTag[T]) {
-    /** blocking */
-    def deleteById(id: ObjectId): Unit = Await.result(col.deleteOne(equal("_id", id)).headOption(), Duration.Inf)
-
-    def delete(obj: MongoObject): Unit = Await.result(col.deleteOne(equal("_id", obj._id)).headOption(), Duration.Inf)
-
-    /** blocking */
-    def insert(t: T): T = {
-      Await.result(col.insertOne(t).headOption(), Duration.Inf)
-      t
-    }
-
-    /** blocking */
-    def byId(id: ObjectId): Option[T] = byField("_id", id)
-
-    /** blocking */
-    def byField[F](fieldName: String, fieldValue: F): Option[T] = Await.result(col.find(equal(fieldName, fieldValue)).first().headOption(), Duration.Inf)
-
-    def updateField[F](obj: MongoObject, fieldName: String, fieldValue: F): Option[UpdateResult] = updateFieldWhenMatches("_id", obj._id, fieldName, fieldValue)
-
-    def updateFieldById[F](id: ObjectId, fieldName: String, fieldValue: F): Option[UpdateResult] = updateFieldWhenMatches("_id", id, fieldName, fieldValue)
-
-    def updateFieldWhenMatches[M, F](fieldToMatchName: String, matchValue: M, fieldName: String, f: F): Option[UpdateResult] =
-      Await.result(col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f)).headOption(), Duration.Inf)
-  }
-
+  val courses: MongoCollection[Course] = database.getCollection("courses")
+  val coursesAvailableForUser: MongoCollection[CourseTemplateAvailableForUser] = database.getCollection("coursesAvailableForUser")
 
 }

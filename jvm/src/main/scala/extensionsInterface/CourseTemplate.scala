@@ -3,7 +3,7 @@ package extensionsInterface
 import model.Problem
 
 
-trait ProblemListTemplate {
+trait CourseTemplate {
   // registerProblemListTemplate(this)
 
   val uniqueTemplates: Set[ProblemTemplate]

@@ -18,12 +18,12 @@ object SubmitAnswer {
    * attemptsLeft should be greater than 'BeingVerified' answers  */
   def submitAnswer(problemIdHex: String, answerRaw: String, user: User): Unit = {
     log.info(s"Answer submitted id : $problemIdHex answer : $answerRaw user ${user._id.toHexString} login : ${user.login}")
-    UsersRegistry getSync (user._id.toHexString) synchronized {
+    UsersRegistry.doSynchronized(user._id) {
       //val answer: Option[Answer] = db.answers.insert(Answer())byId(new ObjectId(answerIdHex))
       for (
         p <- db.problems.byId(new ObjectId(problemIdHex))
         if db.answers.byField("problemId", p._id).count(_.status.isInstanceOf[BeingVerified]) < p.attemptsMax;
-        pl <- db.problemList.byId(p.problemListId) if pl.userID.equals(user._id);
+        pl <- db.courses.byId(p.problemListId) if pl.userID.equals(user._id);
         pt <- TemplatesRegistry.problemTemplate(p.templateAlias);
         answer <- db.answers.insert(Answer(p._id, answerRaw, BeingVerified(), Clock.systemUTC().instant())).pure[Option]
       ) {
@@ -34,7 +34,7 @@ object SubmitAnswer {
   }
 
 
-  def processSubmissionResult(sr: SubmissionResult, answer: Answer, user: User): Unit = UsersRegistry getSync (user._id.toHexString) synchronized {
+  def processSubmissionResult(sr: SubmissionResult, answer: Answer, user: User): Unit = UsersRegistry.doSynchronized(user._id) {
     sr match {
       case Verified(score, review, systemMessage) =>
         log.info(s"Answer : ${answer._id} verified")
