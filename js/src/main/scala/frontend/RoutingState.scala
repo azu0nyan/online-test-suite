@@ -21,6 +21,7 @@ sealed abstract class FinalRoutingState(
 case object RootState extends ContainerRoutingState(None)
 case object LandingPageState extends FinalRoutingState(Some(RootState))
 case object LoginPageState extends FinalRoutingState(Some(RootState))
+case object RegistrationPageState extends FinalRoutingState(Some(RootState))
 case object AppPageState extends FinalRoutingState(Some(RootState))
 //case object CourseSelectionPage extends FinalRoutingState(Some(RootState))
 //case object CoursePageState extends FinalRoutingState(Some(RootState))

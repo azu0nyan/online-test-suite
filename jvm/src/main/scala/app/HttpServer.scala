@@ -1,7 +1,7 @@
 package app
 import clientRequests.{LoginRequest, LoginSuccessResponse}
 import constants.Skeleton
-import controller.LoginUser
+import controller.{LoginUser, RegisterUser}
 import spark._
 import spark.Spark._
 import viewData.UserViewData
@@ -14,8 +14,7 @@ object HttpServer {
     get("/", (request: Request, response: Response) => {Skeleton()})
 
     addRoute(clientRequests.Login, LoginUser.loginUser)
-
-    post("/register", (request: Request, response: Response) => {""})
+    addRoute(clientRequests.Registration, RegisterUser.registerUser)
   }
 
 

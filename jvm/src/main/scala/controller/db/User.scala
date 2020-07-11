@@ -20,17 +20,7 @@ object User {
   /** blocking */
   def exists(login: String): Boolean = byLogin(login).nonEmpty
 
-  final case class LoginAlreadyClaimed(login: String) extends Exception
-  /** blocking */
-  def registerUser(login: String, password: String, firstName: Option[String] = None, lastName: Option[String] = None, email: Option[String] = None): Either[User, LoginAlreadyClaimed] =
-    if (exists(login)) {
-      Right(throw LoginAlreadyClaimed(login))
-    } else {
-      val hashPasswords = PasswordHashingSalting.hashPasswords(password)
-      val res = User(login, hashPasswords.hash, hashPasswords.salt, firstName, lastName, email, Some(Clock.systemUTC.instant), lastLogin = None)
-      Await.result(users.insertOne(res).toFuture(), Duration.Inf)
-      Left(res)
-    }
+
   /** blocking */
   def byLogin(login:String):Option[User] = users.byField("login", login)//Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
 

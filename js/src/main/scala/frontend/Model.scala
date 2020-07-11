@@ -20,6 +20,9 @@ object AvailableCourseViewData extends HasModelPropertyCreator[viewData.Availabl
 
 //Frontend specific data
 
+case class UserRegistrationData(login:String, password:String, passwordAgain:String, firstName:String, lastName:String, email:String)
+object  UserRegistrationData extends HasModelPropertyCreator[UserRegistrationData]
+
 case class UserCredentialsData(login:String, password:String)
 object UserCredentialsData extends HasModelPropertyCreator[UserCredentialsData]
 

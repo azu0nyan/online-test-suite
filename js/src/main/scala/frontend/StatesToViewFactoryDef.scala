@@ -1,6 +1,6 @@
 package frontend
 
-import frontend.views.{ErrorPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, RootPageViewFactory}
+import frontend.views.{ErrorPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory}
 import io.udash.core.{ViewFactory, ViewFactoryRegistry}
 
 class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
@@ -9,6 +9,7 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
       case RootState => RootPageViewFactory
       case LandingPageState => LandingPageViewFactory
       case LoginPageState => LoginPageViewFactory
+      case RegistrationPageState => RegistrationPageViewFactory
       //case AppPageState => AppPageViewFactory
       case _ => ErrorPageViewFactory
     }

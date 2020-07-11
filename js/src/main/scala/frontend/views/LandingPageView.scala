@@ -1,6 +1,6 @@
 package frontend.views
 
-import frontend.{AppViewData,  LandingPageState, LoginPageState, RoutingState}
+import frontend.{AppViewData, LandingPageState, LoginPageState, RegistrationPageState, RoutingState}
 import io.udash._
 import io.udash.core.ContainerView
 import org.scalajs.dom.{Element, Event}
@@ -21,7 +21,11 @@ class LandingPageView(
     button(onclick :+= ((_: Event) => {
       presenter.toLoginPage()
       true // prevent default
-    }))("Login")
+    }))("Войти"),
+    button(onclick :+= ((_: Event) => {
+      presenter.toRegistrationPage()
+      true // prevent default
+    }))("Зарегистрироваться")
   )
 
 }
@@ -30,6 +34,10 @@ class LandingPagePresenter(
                             model: ModelProperty[AppViewData],
                             app: Application[RoutingState]
                           ) extends Presenter[LandingPageState.type] {
+  def toRegistrationPage() : Unit = {
+    app.goTo(RegistrationPageState)
+  }
+
   override def handleState(state: LandingPageState.type): Unit = {
     println(s"Landing page presenter,  handling state : $state")
   }

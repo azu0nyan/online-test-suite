@@ -20,7 +20,7 @@ class LoginPageView(
   val loginId = "loginInput"
   val passwordId = "passwordInput"
 
-  override def getTemplate: Modifier[Element] =
+  override def getTemplate: Modifier[Element] = div(
     form()(
       label(`for` := loginId)("Логин:"),
       TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин..."),
@@ -30,7 +30,12 @@ class LoginPageView(
         presenter.logIn()
         true // prevent default
       }))("Войти")
-    )
+    ),
+    button(onclick :+= ((_: Event) => {
+      presenter.toLandingPage()
+      true // prevent default
+    }))("Назад")
+  )
 
 }
 
