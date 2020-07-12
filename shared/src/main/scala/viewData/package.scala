@@ -1,13 +1,26 @@
+import DbViewsShared.CourseShared.CourseStatus
+import DbViewsShared.ProblemShared.{AnswerFieldType, ProblemScore}
+
 /**
- Данные которые может послать сервер клиенту
+ * Данные которые может послать сервер клиенту
  */
 package object viewData {
 
-  case class UserViewData(login:String,  token:String, firstName:Option[String], lastName:Option[String], email:Option[String])
+  /**Информация о пользователе для отображения*/
+  case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String])
 
-  case class ProblemViewData(problemId: String, title:String, problemHtml: String)
+  /**Информация о проблеме для отображения*/
+  case class ProblemViewData(problemId: String, title: Option[String], problemHtml: String, answerFieldType: AnswerFieldType, score:ProblemScore)
 
-  case class CourseViewData(problemListId: String, title:String, problems:Seq[ProblemViewData])
+  /** Вся информация о курсе, отображаемаяч во время его выполнения */
+  case class CourseViewData(courseId: String, title: String, status: CourseStatus, problems: Seq[ProblemViewData], description: Option[String])
 
-  case class AvailableCourseViewData(courseTemplateId: String, title:String)
+  /** Информация видная в списке активных курсов */
+  case class CourseInfoViewData(courseId: String, title: String, status: CourseStatus, description: Option[String])
+
+  /** Информация видная в списке курсов которые можно пройти */
+  case class CourseTemplateViewData(courseTemplateId: String, title: String, description: Option[String])
+
+  /** Информация видная на странице выбора курса */
+  case class UserCoursesInfoViewData(templates: Seq[CourseTemplateViewData], existing: Seq[CourseInfoViewData])
 }

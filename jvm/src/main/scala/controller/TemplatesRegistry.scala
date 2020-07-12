@@ -13,7 +13,7 @@ object TemplatesRegistry {
 
   val aliasToPT:mutable.Map[String, ProblemTemplate] = new ConcurrentHashMap[String, ProblemTemplate]().asScala
 
-  def registerProblemListTemplate(pl:CourseTemplate):Unit = {
+  def registerCourseTemplate(pl:CourseTemplate):Unit = {
     aliasToPLT += pl.uniqueAlias -> pl
     pl.uniqueTemplates.foreach(registerProblemTemplate)
   }
@@ -24,7 +24,7 @@ object TemplatesRegistry {
 
   def problemTemplate(alias:String):Option[ProblemTemplate] = aliasToPT.get(alias)
 
-  def getProblemListTemplate(alias:String):Option[CourseTemplate] = aliasToPLT.get(alias)
+  def getCourseTemplate(alias:String):Option[CourseTemplate] = aliasToPLT.get(alias)
 
 
 }

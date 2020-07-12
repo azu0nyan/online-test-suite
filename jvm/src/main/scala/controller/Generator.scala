@@ -1,7 +1,7 @@
 package controller
 
-import controller.db.Course.Passing
-import controller.db.{Problem, Course, CourseTemplateAvailableForUser}
+import DbViewsShared.CourseShared.Passing
+import controller.db.{Course, CourseTemplateAvailableForUser, Problem}
 import org.bson.types.ObjectId
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -22,7 +22,7 @@ object Generator {
   /** blocking */
   def generateProblemListForUserUnsafe(userId: ObjectId, templateAlias: String, seed: Int = 0): (Course, Seq[Problem]) = {
     //todo transaction
-    TemplatesRegistry.getProblemListTemplate(templateAlias) match {
+    TemplatesRegistry.getCourseTemplate(templateAlias) match {
       case Some(plt) =>
         val plId = new ObjectId()
         val generated = plt.generate(seed)

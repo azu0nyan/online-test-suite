@@ -1,6 +1,6 @@
 package extensionsInterface
 
-import model.Problem.{AnswerFieldType, ProblemScore}
+import DbViewsShared.ProblemShared.{AnswerFieldType, ProblemScore}
 
 import scala.concurrent.Future
 

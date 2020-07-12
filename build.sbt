@@ -40,6 +40,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
   settings(
     name := "online-test-suite",
     version := "0.1-SNAPSHOT",
+    libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
     libraryDependencies += "com.lihaoyi" %%% "scalatags" % scalatagsVersion,
 //    libraryDependencies += "com.lihaoyi" %%% "upickle" % "1.0.0",
     libraryDependencies ++= Seq(
@@ -73,6 +74,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
 //    baseDirectory in run := file("workdir")
   ).
   jsSettings(
+
     libraryDependencies ++= Seq(
       "io.udash" %%% "udash-core" % udashVersion,
       "io.udash" %%% "udash-css" % udashVersion,

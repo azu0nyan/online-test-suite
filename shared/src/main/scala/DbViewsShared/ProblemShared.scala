@@ -1,8 +1,8 @@
-package model
+package DbViewsShared
 
 import scala.concurrent.Future
 
-object Problem {
+object ProblemShared {
 
   sealed trait ProblemScore
   case class BinaryScore(passed: Boolean) extends ProblemScore

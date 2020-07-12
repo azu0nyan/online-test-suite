@@ -1,9 +1,11 @@
 package controller.db
 
-import controller.db
-import model.Problem.ProblemScore
+import controller.{TemplatesRegistry, db}
+import extensionsInterface.ProblemTemplate
+import DbViewsShared.ProblemShared.ProblemScore
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Updates._
+import viewData.ProblemViewData
 
 import scala.concurrent.Await
 
@@ -33,7 +35,11 @@ case class Problem(
     this
   }
 
-  def answers:Seq[Answer] = Seq()//todo db.answers.byField("problemId", _id)
+  def answers:Seq[Answer] =  db.answers.byFieldMany("problemId", _id)
+
+  def template:ProblemTemplate = TemplatesRegistry.problemTemplate(templateAlias).get
+
+  def toView:ProblemViewData = ProblemViewData(_id.toHexString, Some("Problem title fix pls."),  template.generateProblemHtml(seed), template.answerFieldType(seed), score)
 
 //  def changeStatus(newStatus: ProblemStatus): Problem = {
 //    problems.updateField(this, "status", newStatus)

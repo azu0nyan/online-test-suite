@@ -23,6 +23,7 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState]{
     case "/" => LandingPageState
     case "/login" => LoginPageState
     case "/register" => RegistrationPageState
+    case "/courseSelection" / login => CourseSelectionPageState(viewData.UserViewData(login, None, None, None))
     case "/app" => AppPageState
   }
 

@@ -1,10 +1,11 @@
-package controller.db
+package controller
 
+import controller.db.MongoObject
 import org.bson.types.ObjectId
-import org.mongodb.scala.{ClientSession, MongoCollection}
-import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.result.UpdateResult
+import org.mongodb.scala.{ClientSession, MongoCollection}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration

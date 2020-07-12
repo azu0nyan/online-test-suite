@@ -1,24 +1,23 @@
 package frontend
 
 import io.udash._
-import io.udash.properties.Blank
+import io.udash.properties.{Blank, ModelPropertyCreator}
 //import viewData.{AvailableCourseViewData, CourseViewData, ProblemViewData, UserViewData}
 
 //bindings of data sent from backend
 
-//case class UserViewData(login:String, firstName:Option[String], lastName:Option[String], email:Option[String])
-object UserViewData extends HasModelPropertyCreator[viewData.UserViewData]
+trait Bindings{
+  implicit val a: ModelPropertyCreator[viewData.UserViewData] =ModelPropertyCreator.materialize[viewData.UserViewData]
+  implicit val b: ModelPropertyCreator[viewData.ProblemViewData] =ModelPropertyCreator.materialize[viewData.ProblemViewData]
+  implicit val c: ModelPropertyCreator[viewData.CourseViewData] =ModelPropertyCreator.materialize[viewData.CourseViewData]
+  implicit val d: ModelPropertyCreator[viewData.CourseTemplateViewData] =ModelPropertyCreator.materialize[viewData.CourseTemplateViewData]
+  implicit val e: ModelPropertyCreator[viewData.CourseInfoViewData] =ModelPropertyCreator.materialize[viewData.CourseInfoViewData]
+  implicit val f: ModelPropertyCreator[viewData.UserCoursesInfoViewData] =ModelPropertyCreator.materialize[viewData.UserCoursesInfoViewData]
 
-//case class ProblemViewData(problemId: String, title:String, problemHtml: String)
-object ProblemViewData extends HasModelPropertyCreator[viewData.ProblemViewData]
+  implicit val blank1: Blank[viewData.UserCoursesInfoViewData] =  Blank.Simple(viewData.UserCoursesInfoViewData( Seq(),Seq()))
+}
 
-//case class CourseViewData(problemListId: String, title:String, problems:Seq[ProblemViewData])
-object CourseViewData extends HasModelPropertyCreator[viewData.CourseViewData]
 
-//case class AvailableCourseViewData(courseTemplateId: String, title:String)
-object AvailableCourseViewData extends HasModelPropertyCreator[viewData.AvailableCourseViewData]
-
-//Frontend specific data
 
 case class UserRegistrationData(login:String, password:String, passwordAgain:String, firstName:String, lastName:String, email:String)
 object  UserRegistrationData extends HasModelPropertyCreator[UserRegistrationData]
@@ -26,8 +25,10 @@ object  UserRegistrationData extends HasModelPropertyCreator[UserRegistrationDat
 case class UserCredentialsData(login:String, password:String)
 object UserCredentialsData extends HasModelPropertyCreator[UserCredentialsData]
 
-case class AppViewData(currentUser:Option[viewData.UserViewData], availableCourses:Seq[viewData.AvailableCourseViewData], currentCourse:Option[viewData.CourseViewData])
-object AppViewData extends HasModelPropertyCreator[AppViewData] {
-  implicit val blank: Blank[AppViewData] =
-    Blank.Simple(AppViewData(None, Seq(), None))
-}
+case class LoggedInUser(user:viewData.UserViewData, token: Token)
+object LoggedInUser extends HasModelPropertyCreator[LoggedInUser]
+//case class AppViewData(currentUser:Option[viewData.UserViewData], currentCourseId:Option[String])
+//object AppViewData extends HasModelPropertyCreator[AppViewData] {
+//  implicit val blank: Blank[AppViewData] =
+//    Blank.Simple(AppViewData(None, Seq(), None))
+//}

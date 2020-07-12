@@ -1,6 +1,6 @@
 package frontend.views
 
-import frontend.{AppViewData, LandingPageState, RootState}
+import frontend.{ LandingPageState, RootState}
 import io.udash._
 import io.udash.{ModelProperty, View, bind}
 import org.scalajs.dom._
@@ -15,7 +15,7 @@ class ErrorPageView( ) extends ContainerView {
 
 
   override def getTemplate: Modifier[Element] = div(
-    h1("ERROR"),
+    h1(color := "red")("ERROR"),
     childViewContainer
   )
 }

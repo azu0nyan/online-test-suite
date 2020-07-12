@@ -1,12 +1,12 @@
 package frontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import frontend.{AppViewData, LandingPageState, LoginPageState, RoutingState, UserCredentialsData}
 import io.udash._
-import io.udash.core.ContainerView
-import org.scalajs.dom.{Element, Event}
-import scalatags.generic.Modifier
+import frontend._
+import org.scalajs.dom._
 import scalatags.JsDom.all._
+import io.udash.core.ContainerView
+import scalatags.generic.Modifier
 import io.udash.css.CssView._
 import clientRequests.{LoginFailure,  LoginFailureFrontendException,  LoginRequest, LoginSuccessResponse}
 import viewData.UserViewData
@@ -48,15 +48,17 @@ class LoginPagePresenter(
     val pass = model.subProp(_.password).get
     println("logging in ...")
 
-    frontend.sendRequest(clientRequests.Login, LoginRequest(login, pass)) onComplete {
-      case Success(LoginSuccessResponse(data)) => onLoginSuccess(data)
+    frontend sendRequest(clientRequests.Login, LoginRequest(login, pass)) onComplete {
+      case Success(LoginSuccessResponse(token, userViewData)) => onLoginSuccess(token, userViewData)
       case Success(r:LoginFailure) => onLoginFailure(r)
       case Failure(exception) => onLoginFailure(LoginFailureFrontendException(exception))
     }
   }
 
-  def onLoginSuccess(userViewData: UserViewData): Unit = {
-    println(userViewData)
+  def onLoginSuccess(token: Token, userViewData: UserViewData): Unit = {
+    println(s"Login success $token $userViewData")
+    currentToken.set(token, true)
+    app.goTo(CourseSelectionPageState(userViewData))
   }
 
   def onLoginFailure(error: LoginFailure): Unit = {
@@ -72,12 +74,3 @@ class LoginPagePresenter(
 
 }
 
-case object LoginPageViewFactory extends ViewFactory[LoginPageState.type] {
-  override def create(): (View, Presenter[LoginPageState.type]) = {
-    println(s"Login  page view factory creating..")
-    val model = ModelProperty(UserCredentialsData("", ""))
-    val presenter = new LoginPagePresenter(model, frontend.applicationInstance)
-    val view = new LoginPageView(model, presenter)
-    (view, presenter)
-  }
-}

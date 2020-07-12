@@ -1,22 +1,30 @@
 package controller.db
 
-import java.time.{Instant, ZonedDateTime}
 
-import controller.db.Course.CourseStatus
+import DbViewsShared.CourseShared.CourseStatus
+import controller.TemplatesRegistry
+import extensionsInterface.CourseTemplate
 import org.mongodb.scala.bson.ObjectId
+import viewData.{CourseInfoViewData, CourseTemplateViewData, CourseViewData}
 
 object Course {
-  sealed trait CourseStatus
-  case class Passing(endsAt: Option[Instant]) extends CourseStatus
-  case class Finished(/*score: Option[ProblemListScore]*/) extends CourseStatus
 
   def apply(userID: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId]): Course =
     Course(new ObjectId(), userID, templateAlias, status, problemIds)
+
+  def forUser(user: User): Seq[Course] = courses.byFieldMany("userId", user._id)
+
 }
 
-case class Course(_id: ObjectId, userID: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId])  extends MongoObject {
+case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
   def changeStatus(newStatus: CourseStatus): Course = {
     problems.updateField(this, "status", newStatus)
     this.copy(status = newStatus)
   }
+
+  def template: CourseTemplate = TemplatesRegistry.getCourseTemplate(templateAlias).get
+
+  def toInfoViewData: CourseInfoViewData = CourseInfoViewData(_id.toHexString, template.curseTitle, status, template.description)
+
+  def toViewData: CourseViewData = CourseViewData(_id.toHexString, template.curseTitle, status, problemIds.flatMap(problems.byId(_)).map(_.toView), template.description)
 }

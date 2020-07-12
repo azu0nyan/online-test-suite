@@ -6,7 +6,9 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-package object frontend {
+package object frontend extends Bindings {
+
+  type Token = String
 
   val host:String = "http://localhost:8080/"
 
@@ -22,7 +24,9 @@ package object frontend {
     routingRegistry, viewFactoryRegistry
   )
 
-  val appData: ModelProperty[AppViewData] = ModelProperty.blank[AppViewData]
+  val currentToken: Property[Token] = Property("")
+
+//  val appData: ModelProperty[AppViewData] = ModelProperty.blank[AppViewData]
 
 
 

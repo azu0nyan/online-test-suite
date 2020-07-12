@@ -1,8 +1,8 @@
 package impl
 
-import model.Problem.{BinaryScore, DoubleNumberField, ProblemScore}
+import DbViewsShared.ProblemShared.{BinaryScore, DoubleNumberField, ProblemScore}
 import extensionsInterface.{CourseTemplate, ProblemTemplate, SubmissionResult, Verified, WrongAnswerFormat}
-import model.Problem
+import DbViewsShared.ProblemShared
 
 import scala.concurrent.Future
 
@@ -21,7 +21,7 @@ object BinaryCountingOfAncientRussians {
       BCORProblem("золотничок", 1 / 128d),
       BCORProblem("сто двадцать восемь пар", 256),
     )
-    override val ProblemListTitle: String = "Двоичный счет древних русов. Базовые понятия"
+    override val curseTitle: String = "Двоичный счет древних русов. Базовые понятия"
     override val uniqueAlias: String = "BinaryCountingOfAncientRussians"
 
   }
@@ -46,7 +46,7 @@ object BinaryCountingOfAncientRussians {
     override def generateProblemHtml(seed: Int): String = s"<h4>Напишите точное значение следующей единицы измерения дрених русов: <i> ${name} </i> </h4>"
 
 
-    override def answerFieldType(seed: Int): Problem.AnswerFieldType = DoubleNumberField()
+    override def answerFieldType(seed: Int): ProblemShared.AnswerFieldType = DoubleNumberField()
 
     override val initialScore: ProblemScore = BinaryScore(false)
 

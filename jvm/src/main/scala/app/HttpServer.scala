@@ -1,7 +1,7 @@
 package app
 import clientRequests.{LoginRequest, LoginSuccessResponse}
 import constants.Skeleton
-import controller.{LoginUser, RegisterUser}
+import controller.{CoursesOps, LoginUserOps, RegisterUser}
 import spark._
 import spark.Spark._
 import viewData.UserViewData
@@ -13,8 +13,9 @@ object HttpServer {
     port(8080)
     get("/", (request: Request, response: Response) => {Skeleton()})
 
-    addRoute(clientRequests.Login, LoginUser.loginUser)
+    addRoute(clientRequests.Login, LoginUserOps.loginUser)
     addRoute(clientRequests.Registration, RegisterUser.registerUser)
+    addRoute(clientRequests.CoursesForUser, CoursesOps.coursesForUser)
   }
 
 

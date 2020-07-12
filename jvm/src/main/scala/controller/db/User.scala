@@ -11,6 +11,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import org.mongodb.scala.model.Updates._
+import viewData.{UserCoursesInfoViewData, UserViewData}
 
 object User {
   def apply(login: String, passwordHash: String, passwordSalt: String, firstName: Option[String], lsatName: Option[String], email: Option[String],
@@ -20,12 +21,11 @@ object User {
   /** blocking */
   def exists(login: String): Boolean = byLogin(login).nonEmpty
 
+  /** blocking */
+  def byLogin(login: String): Option[User] = users.byField("login", login) //Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
 
   /** blocking */
-  def byLogin(login:String):Option[User] = users.byField("login", login)//Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
-
-  /** blocking */
-  def checkPassword(user:User, password:String):Boolean = PasswordHashingSalting.checkPassword(password, user.passwordHash, user.passwordSalt)
+  def checkPassword(user: User, password: String): Boolean = PasswordHashingSalting.checkPassword(password, user.passwordHash, user.passwordSalt)
 
 
 }
@@ -38,13 +38,22 @@ case class User(_id: ObjectId,
                 lastName: Option[String] = None,
                 email: Option[String] = None,
                 registeredAt: Option[Instant],
-                lastLogin: Option[Instant])  extends MongoObject{
-  def  idAndLoginStr = s"[${_id} - $login]"
+                lastLogin: Option[Instant]) extends MongoObject {
+  def idAndLoginStr = s"[${_id} - $login]"
 
-  def updateLastLogin():User = {
+  def updateLastLogin(): User = {
     users.updateField(this, "lastLogin", Clock.systemUTC().instant())
     users.byId(this._id).get
   }
 
-  def groups:Seq[Group] = UserToGroup.userGroups(this)
+  def groups: Seq[Group] = UserToGroup.userGroups(this)
+
+  def toViewData: UserViewData = UserViewData(login, firstName, lastName, email)
+
+  def courses: Seq[Course] = Course.forUser(this)
+
+  def curseTemplates: Seq[CourseTemplateAvailableForUser] = CourseTemplateAvailableForUser.forUser(this)
+
+  def userCoursesInfo: UserCoursesInfoViewData = UserCoursesInfoViewData(curseTemplates.map(_.toViewData), courses.map(_.toInfoViewData))
+
 }
