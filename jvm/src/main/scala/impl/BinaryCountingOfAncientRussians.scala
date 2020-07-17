@@ -10,6 +10,11 @@ object BinaryCountingOfAncientRussians {
 
 
   val template: CourseTemplate = new CourseTemplate {
+
+    override val allowedForAll: Boolean = true
+
+    override val allowedInstances: Option[Int] = Some(2)
+
     override val uniqueTemplates: Set[ProblemTemplate] = Set(
       BCORProblem("целковый", 1),
       BCORProblem("полушка", 1 / 2d),
@@ -21,7 +26,7 @@ object BinaryCountingOfAncientRussians {
       BCORProblem("золотничок", 1 / 128d),
       BCORProblem("сто двадцать восемь пар", 256),
     )
-    override val curseTitle: String = "Двоичный счет древних русов. Базовые понятия"
+    override val courseTitle: String = "Двоичный счет древних русов. Базовые понятия"
     override val uniqueAlias: String = "BinaryCountingOfAncientRussians"
 
   }

@@ -39,10 +39,10 @@ class LoginPageView(
 
 }
 
-class LoginPagePresenter(
+case class LoginPagePresenter(
                           model: ModelProperty[UserCredentialsData],
                           app: Application[RoutingState]
-                        ) extends Presenter[LoginPageState.type] {
+                        ) extends GenericPresenter[LoginPageState.type] {
   def logIn(): Unit = {
     val login = model.subProp(_.login).get
     val pass = model.subProp(_.password).get
@@ -65,8 +65,7 @@ class LoginPagePresenter(
     println(error)
   }
 
-  //noinspection AccessorLikeMethodIsUnit
-  def toLandingPage(): Unit = app.goTo(LandingPageState)
+
 
   override def handleState(state: LoginPageState.type): Unit = {
     println(s"Login page presenter,  handling state : $state")
@@ -74,3 +73,12 @@ class LoginPagePresenter(
 
 }
 
+case object LoginPageViewFactory extends ViewFactory[LoginPageState.type] {
+  override def create(): (View, Presenter[LoginPageState.type]) = {
+    println(s"Login  page view factory creating..")
+    val model = ModelProperty(UserCredentialsData("", ""))
+    val presenter = new LoginPagePresenter(model, frontend.applicationInstance)
+    val view = new LoginPageView(model, presenter)
+    (view, presenter)
+  }
+}

@@ -29,9 +29,9 @@ class LandingPageView(
 
 }
 
-class LandingPagePresenter(
+case class LandingPagePresenter(
                             app: Application[RoutingState]
-                          ) extends Presenter[LandingPageState.type] {
+                          ) extends GenericPresenter[LandingPageState.type] {
   def toRegistrationPage() : Unit = {
     app.goTo(RegistrationPageState)
   }
@@ -40,10 +40,7 @@ class LandingPagePresenter(
     println(s"Landing page presenter,  handling state : $state")
   }
 
-  //noinspection AccessorLikeMethodIsUnit
-  def toLoginPage(): Unit = {
-    app.goTo(LoginPageState)
-  }
+
 }
 
 case object LandingPageViewFactory extends ViewFactory[LandingPageState.type] {

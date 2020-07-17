@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.{BadTokenFailure, CoursesForUser, LoginRequest, RequestCourseForUser, RequestCoursesSuccess}
+import clientRequests.{CoursesList, LoginRequest, RequestCourse, RequestCoursesList, RequestCoursesListFailure, RequestCoursesListSuccess, RequestStartCourse, RequestStartCourseSuccess}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
@@ -24,7 +24,7 @@ class CourseSelectionPageView(
     h3(ct.title), br,
     p(ct.description.getOrElse("").toString), br,
     button(onclick :+= ((_: Event) => {
-      presenter.startNewCourse(ct.courseTemplateId)
+      presenter.startNewCourse(ct.courseTemplateAlias)
       true // prevent default
     }))("Начать")
   ) .render
@@ -52,27 +52,33 @@ class CourseSelectionPageView(
 }
 
 
-class CourseSelectionPagePresenter(
+case class CourseSelectionPagePresenter(
                                     courses: ModelProperty[viewData.UserCoursesInfoViewData],
                                     app: Application[RoutingState]
-                                  ) extends Presenter[CourseSelectionPageState]{
-  def continueCourse(courseId: String) = ???
-
-  def startNewCourse(courseTemplateId: String) = ???
-
-  def logOut():Unit = {
-    currentToken.set("", true)
-    app.goTo(LoginPageState)
+                                  ) extends GenericPresenter[CourseSelectionPageState]{
+  def continueCourse(courseId: String) : Unit = {
+    app.goTo(CoursePageState(courseId, ""))
   }
 
-  def toLandingPage(): Unit = app.goTo(LandingPageState)
+  def startNewCourse(courseTemplateAlias: String): Unit = {
+    frontend sendRequest(clientRequests.StartCourse, RequestStartCourse(currentToken.get, courseTemplateAlias)) onComplete {
+      case Success(RequestStartCourseSuccess(courseHexId)) =>
+        app.goTo(CoursePageState(courseHexId, ""))
+      case Success(failure@_) =>
+        println(failure)
+      case Failure(ex) =>
+        ex.printStackTrace()
+      case _ => println("Unknown error")
+    }
+  }
+
 
   def requestCoursesListUpdate(): Unit = {
-    frontend sendRequest(clientRequests.CoursesForUser, RequestCourseForUser(currentToken.get)) onComplete  {
-      case Success(RequestCoursesSuccess(cs)) =>
+    frontend sendRequest(clientRequests.CoursesList, RequestCoursesList(currentToken.get)) onComplete  {
+      case Success(RequestCoursesListSuccess(cs)) =>
         println(s"courses list update : $cs")
         courses.set(cs)
-      case Success(BadTokenFailure()) =>
+      case Success(RequestCoursesListFailure(_)) =>
         println("bad token")
         app.goTo(LoginPageState)
       case Failure(ex) =>
@@ -98,13 +104,5 @@ case class CourseSelectionPageViewFactory(userViewData: UserViewData) extends Vi
   }
 }
 
-case object LoginPageViewFactory extends ViewFactory[LoginPageState.type] {
-  override def create(): (View, Presenter[LoginPageState.type]) = {
-    println(s"Login  page view factory creating..")
-    val model = ModelProperty(UserCredentialsData("", ""))
-    val presenter = new LoginPagePresenter(model, frontend.applicationInstance)
-    val view = new LoginPageView(model, presenter)
-    (view, presenter)
-  }
-}
+
 

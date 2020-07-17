@@ -9,12 +9,14 @@ import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 
 object TemplatesRegistry {
-  val aliasToPLT:mutable.Map[String, CourseTemplate] = new ConcurrentHashMap[String, CourseTemplate]().asScala
+  def templatesForAllUsers: Seq[CourseTemplate] = aliasToCourseTemplate.values.filter(_.allowedForAll).toSeq
+
+  val aliasToCourseTemplate:mutable.Map[String, CourseTemplate] = new ConcurrentHashMap[String, CourseTemplate]().asScala
 
   val aliasToPT:mutable.Map[String, ProblemTemplate] = new ConcurrentHashMap[String, ProblemTemplate]().asScala
 
   def registerCourseTemplate(pl:CourseTemplate):Unit = {
-    aliasToPLT += pl.uniqueAlias -> pl
+    aliasToCourseTemplate += pl.uniqueAlias -> pl
     pl.uniqueTemplates.foreach(registerProblemTemplate)
   }
 
@@ -24,7 +26,7 @@ object TemplatesRegistry {
 
   def problemTemplate(alias:String):Option[ProblemTemplate] = aliasToPT.get(alias)
 
-  def getCourseTemplate(alias:String):Option[CourseTemplate] = aliasToPLT.get(alias)
+  def getCourseTemplate(alias:String):Option[CourseTemplate] = aliasToCourseTemplate.get(alias)
 
 
 }

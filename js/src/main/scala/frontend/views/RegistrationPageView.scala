@@ -50,10 +50,10 @@ class RegistrationPageView(
 
 }
 
-class RegistrationPagePresenter(
+case class RegistrationPagePresenter(
                                  model: ModelProperty[UserRegistrationData],
                                  app: Application[RoutingState]
-                               ) extends Presenter[RegistrationPageState.type] {
+                               ) extends GenericPresenter[RegistrationPageState.type] {
   def register(): Unit = {
     val login = model.subProp(_.login).get
     val pass = model.subProp(_.password).get
@@ -95,9 +95,6 @@ class RegistrationPagePresenter(
 
 
   }
-
-  //noinspection AccessorLikeMethodIsUnit
-  def toLandingPage(): Unit = app.goTo(LandingPageState)
 
   override def handleState(state: RegistrationPageState.type): Unit = {
     println(s"Registration page presenter,  handling state : $state")

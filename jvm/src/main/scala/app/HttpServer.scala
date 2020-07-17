@@ -15,7 +15,9 @@ object HttpServer {
 
     addRoute(clientRequests.Login, LoginUserOps.loginUser)
     addRoute(clientRequests.Registration, RegisterUser.registerUser)
-    addRoute(clientRequests.CoursesForUser, CoursesOps.coursesForUser)
+    addRoute(clientRequests.CoursesList, CoursesOps.requestCoursesList)
+    addRoute(clientRequests.Course, CoursesOps.requestCourse)
+    addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse)
   }
 
 

@@ -1,5 +1,6 @@
 package frontend
 
+import DbViewsShared.CourseShared.Passing
 import io.udash._
 import io.udash.properties.{Blank, ModelPropertyCreator}
 //import viewData.{AvailableCourseViewData, CourseViewData, ProblemViewData, UserViewData}
@@ -15,6 +16,7 @@ trait Bindings{
   implicit val f: ModelPropertyCreator[viewData.UserCoursesInfoViewData] =ModelPropertyCreator.materialize[viewData.UserCoursesInfoViewData]
 
   implicit val blank1: Blank[viewData.UserCoursesInfoViewData] =  Blank.Simple(viewData.UserCoursesInfoViewData( Seq(),Seq()))
+  implicit val blank2: Blank[viewData.CourseViewData] =  Blank.Simple(viewData.CourseViewData( "Loading course..", "NO TITLE", Passing(None), Seq(), None))
 }
 
 

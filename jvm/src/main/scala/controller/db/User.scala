@@ -2,7 +2,7 @@ package controller.db
 
 import java.time.{Clock, Instant, ZonedDateTime}
 
-import controller.PasswordHashingSalting
+import controller.{PasswordHashingSalting, TemplatesRegistry}
 import org.mongodb.scala._
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Filters._
@@ -52,8 +52,9 @@ case class User(_id: ObjectId,
 
   def courses: Seq[Course] = Course.forUser(this)
 
-  def curseTemplates: Seq[CourseTemplateAvailableForUser] = CourseTemplateAvailableForUser.forUser(this)
+  def courseTemplates: Seq[CourseTemplateAvailableForUser] = CourseTemplateAvailableForUser.forUser(this)
 
-  def userCoursesInfo: UserCoursesInfoViewData = UserCoursesInfoViewData(curseTemplates.map(_.toViewData), courses.map(_.toInfoViewData))
+  def userCoursesInfo: UserCoursesInfoViewData =
+    UserCoursesInfoViewData(courseTemplates.map(_.toViewData) ++ TemplatesRegistry.templatesForAllUsers.map(_.toViewData), courses.map(_.toInfoViewData))
 
 }

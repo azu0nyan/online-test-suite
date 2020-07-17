@@ -1,16 +1,25 @@
 package extensionsInterface
 
 import DbViewsShared.ProblemShared
+import viewData.CourseTemplateViewData
 
 
 trait CourseTemplate {
+  //todo move from here
+  def toViewData: CourseTemplateViewData = CourseTemplateViewData(uniqueAlias, courseTitle , description)
+
+
+  val allowedForAll: Boolean = false
+
+  val allowedInstances: Option[Int] = None
+
   def description: Option[String] = None
 
   // registerProblemListTemplate(this)
 
   val uniqueTemplates: Set[ProblemTemplate]
 
-  val curseTitle: String = "No title"
+  val courseTitle: String = "No title"
 
   val uniqueAlias: String
 
