@@ -42,11 +42,11 @@ object Generator {
     val generated = template.generate(seed)
     val problems = generated.map(gp => Problem(courseId, gp.template.uniqueAlias, gp.seed, gp.attempts, gp.initialScore))
     val course = Course(courseId, userId, template.uniqueAlias, Passing(None), problems.map(_._id))
-    Transaction { s =>
-      val session = Some(s)
-      db.courses.insert(course, session)
+//    Transaction { s =>
+//      val session = Some(s)
+      db.courses.insert(course)//, session)
       problems.foreach(p => db.problems.insert(p))
-    }
+//    }
     (course, problems)
   }
 
