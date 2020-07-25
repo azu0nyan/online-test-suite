@@ -2,7 +2,7 @@ package frontend.views
 
 import DbViewsShared.ProblemShared
 import DbViewsShared.ProblemShared.{AnswerFieldType, ProblemScore}
-import clientRequests.{RequestCourse, RequestCourseSuccess, RequestCoursesListFailure}
+import clientRequests.{RequestCourseData, GetCourseDataSuccess, GetCoursesListFailure}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
@@ -61,8 +61,8 @@ case class CoursePagePresenter(
                                     ) extends GenericPresenter[CoursePageState]{
 
   def requestCoursesListUpdate(courseHexId:String): Unit = {
-    frontend sendRequest(clientRequests.Course, RequestCourse(currentToken.get, courseHexId)) onComplete  {
-      case Success(RequestCourseSuccess(cs)) =>
+    frontend sendRequest(clientRequests.GetCourseData, RequestCourseData(currentToken.get, courseHexId)) onComplete  {
+      case Success(GetCourseDataSuccess(cs)) =>
         println(s"course request success : ${cs.courseId} ${cs.title}")
         course.set(cs)
       case Success(failure@_) =>

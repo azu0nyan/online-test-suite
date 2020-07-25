@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.{CoursesList, LoginRequest, RequestCourse, RequestCoursesList, RequestCoursesListFailure, RequestCoursesListSuccess, RequestStartCourse, RequestStartCourseSuccess}
+import clientRequests.{GetCoursesList, LoginRequest, RequestCourseData, RequestCoursesList, GetCoursesListFailure, GetCoursesListSuccess, StartCourseRequest, RequestStartCourseSuccess}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
@@ -60,7 +60,7 @@ case class CourseSelectionPagePresenter(
   }
 
   def startNewCourse(courseTemplateAlias: String): Unit = {
-    frontend sendRequest(clientRequests.StartCourse, RequestStartCourse(currentToken.get, courseTemplateAlias)) onComplete {
+    frontend sendRequest(clientRequests.StartCourse, StartCourseRequest(currentToken.get, courseTemplateAlias)) onComplete {
       case Success(RequestStartCourseSuccess(courseHexId)) =>
         app.goTo(CoursePageState(courseHexId, ""))
       case Success(failure@_) =>
@@ -73,11 +73,11 @@ case class CourseSelectionPagePresenter(
 
 
   def requestCoursesListUpdate(): Unit = {
-    frontend sendRequest(clientRequests.CoursesList, RequestCoursesList(currentToken.get)) onComplete  {
-      case Success(RequestCoursesListSuccess(cs)) =>
+    frontend sendRequest(clientRequests.GetCoursesList, RequestCoursesList(currentToken.get)) onComplete  {
+      case Success(GetCoursesListSuccess(cs)) =>
         println(s"courses list update : $cs")
         courses.set(cs)
-      case Success(RequestCoursesListFailure(_)) =>
+      case Success(GetCoursesListFailure(_)) =>
         println("bad token")
         app.goTo(LoginPageState)
       case Failure(ex) =>

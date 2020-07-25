@@ -7,7 +7,7 @@ import scala.util.Random
 
 object CoursesOps {
 
-  def requestStartCourse(req: RequestStartCourse): RequestStartCourseResponse =
+  def requestStartCourse(req: StartCourseRequest): StartCourseResponse =
     LoginUserOps.decodeAndValidateToken(req.token) match {
       case Some(user) =>
         TemplatesRegistry.getCourseTemplate(req.courseTemplateAlias) match {
@@ -41,27 +41,27 @@ object CoursesOps {
       case None => RequestStartCourseFailure(BadToken())
     }
 
-  def requestCourse(req: RequestCourse): RequestCourseResponse = {
+  def requestCourse(req: RequestCourseData): GetCourseDataResponse = {
     LoginUserOps.decodeAndValidateToken(req.token) match {
       case Some(user) =>
         db.courses.byId(new ObjectId(req.courseId)) match {
           case Some(course) =>
             if (course.userId.equals(user._id)) {
-              RequestCourseSuccess(course.toViewData)
+              GetCourseDataSuccess(course.toViewData)
             } else {
-              CourseNotOwnedByYou()
+              GetCourseNotOwnedByYou()
             }
-          case None => CourseNotFound()
+          case None => GetCourseNotFound()
         }
-      case None => RequestCourseFailure(BadToken())
+      case None => GetCourseDataFailure(BadToken())
     }
   }
 
 
-  def requestCoursesList(req: RequestCoursesList): RequestCoursesListResponse = {
+  def requestCoursesList(req: RequestCoursesList): GetCoursesListResponse = {
     LoginUserOps.decodeAndValidateToken(req.token) match {
-      case Some(user) => RequestCoursesListSuccess(user.userCoursesInfo)
-      case None => RequestCoursesListFailure(BadToken())
+      case Some(user) => GetCoursesListSuccess(user.userCoursesInfo)
+      case None => GetCoursesListFailure(BadToken())
     }
   }
 
