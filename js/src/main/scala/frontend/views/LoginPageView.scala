@@ -58,7 +58,7 @@ case class LoginPagePresenter(
   def onLoginSuccess(token: Token, userViewData: UserViewData): Unit = {
     println(s"Login success $token $userViewData")
     currentToken.set(token, true)
-    app.goTo(CourseSelectionPageState(userViewData))
+    app.goTo(CourseSelectionPageState)
   }
 
   def onLoginFailure(error: LoginFailure): Unit = {

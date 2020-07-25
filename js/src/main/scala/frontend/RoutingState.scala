@@ -24,7 +24,7 @@ case object LandingPageState extends FinalRoutingState(Some(RootState))
 case object LoginPageState extends FinalRoutingState(Some(RootState))
 case object RegistrationPageState extends FinalRoutingState(Some(RootState))
 
-case class CourseSelectionPageState(userViewData: UserViewData) extends FinalRoutingState(Some(RootState))
+case object CourseSelectionPageState extends FinalRoutingState(Some(RootState))
 
 case class CoursePageState(courseId:String, taskId:String) extends FinalRoutingState(Some(RootState))
 

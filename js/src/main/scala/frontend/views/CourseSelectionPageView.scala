@@ -15,7 +15,6 @@ import scala.util.{Failure, Success}
 
 
 class CourseSelectionPageView(
-                             userViewData: UserViewData,
                              courses: ModelProperty[viewData.UserCoursesInfoViewData],
                              presenter: CourseSelectionPagePresenter
                              ) extends ContainerView {
@@ -55,7 +54,7 @@ class CourseSelectionPageView(
 case class CourseSelectionPagePresenter(
                                     courses: ModelProperty[viewData.UserCoursesInfoViewData],
                                     app: Application[RoutingState]
-                                  ) extends GenericPresenter[CourseSelectionPageState]{
+                                  ) extends GenericPresenter[CourseSelectionPageState.type]{
   def continueCourse(courseId: String) : Unit = {
     app.goTo(CoursePageState(courseId, ""))
   }
@@ -87,19 +86,19 @@ case class CourseSelectionPagePresenter(
     }
   }
 
-  override def handleState(state: CourseSelectionPageState): Unit = {
+  override def handleState(state: CourseSelectionPageState.type): Unit = {
     println(s"Course selection page presenter,  handling state : $state")
     requestCoursesListUpdate()
   }
 
 }
 
-case class CourseSelectionPageViewFactory(userViewData: UserViewData) extends ViewFactory[CourseSelectionPageState]{
-  override def create(): (View, Presenter[CourseSelectionPageState]) = {
+case object CourseSelectionPageViewFactory extends ViewFactory[CourseSelectionPageState.type]{
+  override def create(): (View, Presenter[CourseSelectionPageState.type]) = {
     println(s"Course selection page view factory creating..")
     val coursesModel:ModelProperty[viewData.UserCoursesInfoViewData] = ModelProperty.blank[viewData.UserCoursesInfoViewData]//ModelProperty(viewData.UserCoursesInfoViewData(Seq(), Seq()))
     val presenter = new CourseSelectionPagePresenter(coursesModel, frontend.applicationInstance)
-    val view = new CourseSelectionPageView(userViewData, coursesModel, presenter)
+    val view = new CourseSelectionPageView( coursesModel, presenter)
     (view, presenter)
   }
 }

@@ -10,7 +10,7 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
       case LandingPageState => LandingPageViewFactory
       case LoginPageState => LoginPageViewFactory
       case RegistrationPageState => RegistrationPageViewFactory
-      case CourseSelectionPageState(user) => CourseSelectionPageViewFactory(user)
+      case CourseSelectionPageState => CourseSelectionPageViewFactory
       case CoursePageState(courseId, taskId) => CoursePageViewFactory
       //case AppPageState => AppPageViewFactory
       case _ => ErrorPageViewFactory
