@@ -25,7 +25,7 @@ object Problem {
 
 case class Problem(
                     _id: ObjectId,
-                    problemListId: ObjectId,
+                    courseId: ObjectId,
                     templateAlias: String,
                     seed: Int,
                     attemptsMax:Int,
@@ -37,7 +37,7 @@ case class Problem(
 
   def answers:Seq[Answer] =  db.answers.byFieldMany("problemId", _id)
 
-  def template:ProblemTemplate = TemplatesRegistry.problemTemplate(templateAlias).get
+  def template:ProblemTemplate = TemplatesRegistry.getProblemTemplate(templateAlias).get
 
   def toView:ProblemViewData = ProblemViewData(_id.toHexString, Some("Problem title fix pls."),  template.generateProblemHtml(seed), template.answerFieldType(seed), score)
 

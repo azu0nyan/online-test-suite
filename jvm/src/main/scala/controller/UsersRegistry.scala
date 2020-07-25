@@ -20,7 +20,7 @@ object UsersRegistry {
     }
   }
 
-  def doSynchronized(objectId: ObjectId)(code: => Unit): Unit = getSync(objectId).synchronized{
+  def doSynchronized[T](objectId: ObjectId)(code: => T): T = getSync(objectId).synchronized{
     code
   }
 

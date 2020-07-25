@@ -68,13 +68,13 @@ object LoginUserOps {
   def decodeAndValidateToken(token: Token): Option[User] = {
     Jwt.decode(token, secretKey, Seq(algorithm)) match {
       case Failure(exception) =>
-        log.warn(s"Someone tried to use undecodable token $token $exception")
+        log.warn(s"Someone tried to use undecodable token \n$token \n$exception")
         None
       case Success(claim) =>
         if (claim.issuedAt.getOrElse(Long.MaxValue) <= JwtTime.nowSeconds && claim.expiration.getOrElse(Long.MinValue) >= JwtTime.nowSeconds) {
           claim.subject.flatMap(hex => db.users.byId(new ObjectId(hex)))
         } else {
-          log.info(s"Someone used expired token $token ${claim.subject} issued At : ${claim.issuedAt}  expires: ${claim.expiration} now: ${JwtTime.nowSeconds}")
+          log.info(s"Someone used expired token \n $token \n${claim.subject} issued At : ${claim.issuedAt}  expires: ${claim.expiration} now: ${JwtTime.nowSeconds}")
           None
         }
     }
