@@ -4,7 +4,7 @@ import java.time.Clock
 
 import controller.db.Answer.{BeingVerified, Rejected}
 import controller.db.{Answer, Problem, User}
-import extensionsInterface.{SubmissionResult, Verified, WrongAnswerFormat}
+import otsbridge.{SubmissionResult, Verified, WrongAnswerFormat}
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
 import clientRequests._

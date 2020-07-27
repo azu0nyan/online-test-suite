@@ -1,7 +1,5 @@
 package frontend.views
 
-import DbViewsShared.ProblemShared
-import DbViewsShared.ProblemShared.{AnswerFieldType, ProblemScore}
 import clientRequests.{RequestCourseData, GetCourseDataSuccess, GetCoursesListFailure}
 
 import scala.concurrent.ExecutionContext.Implicits.global

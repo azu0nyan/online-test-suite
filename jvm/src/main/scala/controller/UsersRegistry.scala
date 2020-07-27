@@ -2,7 +2,7 @@ package controller
 
 import java.util.concurrent.ConcurrentHashMap
 
-import extensionsInterface.CourseTemplate
+import otsbridge.CourseTemplate
 import org.mongodb.scala.bson.ObjectId
 
 import scala.jdk.CollectionConverters._

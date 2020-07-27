@@ -3,7 +3,7 @@ package controller.db
 
 import DbViewsShared.CourseShared.CourseStatus
 import controller.TemplatesRegistry
-import extensionsInterface.CourseTemplate
+import otsbridge.CourseTemplate
 import org.mongodb.scala.bson.ObjectId
 import viewData.{CourseInfoViewData, CourseTemplateViewData, CourseViewData}
 

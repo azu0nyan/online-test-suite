@@ -1,8 +1,8 @@
 package controller.db
 
 import controller.{TemplatesRegistry, db}
-import extensionsInterface.ProblemTemplate
-import DbViewsShared.ProblemShared.ProblemScore
+import otsbridge.ProblemTemplate
+import .ProblemScore
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Updates._
 import viewData.ProblemViewData

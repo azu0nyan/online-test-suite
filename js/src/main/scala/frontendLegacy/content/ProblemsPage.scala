@@ -3,7 +3,6 @@ package frontendLegacy.content
 import frontendLegacy.css.Styles
 import frontendLegacy.templates.MenuItem
 import frontendLegacy.{Content, LeftMenu, path}
-import DbViewsShared.ProblemShared._
 import newtwork.AnswerSubmission
 import org.scalajs.dom
 import org.scalajs.dom.Element

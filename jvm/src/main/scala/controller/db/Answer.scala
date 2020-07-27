@@ -4,7 +4,7 @@ import java.time.{Clock, Instant}
 
 
 import controller.db.Answer.AnswerStatus
-import DbViewsShared.ProblemShared.ProblemScore
+import .ProblemScore
 import org.bson.types.ObjectId
 
 object Answer {

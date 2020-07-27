@@ -1,8 +1,6 @@
 package impl
 
-import DbViewsShared.ProblemShared.{BinaryScore, DoubleNumberField, ProblemScore}
-import extensionsInterface.{CourseTemplate, ProblemTemplate, SubmissionResult, Verified, WrongAnswerFormat}
-import DbViewsShared.ProblemShared
+import otsbridge.{CourseTemplate, ProblemTemplate, SubmissionResult, Verified, WrongAnswerFormat}
 
 import scala.concurrent.Future
 

@@ -3,7 +3,7 @@ package controller
 
 import java.util.concurrent.ConcurrentHashMap
 
-import extensionsInterface.{CourseTemplate, ProblemTemplate}
+import otsbridge.{CourseTemplate, ProblemTemplate}
 
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._

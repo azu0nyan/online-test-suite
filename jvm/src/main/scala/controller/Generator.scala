@@ -2,7 +2,7 @@ package controller
 
 import DbViewsShared.CourseShared.Passing
 import controller.db.{Course, CourseTemplateAvailableForUser, Problem, Transaction}
-import extensionsInterface.CourseTemplate
+import otsbridge.CourseTemplate
 import org.bson.types.ObjectId
 
 import scala.concurrent.ExecutionContext.Implicits.global

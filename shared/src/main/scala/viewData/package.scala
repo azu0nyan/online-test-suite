@@ -1,5 +1,4 @@
 import DbViewsShared.CourseShared.CourseStatus
-import DbViewsShared.ProblemShared.{AnswerFieldType, ProblemScore}
 
 /**
  * Данные которые может послать сервер клиенту

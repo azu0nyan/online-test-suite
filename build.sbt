@@ -28,6 +28,7 @@ val udashVersion = "0.9.0-M2"
 val udashJQueryVersion = "3.0.4"
 
 
+lazy val extensionsBridge = RootProject(file("../otsExtensionsBridge"))
 
 lazy val root = project.in(file(".")).
   aggregate(foo.js, foo.jvm).
