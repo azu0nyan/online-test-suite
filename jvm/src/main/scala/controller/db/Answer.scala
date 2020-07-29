@@ -2,9 +2,8 @@ package controller.db
 
 import java.time.{Clock, Instant}
 
-
 import controller.db.Answer.AnswerStatus
-import .ProblemScore
+import otsbridge.ProblemScore
 import org.bson.types.ObjectId
 
 object Answer {
@@ -19,7 +18,7 @@ object Answer {
 }
 
 
-case class Answer(_id:ObjectId, problemId:ObjectId, answer: String, status: AnswerStatus, answeredAt: Instant) extends MongoObject {
+case class Answer(_id: ObjectId, problemId: ObjectId, answer: String, status: AnswerStatus, answeredAt: Instant) extends MongoObject {
   def changeStatus(newStatus: AnswerStatus): Answer = {
     answers.updateField(this, "status", newStatus)
     this.copy(status = newStatus)

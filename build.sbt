@@ -49,8 +49,10 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
       "io.circe" %%% "circe-generic",
       "io.circe" %%% "circe-parser"
     ).map(_ % circeVersion)
-  ).
-  jvmSettings(
+  )
+  .jvmConfigure(
+    _.dependsOn(extensionsBridge))
+  .jvmSettings(
     // Add JVM-specific settings here
     libraryDependencies += "ch.qos.logback"  %  "logback-classic"     % "1.2.3",
     libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
@@ -75,7 +77,6 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file(".")).
 //    baseDirectory in run := file("workdir")
   ).
   jsSettings(
-
     libraryDependencies ++= Seq(
       "io.udash" %%% "udash-core" % udashVersion,
       "io.udash" %%% "udash-css" % udashVersion,
