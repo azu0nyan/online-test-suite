@@ -7,6 +7,7 @@ object GetCoursesList  extends Route[RequestCoursesList, GetCoursesListResponse]
 
   override val route: String = "requestCoursesList"
 }
+
 //REQ
 case class RequestCoursesList(token:String)
 

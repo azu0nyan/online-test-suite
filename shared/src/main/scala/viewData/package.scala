@@ -2,6 +2,7 @@ import java.time.Instant
 
 import DbViewsShared.CourseShared.CourseStatus
 import otsbridge.{AnswerField, ProblemScore}
+import io.circe.generic.auto._
 
 /**
  * Данные которые может послать сервер клиенту

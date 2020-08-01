@@ -1,19 +1,19 @@
 package clientRequests
 
-import io.circe.generic.auto._
 import viewData.CourseViewData
+import io.circe.generic.auto._
 
-object GetCourseData extends Route[CourseDataRequest, GetCourseDataResponse] {
+object GetCourseData extends Route[CourseDataRequest, CourseDataResponse] {
   override val route: String = "courseData"
 }
 //REQ
 case class CourseDataRequest(token:String, courseId:String)
 
 //RES
-sealed trait GetCourseDataResponse
-case class GetCourseDataSuccess(course:CourseViewData) extends GetCourseDataResponse
+sealed trait CourseDataResponse
+case class GetCourseDataSuccess(course:CourseViewData) extends CourseDataResponse
 
-case class GetCourseNotOwnedByYou() extends GetCourseDataResponse
-case class GetCourseNotFound() extends GetCourseDataResponse
-case class GetCourseDataFailure(failure: GenericRequestFailure) extends GetCourseDataResponse
+case class GetCourseNotOwnedByYou() extends CourseDataResponse
+case class GetCourseNotFound() extends CourseDataResponse
+case class GetCourseDataFailure(failure: GenericRequestFailure) extends CourseDataResponse
 
