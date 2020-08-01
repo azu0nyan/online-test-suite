@@ -41,7 +41,7 @@ object CoursesOps {
       case None => RequestStartCourseFailure(BadToken())
     }
 
-  def requestCourse(req: RequestCourseData): GetCourseDataResponse = {
+  def requestCourse(req: CourseDataRequest): GetCourseDataResponse = {
     LoginUserOps.decodeAndValidateToken(req.token) match {
       case Some(user) =>
         db.courses.byId(new ObjectId(req.courseId)) match {

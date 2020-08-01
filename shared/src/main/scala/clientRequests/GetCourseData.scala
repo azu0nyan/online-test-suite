@@ -3,11 +3,11 @@ package clientRequests
 import io.circe.generic.auto._
 import viewData.CourseViewData
 
-object GetCourseData extends Route[RequestCourseData, GetCourseDataResponse] {
+object GetCourseData extends Route[CourseDataRequest, GetCourseDataResponse] {
   override val route: String = "courseData"
 }
 //REQ
-case class RequestCourseData(token:String, courseId:String)
+case class CourseDataRequest(token:String, courseId:String)
 
 //RES
 sealed trait GetCourseDataResponse

@@ -1,8 +1,7 @@
 package controller.db
 
 import controller.{TemplatesRegistry, db}
-import otsbridge.ProblemTemplate
-import .ProblemScore
+import otsbridge._
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Updates._
 import viewData.ProblemViewData
@@ -39,7 +38,11 @@ case class Problem(
 
   def template:ProblemTemplate = TemplatesRegistry.getProblemTemplate(templateAlias).get
 
-  def toView:ProblemViewData = ProblemViewData(_id.toHexString, Some("Problem title fix pls."),  template.generateProblemHtml(seed), template.answerFieldType(seed), score)
+  def toView:ProblemViewData =
+    ProblemViewData(_id.toHexString,
+      Some("Problem title fix pls."),
+      template.generateProblemHtml(seed),
+      template.answerField(seed), score)
 
 //  def changeStatus(newStatus: ProblemStatus): Problem = {
 //    problems.updateField(this, "status", newStatus)

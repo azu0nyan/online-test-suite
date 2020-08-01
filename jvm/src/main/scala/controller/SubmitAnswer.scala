@@ -4,12 +4,15 @@ import java.time.Clock
 
 import controller.db.Answer.{BeingVerified, Rejected}
 import controller.db.{Answer, Problem, User}
-import otsbridge.{SubmissionResult, Verified, WrongAnswerFormat}
+import otsbridge.{CantVerify, SubmissionResult, Verified}
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
 import clientRequests._
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
 object SubmitAnswer {
@@ -37,7 +40,9 @@ object SubmitAnswer {
                 } else {
                   val answer = db.answers.insert(Answer(problem._id, req.answerRaw, BeingVerified(), Clock.systemUTC().instant())).pure[Option]
                   val template = TemplatesRegistry.getProblemTemplate(problem.templateAlias).get
-                  template.submitAnswer(problem.seed, req.answerRaw, processSubmissionResult(_, answer.get, user))
+                  Future {
+                    template.submitAnswer(problem.seed, req.answerRaw, processSubmissionResult(_, answer.get, user))
+                  }
                   AnswerSubmitted()
                 }
               }
@@ -77,10 +82,10 @@ object SubmitAnswer {
         log.info(s"Answer : ${answer._id} verified")
         answer.changeStatus(Answer.Verified(score, review, systemMessage, Clock.systemUTC().instant()))
         db.problems.byId(answer.problemId).foreach { p =>
-          val bestScore = DbViewsShared.ProblemShared.bestOf(p.score, score)
+          val bestScore = otsbridge.ProblemScore.bestOf(p.score, score)
           if (p.score != bestScore) p.updateScore(score)
         }
-      case WrongAnswerFormat(systemMessage) =>
+      case CantVerify(systemMessage) =>
         log.info(s"Answer : ${answer._id} wrong format")
         answer.changeStatus(Rejected(systemMessage, Clock.systemUTC().instant()))
     }

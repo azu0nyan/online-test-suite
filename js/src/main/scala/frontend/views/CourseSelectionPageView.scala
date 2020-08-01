@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.{GetCoursesList, LoginRequest, RequestCourseData, RequestCoursesList, GetCoursesListFailure, GetCoursesListSuccess, StartCourseRequest, RequestStartCourseSuccess}
+import clientRequests.{GetCoursesList, LoginRequest, CourseDataRequest, RequestCoursesList, GetCoursesListFailure, GetCoursesListSuccess, StartCourseRequest, RequestStartCourseSuccess}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
