@@ -24,7 +24,7 @@ package object viewData {
   case class ProblemViewData(problemId: String,
                              title: Option[String],
                              problemHtml: String,
-                             answerFieldType: AnswerField[_],
+                             answerFieldType: AnswerField,
                              score:ProblemScore,
                              currentAnswerRaw:String,
                              answers:Seq[AnswerViewData]

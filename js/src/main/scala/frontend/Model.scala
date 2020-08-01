@@ -6,6 +6,7 @@ import io.udash.properties.{Blank, ModelPropertyCreator}
 //import viewData.{AvailableCourseViewData, CourseViewData, ProblemViewData, UserViewData}
 
 //bindings of data sent from backend
+//object Model extends Bindings
 
 trait Bindings {
   implicit val a: ModelPropertyCreator[viewData.UserViewData] = ModelPropertyCreator.materialize[viewData.UserViewData]

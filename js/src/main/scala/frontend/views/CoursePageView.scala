@@ -6,11 +6,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
 import frontend._
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
+import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom._
 import otsbridge._
 import scalatags.JsDom.all.{button, _}
 import scalatags.generic.Modifier
 import viewData.{CourseInfoViewData, CourseTemplateViewData, UserViewData}
+//import Model._
 
 import scala.util.{Failure, Success}
 
@@ -73,6 +75,7 @@ class CoursePageView(
       score(problemData.subProp(_.score).get)
     ).render
 
+//  implicit val b: ModelPropertyCreator[viewData.ProblemViewData] = ModelPropertyCreator.materialize[viewData.ProblemViewData]
   override def getTemplate: Modifier[Element] = div(
     repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
