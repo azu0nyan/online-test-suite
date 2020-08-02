@@ -1,6 +1,6 @@
 package impl
 
-import otsbridge.{CourseTemplate, ProblemTemplate, SubmissionResult, Verified, WrongAnswerFormat}
+import otsbridge.{AnswerField, BinaryScore, CantVerify, CourseTemplate, DoubleNumberField, ProblemScore, ProblemTemplate, SubmissionResult, Verified}
 
 import scala.concurrent.Future
 
@@ -13,7 +13,7 @@ object BinaryCountingOfAncientRussians {
 
     override val allowedInstances: Option[Int] = Some(2)
 
-    override val uniqueTemplates: Set[ProblemTemplate] = Set(
+    override val uniqueTemplates: Seq[ProblemTemplate] = Seq(
       BCORProblem("целковый", 1),
       BCORProblem("полушка", 1 / 2d),
       BCORProblem("четвертушка", 1 / 4d),
@@ -49,13 +49,14 @@ object BinaryCountingOfAncientRussians {
     override def generateProblemHtml(seed: Int): String = s"<h4>Напишите точное значение следующей единицы измерения дрених русов: <i> ${name} </i> </h4>"
 
 
-    override def answerFieldType(seed: Int): ProblemShared.AnswerFieldType = DoubleNumberField()
+//    override def answerFieldType(seed: Int): DoubleNumberField = DoubleNumberField("")
 
     override val initialScore: ProblemScore = BinaryScore(false)
 
     override def submitAnswer(seed: Int, answer: String, onComplete: SubmissionResult => Unit): Unit = onComplete(answer.toDoubleOption match {
       case Some(x) => Verified(BinaryScore(x == value), None, None)
-      case None => WrongAnswerFormat(Some("Неправильный формат данных"))
+      case None => CantVerify(Some("Неправильный формат данных"))
     })
+    override def answerField(seed: Int): DoubleNumberField = DoubleNumberField("")
   }
 }

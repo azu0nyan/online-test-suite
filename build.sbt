@@ -1,4 +1,4 @@
-ThisBuild / scalaVersion := "2.13.1"
+ThisBuild / scalaVersion := "2.13.3"
 
 cancelable in Global := true
 
@@ -28,7 +28,9 @@ val udashVersion = "0.9.0-M2"
 val udashJQueryVersion = "3.0.4"
 
 
-lazy val extensionsBridge = RootProject(file("../otsExtensionsBridge"))
+//lazy val extensionsBridge = RootProject(file("../otsExtensionsBridge"))
+lazy val extensionsBridge = RootProject( file("../otsExtensionsBridge"))
+lazy val extensionsBridgeJs = RootProject( file("../otsExtensionsBridge"))
 
 lazy val contentProject = RootProject(file("../problemsAndTests"))
 
@@ -52,9 +54,9 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
       "io.circe" %%% "circe-parser"
     ).map(_ % circeVersion)
   )
-  .jvmConfigure(   _.dependsOn(extensionsBridge)  )
-  .jvmConfigure(   _.dependsOn(contentProject)  )
-  .jsConfigure(   _.dependsOn(extensionsBridge)  )
+//  .jvmConfigure(   _.dependsOn(extensionsBridge)  )
+//  .jvmConfigure(   _.dependsOn(contentProject)  )
+//  .jsConfigure(   _.dependsOn(extensionsBridgeJs)  )
   .jvmSettings(
     // Add JVM-specific settings here
     libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
@@ -99,7 +101,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
 
 
 
-
+lazy val fooJS = foo.js.dependsOn(extensionsBridgeJs)
+lazy val fooJVM = foo.jvm.dependsOn(extensionsBridge)
 
 
 

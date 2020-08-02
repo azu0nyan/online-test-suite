@@ -15,9 +15,11 @@ package object viewData {
   case class AnswerViewData(
                            problemId: String,
                            answerText:String,
-                           answerStatus:String,
-                           score: ProblemScore,
-                           answeredAt:Instant
+                           score: Option[ProblemScore],
+                           verifiedAt: Option[Instant],
+                           answeredAt: Instant,
+                           review: Option[String],
+                           systemMessage: Option[String]
                            )
 
   /**Информация о проблеме для отображения пользователю */

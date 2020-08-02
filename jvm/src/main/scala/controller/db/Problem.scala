@@ -34,6 +34,10 @@ case class Problem(
     this
   }
 
+//  def bestAnswer:Option[Answer] = answers.flatMap(a => Option.when(a.status.isInstanceOf[]))
+
+  def lastAnswer:Option[Answer] = answers.maxByOption(_.answeredAt)
+
   def answers:Seq[Answer] =  db.answers.byFieldMany("problemId", _id)
 
   def template:ProblemTemplate = TemplatesRegistry.getProblemTemplate(templateAlias).get
@@ -42,7 +46,9 @@ case class Problem(
     ProblemViewData(_id.toHexString,
       Some("Problem title fix pls."),
       template.generateProblemHtml(seed),
-      template.answerField(seed), score)
+      template.answerField(seed),
+      score,
+      lastAnswer.map(_.answer).getOrElse(""), answers.map(_.toViewData) )
 
 //  def changeStatus(newStatus: ProblemStatus): Problem = {
 //    problems.updateField(this, "status", newStatus)
