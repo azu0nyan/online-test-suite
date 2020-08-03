@@ -60,7 +60,7 @@ case class CourseSelectionPagePresenter(
   }
 
   def startNewCourse(courseTemplateAlias: String): Unit = {
-    frontend sendRequest(clientRequests.StartCourse, StartCourseRequest(currentToken.get, courseTemplateAlias)) onComplete {
+    frontend.sendRequest(clientRequests.StartCourse, StartCourseRequest(currentToken.get, courseTemplateAlias)) onComplete {
       case Success(RequestStartCourseSuccess(courseHexId)) =>
         app.goTo(CoursePageState(courseHexId, ""))
       case Success(failure@_) =>

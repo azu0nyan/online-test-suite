@@ -29,8 +29,10 @@ val udashJQueryVersion = "3.0.4"
 
 
 //lazy val extensionsBridge = RootProject(file("../otsExtensionsBridge"))
-lazy val extensionsBridge = RootProject( file("../otsExtensionsBridge"))
-lazy val extensionsBridgeJs = RootProject( file("../otsExtensionsBridge"))
+//lazy val extensionsBridge = RootProject( file("../otsExtensionsBridge"))
+lazy val extensionsBridge = ProjectRef( file("../otsExtensionsBridge"), "fooJVM")
+lazy val extensionsBridgeJs = ProjectRef( file("../otsExtensionsBridge"), "fooJS")
+//lazy val extensionsBridge = crossProject(JSPlatform, JVMPlatform).in( file("../otsExtensionsBridge"))
 
 lazy val contentProject = RootProject(file("../problemsAndTests"))
 
@@ -44,7 +46,7 @@ lazy val root = project.in(file(".")).
 lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
   .settings(
     name := "online-test-suite",
-    version := "0.1-SNAPSHOT",
+    version := "0.2-SNAPSHOT",
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
     libraryDependencies += "com.lihaoyi" %%% "scalatags" % scalatagsVersion,
     //    libraryDependencies += "com.lihaoyi" %%% "upickle" % "1.0.0",
@@ -54,9 +56,10 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
       "io.circe" %%% "circe-parser"
     ).map(_ % circeVersion)
   )
+//  .dependsOn(extensionsBridge)
 //  .jvmConfigure(   _.dependsOn(extensionsBridge)  )
-//  .jvmConfigure(   _.dependsOn(contentProject)  )
-//  .jsConfigure(   _.dependsOn(extensionsBridgeJs)  )
+  .jvmConfigure(   _.dependsOn(contentProject)  )
+  .jsConfigure(   _.dependsOn(extensionsBridgeJs)  )
   .jvmSettings(
     // Add JVM-specific settings here
     libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
@@ -101,8 +104,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
 
 
 
-lazy val fooJS = foo.js.dependsOn(extensionsBridgeJs)
-lazy val fooJVM = foo.jvm.dependsOn(extensionsBridge)
+//lazy val fooJS = foo.js.dependsOn(extensionsBridge)
+//lazy val fooJVM = foo.jvm.dependsOn(extensionsBridge, contentProject)
 
 
 

@@ -13,6 +13,8 @@ trait GenericPresenter[T <: State] extends Presenter[T] {
 
   def toLandingPage(): Unit = app.goTo(LandingPageState)
 
+  def toCourseSelectionPage(): Unit = app.goTo(CourseSelectionPageState)
+
 //  def toCourseSelectionPage(): Unit = app.goTo(CourseSelectionPageState())
 
   //noinspection AccessorLikeMethodIsUnit

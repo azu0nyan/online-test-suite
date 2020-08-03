@@ -10,8 +10,10 @@ object App {
     HttpServer.initRoutesAndStart()
   }
 
-  def initAliases(): Unit =
+  def initAliases(): Unit = {
     TemplatesRegistry.registerCourseTemplate(BinaryCountingOfAncientRussians.template)
+    TemplatesRegistry.registerCourseTemplate(tasks.javaCourse.JavaCourse)
+  }
 
 
 }

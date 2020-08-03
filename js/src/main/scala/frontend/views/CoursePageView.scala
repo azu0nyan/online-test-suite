@@ -47,7 +47,7 @@ class CoursePageView(
         div(
           label(`for` := inputId)(questionText),
           //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
-          TextArea(problemData.subProp(_.currentAnswerRaw))(id := inputId, placeholder := "Ваш ответ(десятичная дробь)..."),
+          TextArea(problemData.subProp(_.currentAnswerRaw))(id := inputId),
           button(onclick :+= ((_: Event) => {
             presenter.submitAnswer(problemData.subProp(_.problemId).get, problemData.subProp(_.currentAnswerRaw).get)
             true // prevent default
@@ -79,6 +79,10 @@ class CoursePageView(
   override def getTemplate: Modifier[Element] = div(
     repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
+      presenter.toLandingPage()
+      true // prevent default
+    }))("К выбору курса"),
+    button(onclick :+= ((_: Event) => {
       presenter.logOut()
       true // prevent default
     }))("Выйти"))
@@ -95,9 +99,9 @@ case class CoursePagePresenter(
 
 
   def requestCoursesListUpdate(courseHexId: String): Unit = {
-    frontend sendRequest(clientRequests.GetCourseData, CourseDataRequest(currentToken.get, courseHexId)) onComplete {
+    frontend.sendRequest(clientRequests.GetCourseData, CourseDataRequest(currentToken.get, courseHexId)) onComplete {
       case Success(GetCourseDataSuccess(cs)) =>
-        println(s"course request success : ${cs.courseId} ${cs.title}")
+        println(s"course request success2 : ${cs.courseId} ${cs.title}")
         course.set(cs)
       case Success(failure@_) =>
         println(s"course request failure $failure")

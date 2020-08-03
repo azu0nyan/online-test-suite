@@ -1,7 +1,7 @@
 package app
 import clientRequests.{LoginRequest, LoginSuccessResponse}
 import constants.Skeleton
-import controller.{CoursesOps, LoginUserOps, RegisterUser}
+import controller.{CoursesOps, LoginUserOps, RegisterUser, SubmitAnswer}
 import spark._
 import spark.Spark._
 import viewData.UserViewData
@@ -18,6 +18,7 @@ object HttpServer {
     addRoute(clientRequests.GetCoursesList, CoursesOps.requestCoursesList)
     addRoute(clientRequests.GetCourseData, CoursesOps.requestCourse)
     addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse)
+    addRoute(clientRequests.SubmitAnswer, SubmitAnswer.submitAnswer)
   }
 
 
