@@ -5,7 +5,11 @@ import io.circe.generic.auto._
 
 object Registration extends Route[RegistrationRequest, RegistrationResponse] {
   override val route: String = "register"
+
+
 }
+
+
 
 case class RegistrationRequest(login:String, password:String, firstName:Option[String], lastName:Option[String], email: Option[String])
 

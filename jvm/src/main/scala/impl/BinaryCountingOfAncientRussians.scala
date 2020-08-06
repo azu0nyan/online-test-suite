@@ -58,5 +58,6 @@ object BinaryCountingOfAncientRussians {
       case None => CantVerify(Some("Неправильный формат данных"))
     })
     override def answerField(seed: Int): DoubleNumberField = DoubleNumberField("")
+    override def title(seed: Int): String = name
   }
 }

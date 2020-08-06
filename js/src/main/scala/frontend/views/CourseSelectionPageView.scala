@@ -73,7 +73,7 @@ case class CourseSelectionPagePresenter(
 
 
   def requestCoursesListUpdate(): Unit = {
-    frontend sendRequest(clientRequests.GetCoursesList, RequestCoursesList(currentToken.get)) onComplete  {
+    frontend.sendRequest(clientRequests.GetCoursesList, RequestCoursesList(currentToken.get)) onComplete  {
       case Success(GetCoursesListSuccess(cs)) =>
         println(s"courses list update : $cs")
         courses.set(cs)

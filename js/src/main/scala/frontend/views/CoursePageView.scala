@@ -69,7 +69,7 @@ class CoursePageView(
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
     div(
       //data.get.title.map(t => h4(t)).getOrElse(""),
-      p(problemData.get.title.getOrElse("").asInstanceOf[String]),
+      p(problemData.get.title),
       scalatags.JsDom.all.raw(problemData.subProp(_.problemHtml).get),
       answerField(problemData, nested),
       score(problemData.subProp(_.score).get)
@@ -79,7 +79,7 @@ class CoursePageView(
   override def getTemplate: Modifier[Element] = div(
     repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
-      presenter.toLandingPage()
+      presenter.toCourseSelectionPage()
       true // prevent default
     }))("К выбору курса"),
     button(onclick :+= ((_: Event) => {
@@ -95,7 +95,7 @@ case class CoursePagePresenter(
                                 app: Application[RoutingState],
                               ) extends GenericPresenter[CoursePageState] {
   def submitAnswer(problemId: String, answerRaw: String): Unit =
-    frontend sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw))
+    frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw))
 
 
   def requestCoursesListUpdate(courseHexId: String): Unit = {

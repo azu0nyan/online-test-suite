@@ -6,7 +6,8 @@ import io.circe.generic.auto._, io.circe.syntax._
 
 
 abstract class Route[Request, Response](
-                                         implicit ee: Encoder[Request],
+                                         implicit
+                                         ee: Encoder[Request],
                                          es: Encoder[Response],
                                          de: Decoder[Request],
                                          ds: Decoder[Response]

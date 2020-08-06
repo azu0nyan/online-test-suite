@@ -38,13 +38,13 @@ case class Problem(
 
   def lastAnswer:Option[Answer] = answers.maxByOption(_.answeredAt)
 
-  def answers:Seq[Answer] =  db.answers.byFieldMany("problemId", _id)
+  def answers:Seq[Answer] = db.answers.byFieldMany("problemId", _id)
 
   def template:ProblemTemplate = TemplatesRegistry.getProblemTemplate(templateAlias).get
 
   def toView:ProblemViewData =
     ProblemViewData(_id.toHexString,
-      Some("Problem title fix pls."),
+      template.title(seed),
       template.generateProblemHtml(seed),
       template.answerField(seed),
       score,

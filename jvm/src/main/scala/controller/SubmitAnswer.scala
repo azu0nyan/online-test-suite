@@ -4,7 +4,7 @@ import java.time.Clock
 
 import controller.db.Answer.{BeingVerified, Rejected}
 import controller.db.{Answer, Problem, User}
-import otsbridge.{CantVerify, SubmissionResult, Verified}
+import otsbridge.{CantVerify, SubmissionResult, VerificationDelayed, Verified}
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
 import clientRequests._
@@ -86,8 +86,11 @@ object SubmitAnswer {
           if (p.score != bestScore) p.updateScore(score)
         }
       case CantVerify(systemMessage) =>
-        log.info(s"Answer : ${answer._id} wrong format")
+        log.info(s"Answer : ${answer._id} cant verify cause : ${systemMessage.getOrElse("No message, unknown")}")
         answer.changeStatus(Rejected(systemMessage, Clock.systemUTC().instant()))
+      case VerificationDelayed(systemMessage) =>
+        log.info(s"Answer : ${answer._id} verification delayed")
+
     }
   }
 }

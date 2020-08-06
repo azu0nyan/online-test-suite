@@ -24,7 +24,7 @@ package object viewData {
 
   /**Информация о проблеме для отображения пользователю */
   case class ProblemViewData(problemId: String,
-                             title: Option[String],
+                             title: String,
                              problemHtml: String,
                              answerFieldType: AnswerField,
                              score:ProblemScore,
