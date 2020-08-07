@@ -108,7 +108,7 @@ lazy val fooJS = foo.js.settings(
     // make sure you have configured the valid `CssRenderer` path
     // we assume that `CssRenderer` exists in the `backend` module
     (foo.jvm  / Compile / runMain)
-      .toTask(s" cssRender.CssRenderer $path false")
+      .toTask(s" cssRender.CssRenderer $path true")
   }.value,
 )
 //lazy val fooJS = foo.js.dependsOn(extensionsBridge)

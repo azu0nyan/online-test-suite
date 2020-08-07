@@ -7,26 +7,32 @@ object Base extends CssBase {
 
   import dsl._
 
+  val root: CssStyle = namedStyle("root",
+    unsafeChild("button")(
+      display.inlineBlock,
+      marginTop(verticalMargin),
+      marginBottom(verticalMargin),
+      marginLeft(horizontalMargin),
+      marginRight(horizontalMargin),
+      padding(horizontalPadding, verticalPadding),
+      textAlign.center,
+      whiteSpace.nowrap,
+      verticalAlign.middle,
+      cursor.pointer,
+      borderWidth(smallBorderWidth),
+      borderStyle.solid,
+      borderColor(buttonBorderColor),
+      borderRadius(roundCornerRadius),
+      backgroundColor(mainColor),
+      &().hover {
+        backgroundColor(highlightColor)
+      }
+    )
+
+  )
 
   val button: CssStyle = style(
-    display.inlineBlock,
-    marginTop(verticalMargin),
-    marginBottom(verticalMargin),
-    marginLeft(horizontalMargin),
-    marginRight(horizontalMargin),
-    padding(horizontalPadding, verticalPadding),
-    textAlign.center,
-    whiteSpace.nowrap,
-    verticalAlign.middle,
-    cursor.pointer,
-    borderWidth(smallBorderWidth),
-    borderStyle.solid,
-    borderColor(buttonBorderColor),
-    borderRadius(roundCornerRadius),
-    backgroundColor(mainColor),
-    &().hover {
-      backgroundColor(highlightColor)
-    }
+    all.initial
   )
 
   val inputHorizontalContainerSizeLimiter: CssStyle = style(
@@ -46,10 +52,10 @@ object Base extends CssBase {
     display.block
   )
 
-  val inputField: CssStyle = style (
+  val inputField: CssStyle = style(
     marginBottom(verticalMargin),
     marginLeft(horizontalMargin),
-//    marginRight((horizontalMargin.n + 5) px),
+    //    marginRight((horizontalMargin.n + 5) px),
 
     display.block,
     borderRadius(roundCornerRadius),
@@ -60,7 +66,7 @@ object Base extends CssBase {
     fontSize(biggerFontSize)
   )
 
-  val label: CssStyle = style (
+  val label: CssStyle = style(
     marginLeft(horizontalMargin),
     marginTop(inputVerticalSpacingMargin),
     display.block

@@ -31,7 +31,7 @@ package object styles {
   val bordersColor = c"#a13030"
   val buttonBorderColor = bordersColor
   val bgColor = c"#EBE2E9"
-  val highlightColor = c"#FFFBC6"
+  val highlightColor = c"#A5A0EB"
   val mainColor = c"#FFFBC6"
 
 }
