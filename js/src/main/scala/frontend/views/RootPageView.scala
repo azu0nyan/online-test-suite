@@ -9,7 +9,7 @@ import scalatags.generic.Modifier
 
 class RootPageView extends ContainerView {
 
-  override def getTemplate: Modifier[Element] = div(styles.Base.root ~,
+  override def getTemplate: Modifier[Element] = div(
     h1("This is header"),
     childViewContainer,
     h5("This is footer")

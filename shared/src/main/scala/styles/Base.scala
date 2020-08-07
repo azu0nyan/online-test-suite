@@ -1,14 +1,11 @@
 package styles
 
-import io.udash.css._
+import scalacss.DevDefaults._
 
-
-object Base extends CssBase {
+object Base extends StyleSheet.Standalone {
 
   import dsl._
-
-  val root: CssStyle = namedStyle("root",
-    unsafeChild("button")(
+  ("button") - (
       display.inlineBlock,
       marginTop(verticalMargin),
       marginBottom(verticalMargin),
@@ -24,39 +21,14 @@ object Base extends CssBase {
       borderColor(buttonBorderColor),
       borderRadius(roundCornerRadius),
       backgroundColor(mainColor),
-      &().hover {
+      &.hover {
         backgroundColor(highlightColor)
       }
     )
 
-  )
-
-  val button: CssStyle = style(
-    all.initial
-  )
-
-  val inputHorizontalContainerSizeLimiter: CssStyle = style(
-    width(inputContainerWidthLimit)
-  )
-
-  val inputContainer: CssStyle = style(
-    marginTop(verticalMargin),
+  "input" - (
     marginBottom(verticalMargin),
     marginLeft(horizontalMargin),
-    marginRight(horizontalMargin),
-    padding(horizontalPadding, verticalPadding),
-    borderWidth(smallBorderWidth),
-    borderColor(buttonBorderColor),
-    borderStyle.solid,
-    borderRadius(roundCornerRadius),
-    display.block
-  )
-
-  val inputField: CssStyle = style(
-    marginBottom(verticalMargin),
-    marginLeft(horizontalMargin),
-    //    marginRight((horizontalMargin.n + 5) px),
-
     display.block,
     borderRadius(roundCornerRadius),
     borderStyle.solid,
@@ -66,9 +38,11 @@ object Base extends CssBase {
     fontSize(biggerFontSize)
   )
 
-  val label: CssStyle = style(
+  "label" - (
     marginLeft(horizontalMargin),
     marginTop(inputVerticalSpacingMargin),
     display.block
   )
+
+
 }

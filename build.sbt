@@ -51,7 +51,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     scalacOptions ++= scalacOpts,
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
     libraryDependencies += "com.lihaoyi" %%% "scalatags" % scalatagsVersion,
-    libraryDependencies += "io.udash" %%% "udash-css" % udashVersion,
+    libraryDependencies += "com.github.japgolly.scalacss" %%% "core" % "0.6.1",
+//    libraryDependencies += "io.udash" %%% "udash-css" % udashVersion,
     //    libraryDependencies += "com.lihaoyi" %%% "upickle" % "1.0.0",
     libraryDependencies ++= Seq(
       "io.circe" %%% "circe-core",

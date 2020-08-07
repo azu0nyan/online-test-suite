@@ -18,17 +18,17 @@ class LoginPageView(
 
   val loginId = "loginInput"
   val passwordId = "passwordInput"
-  override def getTemplate: Modifier[Element] = div(styles.Base.inputHorizontalContainerSizeLimiter ~)(
-    form(styles.Base.inputContainer ~)(
-      label(styles.Base.label ~, `for` := loginId)("Логин:"),
-      TextInput(model.subProp(_.login))(id := loginId, styles.Base.inputField ~, placeholder := "Логин..."),
-      label(`for` := loginId, styles.Base.label ~)("Пароль:"),
-      PasswordInput(model.subProp(_.password))(id := passwordId, styles.Base.inputField ~, placeholder := "Пароль..."),
-      button(styles.Base.button ~, onclick :+= ((_: Event) => {
+  override def getTemplate: Modifier[Element] = div(styles.Custom.inputHorizontalContainerSizeLimiter ~)(
+    form(styles.Custom.inputContainer ~)(
+      label( `for` := loginId)("Логин:"),
+      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин..."),
+      label(`for` := loginId)("Пароль:"),
+      PasswordInput(model.subProp(_.password))(id := passwordId, placeholder := "Пароль..."),
+      button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
         presenter.logIn()
         true // prevent default
       }))("Войти"),
-      button(styles.Base.button ~,onclick :+= ((_: Event) => {
+      button(onclick :+= ((_: Event) => {
         presenter.toLandingPage()
         true // prevent default
       }))("Назад")

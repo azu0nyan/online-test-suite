@@ -7,20 +7,24 @@ import scalatags.JsDom.all._
 import org.scalajs.dom._
 import io.udash._
 import io.udash.css.CssStyle
+import scalacss.StyleA
+import scalacss.internal.Dsl
 import scalatags.generic.Modifier
 
 package object views extends Bindings {
 
-  implicit class CssStyleToMod(c:CssStyle) {
-    def asClass : JsDom.Modifier = `class` := c.className
+  implicit class CssStyleToMod(c: StyleA) {
+    val name:String = c.htmlClass
+    def asClass : JsDom.Modifier = `class` := name
     def ~ : JsDom.Modifier = asClass
   }
 
-  def genButton(caption: String,
-                action: => Unit,
-                styleName: String = styles.Base.button.className): Modifier[Element] =
-    button(`class` := styleName,  onclick :+= ((_: Event) => {
-      action
-      true // prevent default
-    }))(caption)
+//  def genButton(caption: String,
+//                action: => Unit,
+//                styleName: String = styles.Base.button.className): Modifier[Element] =
+//    button(`class` := styleName,  onclick :+= ((_: Event) => {
+//      print("asdsd")
+//      action
+//      true // prevent default
+//    }))(caption)
 }

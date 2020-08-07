@@ -1,11 +1,13 @@
 import java.awt.Color
 
 import scalacss.internal.Attrs
-import styles.Base.dsl
+import scalacss.internal.Dsl._
+//import styles.Base.dsl
+import scalacss.DevDefaults._
 
 package object styles {
 
-  import dsl._
+//  import dsl._
 
 
 
@@ -33,5 +35,5 @@ package object styles {
   val bgColor = c"#EBE2E9"
   val highlightColor = c"#A5A0EB"
   val mainColor = c"#FFFBC6"
-
+  val primaryButtonColor = c"#ffcb00"
 }
