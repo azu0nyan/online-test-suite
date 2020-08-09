@@ -29,7 +29,7 @@ object Grid extends StyleSheet.Inline{
     display.grid,
     gridTemplateColumns := s"[${leftColumn}]1fr [${middleColumnStart}]3fr [${rightColumn}]1fr [${rightColumnEnd}]",
     gridTemplateRows :=
-      s"[${headerRowStart}] $rowCellSize$rowCellVal [${contentRowStart}] $rowCellSize$rowCellVal [${contentMiddleRowStart}] ${rowCellSize * 6}$rowCellVal [${contentEndRowStart}] $rowCellSize$rowCellVal [${footerRowStart}] $rowCellSize$rowCellVal"
+      s"[${headerRowStart}] $rowCellSize$rowCellVal [${contentRowStart}] $rowCellSize$rowCellVal [${contentMiddleRowStart}] auto [${contentEndRowStart}] $rowCellSize$rowCellVal [${footerRowStart}] $rowCellSize$rowCellVal"
 //  s"[${headerRowStart}] 1fr [${contentRowStart}] 1fr [${contentMiddleRowStart}] 6fr [${contentEndRowStart}] 1fr [${footerRowStart}] 1fr"
 //  )
   )

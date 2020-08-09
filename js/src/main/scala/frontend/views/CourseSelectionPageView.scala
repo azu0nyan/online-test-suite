@@ -1,6 +1,9 @@
 package frontend.views
 
-import clientRequests.{GetCoursesList, LoginRequest, CourseDataRequest, RequestCoursesList, GetCoursesListFailure, GetCoursesListSuccess, StartCourseRequest, RequestStartCourseSuccess}
+import DbViewsShared.CourseShared
+import DbViewsShared.CourseShared.CourseStatus
+import clientRequests.{CourseDataRequest, GetCoursesList, GetCoursesListFailure, GetCoursesListSuccess, LoginRequest, RequestCoursesList, RequestStartCourseSuccess, StartCourseRequest}
+import constants.Text
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
@@ -28,11 +31,20 @@ class CourseSelectionPageView(
       }))("Начать")
     ).render
 
+
+  def statusHtml(st:CourseStatus) = div(styles.Custom.courseStatusContainer)(st match {
+    case CourseShared.Passing(Some(endsAt)) => p(Text.courseStatusExpires(endsAt.toString))
+    case CourseShared.Passing(None) => p(Text.courseStatusNoEnd)
+    case CourseShared.Finished() => p(Text.courseStatusFinished)
+  }
+  )
+
   //todo nested status
   private def courseHtml(ci: CourseInfoViewData) =
     div(styles.Custom.courseInfoContainer)(
       h3(ci.title), br,
       p(ci.description.getOrElse("").toString), br,
+      statusHtml(ci.status),
       button(onclick :+= ((_: Event) => {
         presenter.continueCourse(ci.courseId)
         true // prevent default
@@ -41,7 +53,7 @@ class CourseSelectionPageView(
 
 
   override def getTemplate: Modifier[Element] = div(
-    h2(constants.Text.continueCourse),
+    h2(constants.Text.existingCourses),
     div(repeat(courses.subSeq(_.existing))(p => courseHtml(p.get))),
     h2(constants.Text.startNewCourse),
     div(repeat(courses.subSeq(_.templates))(p => courseTemplateHtml(p.get))),

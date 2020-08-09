@@ -11,13 +11,15 @@ package object styles {
 
 
 
-  val roundCornerRadius = 5 px
-  val smallBorderWidth = 1 px
-  val bigBorderWidth = 1 px
+  val roundCornerRadius = 2 px
+  val smallBorderWidth = 2 px
+  val bigBorderWidth = 4 px
 
   val horizontalMargin = 10 px
   val verticalMargin = 15 px
 
+  val smallPadding = 5 px
+  val smallMargin = 5 px
   val horizontalPadding = 10 px
   val verticalPadding = 10 px
 
@@ -30,8 +32,9 @@ package object styles {
   //  val inputFieldPadding = horizontalPadding
   //  val inputFieldFontSize = fontSize
 
-  val bordersColor = c"#a13030"
-  val buttonBorderColor = bordersColor
+//  val bordersColor = c"#fbb03b"
+  val bordersColor = c"#FB9512"
+  val buttonBorderColor = c"#a13030"
   val bgColor = c"#EBE2E9"
   val highlightColor = c"#A5A0EB"
   val mainColor = c"#FFFBC6"
