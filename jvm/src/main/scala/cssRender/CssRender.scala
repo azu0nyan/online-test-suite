@@ -21,6 +21,7 @@ object CssRenderer {
     import scalacss.DevDefaults.{cssEnv, cssStringRenderer}
     val cssStr =
       styles.Base.render + "\n" +
+        styles.Grid.render + "\n" +
         styles.Custom.render
     Files.write(file, cssStr.getBytes(StandardCharsets.UTF_8))
 

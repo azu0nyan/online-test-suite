@@ -18,7 +18,7 @@ class LoginPageView(
 
   val loginId = "loginInput"
   val passwordId = "passwordInput"
-  override def getTemplate: Modifier[Element] = div(styles.Custom.inputHorizontalContainerSizeLimiter ~)(
+  override def getTemplate: Modifier[Element] = div(styles.Custom.inputContainerPositioner ~)(
     form(styles.Custom.inputContainer ~)(
       label( `for` := loginId)("Логин:"),
       TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин..."),

@@ -5,6 +5,11 @@ import scalacss.DevDefaults._
 object Base extends StyleSheet.Standalone {
 
   import dsl._
+
+  "div" - (
+    fontFamily :=! "\"Open Sans\", \"Clear Sans\", \"Helvetica Neue\", Helvetica, Arial, sans-serif;"
+  )
+
   ("button") - (
       display.inlineBlock,
       marginTop(verticalMargin),

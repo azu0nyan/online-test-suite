@@ -1,0 +1,36 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1682 231">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #3fa9f5;
+        stroke-miterlimit: 10;
+        stroke-width: 10px;
+      }
+
+      .cls-2 {
+        fill: #fbb03b;
+      }
+    </style>
+  </defs>
+  <title>nodes</title>
+  <line class="cls-1" x1="732.35" y1="77.91" x2="815" y2="133.38"/>
+  <line class="cls-1" x1="141.24" y1="39.16" x2="58.23" y2="86.39"/>
+  <line class="cls-1" x1="221" y1="41" x2="692.59" y2="41.5"/>
+  <line class="cls-1" x1="172" y1="77" x2="249.22" y2="177.72"/>
+  <line class="cls-1" x1="614" y1="153.5" x2="750" y2="180"/>
+  <line class="cls-1" x1="875.75" y1="182.89" x2="1024.8" y2="121.76"/>
+  <line class="cls-1" x1="1107.05" y1="72.5" x2="1202.65" y2="151.57"/>
+  <line class="cls-1" x1="1472.68" y1="38.23" x2="1602.6" y2="105.88"/>
+  <line class="cls-1" x1="1436" y1="78" x2="1345.89" y2="155.36"/>
+  <path class="cls-2" d="M276,121v68H183V121h93m5-10H178a5,5,0,0,0-5,5v78a5,5,0,0,0,5,5H281a5,5,0,0,0,5-5V116a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M1043,166v83H933V166h110m5-10H928a5,5,0,0,0-5,5v93a5,5,0,0,0,5,5h120a5,5,0,0,0,5-5V161a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M934,38v63H871V38h63m5-10H866a5,5,0,0,0-5,5v73a5,5,0,0,0,5,5h73a5,5,0,0,0,5-5V33a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M1274,63v83H1129V63h145m5-10H1124a5,5,0,0,0-5,5v93a5,5,0,0,0,5,5h155a5,5,0,0,0,5-5V58a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M1514,142v82H1382V142h132m5-10H1377a5,5,0,0,0-5,5v92a5,5,0,0,0,5,5h142a5,5,0,0,0,5-5V137a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M1845,142v83H1700V142h145m5-10H1695a5,5,0,0,0-5,5v93a5,5,0,0,0,5,5h155a5,5,0,0,0,5-5V137a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M1641,38v63h-63V38h63m5-10h-73a5,5,0,0,0-5,5v73a5,5,0,0,0,5,5h73a5,5,0,0,0,5-5V33a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M384,38v63H321V38h63m5-10H316a5,5,0,0,0-5,5v73a5,5,0,0,0,5,5h73a5,5,0,0,0,5-5V33a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M572,165v83H427V165H572m5-10H422a5,5,0,0,0-5,5v93a5,5,0,0,0,5,5H577a5,5,0,0,0,5-5V160a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+  <path class="cls-2" d="M777,152v59H693V152h84m5-10H688a5,5,0,0,0-5,5v69a5,5,0,0,0,5,5h94a5,5,0,0,0,5-5V147a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+</svg>

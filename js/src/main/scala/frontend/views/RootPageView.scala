@@ -1,5 +1,6 @@
 package frontend.views
 
+import constants.{Paths, Text}
 import frontend.RootState
 import io.udash._
 import io.udash.core.ContainerView
@@ -8,11 +9,19 @@ import scalatags.JsDom.all._
 import scalatags.generic.Modifier
 
 class RootPageView extends ContainerView {
+  //(styles.Custom.headerImageBG ~)
+  def header = div(styles.Grid.header ~)(
+    img(src := Paths.headerImage, alt := "Nodes", styles.Custom.headerImage ~),
+    //    h1("This is header"),
+  )
+  override protected val childViewContainer: Element = div(styles.Grid.content ~)(
 
-  override def getTemplate: Modifier[Element] = div(
-    h1("This is header"),
+  ).render
+
+  override def getTemplate: Modifier[Element] = div(styles.Grid.gridcontainer ~)(
+    header,
     childViewContainer,
-    h5("This is footer")
+    h5(styles.Grid.footer ~)(Text.footerText )
 
   )
 }

@@ -13,36 +13,38 @@ import viewData.{CourseInfoViewData, CourseTemplateViewData, UserViewData}
 import scala.util.{Failure, Success}
 
 
-
 class CourseSelectionPageView(
-                             courses: ModelProperty[viewData.UserCoursesInfoViewData],
-                             presenter: CourseSelectionPagePresenter
+                               courses: ModelProperty[viewData.UserCoursesInfoViewData],
+                               presenter: CourseSelectionPagePresenter
                              ) extends ContainerView {
 
-  private def courseTemplateHtml(ct:CourseTemplateViewData) = div(
-    h3(ct.title), br,
-    p(ct.description.getOrElse("").toString), br,
-    button(onclick :+= ((_: Event) => {
-      presenter.startNewCourse(ct.courseTemplateAlias)
-      true // prevent default
-    }))("Начать")
-  ) .render
+  private def courseTemplateHtml(ct: CourseTemplateViewData) =
+    div(styles.Custom.courseInfoContainer)(
+      h3(ct.title), br,
+      p(ct.description.getOrElse("").toString), br,
+      button(onclick :+= ((_: Event) => {
+        presenter.startNewCourse(ct.courseTemplateAlias)
+        true // prevent default
+      }))("Начать")
+    ).render
 
   //todo nested status
-  private def courseHtml(ci: CourseInfoViewData) = div(
-    h3(ci.title), br,
-    p(ci.description.getOrElse("").toString), br,
-    button(onclick :+= ((_: Event) => {
-      presenter.continueCourse(ci.courseId)
-      true // prevent default
-    }))("Продолжить")
-  ) .render
-
+  private def courseHtml(ci: CourseInfoViewData) =
+    div(styles.Custom.courseInfoContainer)(
+      h3(ci.title), br,
+      p(ci.description.getOrElse("").toString), br,
+      button(onclick :+= ((_: Event) => {
+        presenter.continueCourse(ci.courseId)
+        true // prevent default
+      }))("Продолжить")
+    ).render
 
 
   override def getTemplate: Modifier[Element] = div(
-    repeat(courses.subSeq(_.templates))(p => courseTemplateHtml(p.get)),
-    repeat(courses.subSeq(_.existing))(p => courseHtml(p.get)),
+    h2(constants.Text.continueCourse),
+    div(repeat(courses.subSeq(_.existing))(p => courseHtml(p.get))),
+    h2(constants.Text.startNewCourse),
+    div(repeat(courses.subSeq(_.templates))(p => courseTemplateHtml(p.get))),
     button(onclick :+= ((_: Event) => {
       presenter.logOut()
       true // prevent default
@@ -52,10 +54,10 @@ class CourseSelectionPageView(
 
 
 case class CourseSelectionPagePresenter(
-                                    courses: ModelProperty[viewData.UserCoursesInfoViewData],
-                                    app: Application[RoutingState]
-                                  ) extends GenericPresenter[CourseSelectionPageState.type]{
-  def continueCourse(courseId: String) : Unit = {
+                                         courses: ModelProperty[viewData.UserCoursesInfoViewData],
+                                         app: Application[RoutingState]
+                                       ) extends GenericPresenter[CourseSelectionPageState.type] {
+  def continueCourse(courseId: String): Unit = {
     app.goTo(CoursePageState(courseId, ""))
   }
 
@@ -73,7 +75,7 @@ case class CourseSelectionPagePresenter(
 
 
   def requestCoursesListUpdate(): Unit = {
-    frontend.sendRequest(clientRequests.GetCoursesList, RequestCoursesList(currentToken.get)) onComplete  {
+    frontend.sendRequest(clientRequests.GetCoursesList, RequestCoursesList(currentToken.get)) onComplete {
       case Success(GetCoursesListSuccess(cs)) =>
         println(s"courses list update : $cs")
         courses.set(cs)
@@ -93,12 +95,12 @@ case class CourseSelectionPagePresenter(
 
 }
 
-case object CourseSelectionPageViewFactory extends ViewFactory[CourseSelectionPageState.type]{
+case object CourseSelectionPageViewFactory extends ViewFactory[CourseSelectionPageState.type] {
   override def create(): (View, Presenter[CourseSelectionPageState.type]) = {
     println(s"Course selection page view factory creating..")
-    val coursesModel:ModelProperty[viewData.UserCoursesInfoViewData] = ModelProperty.blank[viewData.UserCoursesInfoViewData]//ModelProperty(viewData.UserCoursesInfoViewData(Seq(), Seq()))
+    val coursesModel: ModelProperty[viewData.UserCoursesInfoViewData] = ModelProperty.blank[viewData.UserCoursesInfoViewData] //ModelProperty(viewData.UserCoursesInfoViewData(Seq(), Seq()))
     val presenter = new CourseSelectionPagePresenter(coursesModel, frontend.applicationInstance)
-    val view = new CourseSelectionPageView( coursesModel, presenter)
+    val view = new CourseSelectionPageView(coursesModel, presenter)
     (view, presenter)
   }
 }

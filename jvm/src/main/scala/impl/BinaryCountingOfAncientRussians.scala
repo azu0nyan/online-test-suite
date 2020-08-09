@@ -8,7 +8,11 @@ object BinaryCountingOfAncientRussians {
 
 
   val template: CourseTemplate = new CourseTemplate {
-
+    override def description: Option[String] =
+      Some(
+        """Тест на знание основныых понятий двоичного счета древних русов,
+          |вам предстоит ответить на такие вопросы как "что такое `полушка`, `медячок` и т.д.
+          |Сдача теста на -1 баллов обязательно для вступления в ШУЕ.""".stripMargin)
     override val allowedForAll: Boolean = true
 
     override val allowedInstances: Option[Int] = Some(2)
