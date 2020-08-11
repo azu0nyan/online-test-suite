@@ -58,6 +58,7 @@ case class LoginPagePresenter(
 
   def onLoginSuccess(token: Token, userViewData: UserViewData): Unit = {
     println(s"Login success $token $userViewData")
+    setTokenCookie(token)
     currentToken.set(token, true)
     app.goTo(CourseSelectionPageState)
   }
@@ -76,6 +77,7 @@ case class LoginPagePresenter(
 case object LoginPageViewFactory extends ViewFactory[LoginPageState.type] {
   override def create(): (View, Presenter[LoginPageState.type]) = {
     println(s"Login  page view factory creating..")
+//      println(extractHost(document.documentURI))
     val model = ModelProperty(UserCredentialsData("", ""))
     val presenter = new LoginPagePresenter(model, frontend.applicationInstance)
     val view = new LoginPageView(model, presenter)

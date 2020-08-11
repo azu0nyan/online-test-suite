@@ -7,7 +7,6 @@ import scalacss.DevDefaults._
 
 
 object Custom extends StyleSheet.Inline {
-
   import dsl._
 
   //header

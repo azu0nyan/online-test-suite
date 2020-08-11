@@ -1,7 +1,7 @@
 package frontend.views
 
 import constants.{Paths, Text}
-import frontend.RootState
+import frontend.{RootState, currentToken, tokenFromCookie}
 import io.udash._
 import io.udash.core.ContainerView
 import org.scalajs.dom._
@@ -35,6 +35,7 @@ class RootPagePresenter extends Presenter[RootState.type] {
 case object RootPageViewFactory extends ViewFactory[RootState.type] {
   override def create(): (View, Presenter[RootState.type]) = {
     println(s"Root  page view factory creating..")
+    currentToken.set(tokenFromCookie, true)
     val presenter = new RootPagePresenter()
     val view = new RootPageView()
     (view, presenter)
