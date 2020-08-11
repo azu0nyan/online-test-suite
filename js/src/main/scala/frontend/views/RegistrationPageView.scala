@@ -82,6 +82,7 @@ case class RegistrationPagePresenter(
 
   def onRegistrationSuccess(): Unit = {
     println("Registration success")
+    toLoginPage()
   }
 
   def onRegistrationFailure(error: RegistrationFailure): Unit = {

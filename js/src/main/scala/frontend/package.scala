@@ -42,7 +42,7 @@ package object frontend extends Bindings {
   )
 
 
-  val extractToken:Regex = "token=[A-Za-z0-9_\\\\.\\\\-]*".r
+  val extractToken:Regex = "token=[A-Za-z0-9_\\\\.\\\\-]*".r//todo check
   def  tokenFromCookie:String = {
     val cookie = document.cookie
     println(s"extracting cookies from : $cookie")
