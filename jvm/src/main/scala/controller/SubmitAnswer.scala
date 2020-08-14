@@ -4,7 +4,7 @@ import java.time.Clock
 
 import controller.db.Answer.{BeingVerified, Rejected}
 import controller.db.{Answer, Problem, User}
-import otsbridge.{CantVerify, SubmissionResult, VerificationDelayed, Verified}
+import otsbridge.{CantVerify, AnswerVerificationResult, VerificationDelayed, Verified}
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
 import clientRequests._
@@ -35,14 +35,14 @@ object SubmitAnswer {
               } else {
                 val submittedAnswerCount = problem.answers.count(a =>
                   a.status.isInstanceOf[BeingVerified] || a.status.isInstanceOf[Verified])
-                if(submittedAnswerCount >= problem.attemptsMax){
-                  MaximumAttemptsLimitExceeded(problem.attemptsMax)
+                if(problem.attemptsMax.nonEmpty && submittedAnswerCount >= problem.attemptsMax.get){
+                  MaximumAttemptsLimitExceeded(problem.attemptsMax.get)
                 } else {
                   val answer = db.answers.insert(Answer(problem._id, req.answerRaw, BeingVerified(), Clock.systemUTC().instant())).pure[Option]
                   val template = TemplatesRegistry.getProblemTemplate(problem.templateAlias).get
                   Future {
-                    template.submitAnswer(problem.seed, req.answerRaw, processSubmissionResult(_, answer.get, user))
-                  }
+                    template.verifyAnswer(problem.seed, req.answerRaw)
+                  }.map(processSubmissionResult(_, answer.get, user))
                   AnswerSubmitted()
                 }
               }
@@ -58,25 +58,27 @@ object SubmitAnswer {
   /** main function for processing answers,
    * synchronization to prevent insertion of multiple  answers
    * attemptsLeft should be greater than 'BeingVerified' answers  */
-  def submitAnswer(problemIdHex: String, answerRaw: String, user: User): Unit = {
+ /* def submitAnswer(problemIdHex: String, answerRaw: String, user: User): Unit = {
     log.info(s"Answer submitted id : $problemIdHex answer : $answerRaw user ${user._id.toHexString} login : ${user.login}")
     UsersRegistry.doSynchronized(user._id) {
       //val answer: Option[Answer] = db.answers.insert(Answer())byId(new ObjectId(answerIdHex))
       for (
         p <- db.problems.byId(new ObjectId(problemIdHex))
-        if db.answers.byField("problemId", p._id).count(_.status.isInstanceOf[BeingVerified]) < p.attemptsMax;
+        if p.attemptsMax.nonEmpty &&
+          db.answers.byField("problemId", p._id)
+            .count(_.status.isInstanceOf[BeingVerified]) < p.attemptsMax.get;
         pl <- db.courses.byId(p.courseId) if pl.userId.equals(user._id);
         pt <- TemplatesRegistry.getProblemTemplate(p.templateAlias);
         answer <- db.answers.insert(Answer(p._id, answerRaw, BeingVerified(), Clock.systemUTC().instant())).pure[Option]
       ) {
         log.info(s"Answer : ${answer._id}  for problem $problemIdHex added to DB and submitted")
-        pt.submitAnswer(p.seed, answerRaw, processSubmissionResult(_, answer, user))
+        pt.verifyAnswer(p.seed, answerRaw, processSubmissionResult(_, answer, user))
       }
     }
   }
+*/
 
-
-  def processSubmissionResult(sr: SubmissionResult, answer: Answer, user: User): Unit = UsersRegistry.doSynchronized(user._id) {
+  def processSubmissionResult(sr: AnswerVerificationResult, answer: Answer, user: User): Unit = UsersRegistry.doSynchronized(user._id) {
     sr match {
       case Verified(score, review, systemMessage) =>
         log.info(s"Answer : ${answer._id} verified")

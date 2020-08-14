@@ -1,6 +1,6 @@
 package impl
 
-import otsbridge.{AnswerField, BinaryScore, CantVerify, CourseTemplate, DoubleNumberField, ProblemScore, ProblemTemplate, SubmissionResult, Verified}
+import otsbridge.{AnswerField, BinaryScore, CantVerify, CourseTemplate, DoubleNumberField, ProblemScore, ProblemTemplate, AnswerVerificationResult, Verified}
 
 import scala.concurrent.Future
 
@@ -57,10 +57,10 @@ object BinaryCountingOfAncientRussians {
 
     override val initialScore: ProblemScore = BinaryScore(false)
 
-    override def submitAnswer(seed: Int, answer: String, onComplete: SubmissionResult => Unit): Unit = onComplete(answer.toDoubleOption match {
+    override def verifyAnswer(seed: Int, answer: String): AnswerVerificationResult = answer.toDoubleOption match {
       case Some(x) => Verified(BinaryScore(x == value), None, None)
       case None => CantVerify(Some("Неправильный формат данных"))
-    })
+    }
     override def answerField(seed: Int): DoubleNumberField = DoubleNumberField("")
     override def title(seed: Int): String = name
   }

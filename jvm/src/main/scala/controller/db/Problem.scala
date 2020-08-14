@@ -16,7 +16,7 @@ object Problem {
 //  /**Есть засчитанный ответ(возможно неправильный)*/
 //  case class Answered(score: ProblemScore) extends ProblemStatus
 
-  def apply(problemListId: ObjectId, templateAlias: String, seed: Int, attemptsLeft:Int, score:ProblemScore): Problem =
+  def apply(problemListId: ObjectId, templateAlias: String, seed: Int, attemptsLeft:Option[Int], score:ProblemScore): Problem =
     new Problem(new ObjectId(), problemListId, templateAlias, seed, attemptsLeft, score)
 
 }
@@ -27,7 +27,7 @@ case class Problem(
                     courseId: ObjectId,
                     templateAlias: String,
                     seed: Int,
-                    attemptsMax:Int,
+                    attemptsMax:Option[Int],
                     score: ProblemScore)  extends MongoObject {
   def updateScore(score: ProblemScore):Problem = {
     db.problems.updateField(this, "score", score)
