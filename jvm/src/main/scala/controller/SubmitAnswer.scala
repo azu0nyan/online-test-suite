@@ -39,6 +39,7 @@ object SubmitAnswer {
                   MaximumAttemptsLimitExceeded(problem.attemptsMax.get)
                 } else {
                   val answer = db.answers.insert(Answer(problem._id, req.answerRaw, BeingVerified(), Clock.systemUTC().instant())).pure[Option]
+                  log.info(s"User ${user.idAndLoginStr} submitted answer ${answer.map(_._id.toHexString).getOrElse("NONE")} for problem ${problem.idAlias} from course ${course.get.idAlias}")
                   val template = TemplatesRegistry.getProblemTemplate(problem.templateAlias).get
                   Future {
                     template.verifyAnswer(problem.seed, req.answerRaw)
@@ -84,7 +85,7 @@ object SubmitAnswer {
         log.info(s"Answer : ${answer._id} verified")
         answer.changeStatus(Answer.Verified(score, review, systemMessage, Clock.systemUTC().instant()))
         db.problems.byId(answer.problemId).foreach { p =>
-          val bestScore = otsbridge.ProblemScore.bestOf(p.score, score)
+          val bestScore = otsbridge.CompareProblemScore.bestOf(p.score, score)
           if (p.score != bestScore) p.updateScore(score)
         }
       case CantVerify(systemMessage) =>

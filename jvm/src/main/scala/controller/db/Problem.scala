@@ -29,6 +29,8 @@ case class Problem(
                     seed: Int,
                     attemptsMax:Option[Int],
                     score: ProblemScore)  extends MongoObject {
+
+
   def updateScore(score: ProblemScore):Problem = {
     db.problems.updateField(this, "score", score)
     this
@@ -41,6 +43,8 @@ case class Problem(
   def answers:Seq[Answer] = db.answers.byFieldMany("problemId", _id)
 
   def template:ProblemTemplate = TemplatesRegistry.getProblemTemplate(templateAlias).get
+
+  def idAlias = s"[${_id.toHexString} $templateAlias]"
 
   def toView:ProblemViewData =
     ProblemViewData(_id.toHexString,

@@ -3,21 +3,14 @@ package controller
 import DbViewsShared.CourseShared.CourseStatus
 import com.typesafe.scalalogging.Logger
 import controller.db.Answer.AnswerStatus
-import org.mongodb.scala.model.Updates._
 import org.bson.types.ObjectId
 import org.mongodb.scala.{ClientSession, Completed, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, ReadConcern, SingleObservable, TransactionOptions, WriteConcern}
 import org.mongodb.scala.bson.codecs.Macros._
-import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.result.UpdateResult
-import org.mongodb.scala._
-
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future, Promise}
-import scala.reflect.ClassTag
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.slf4j.LoggerFactory
-import otsbridge.ProblemScore
+import otsbridge.{ProblemScore, ProgramRunResult}
+//import otsbridge.{ProblemScore, ProgramRunResult}
 
 
 package object db extends CollectionOps {
@@ -30,6 +23,9 @@ package object db extends CollectionOps {
 
   val dbName = "myTestDb"
 
+  //  import org.mongodb.scala.bson.codecs.Macros
+  //  val problemScoreCodecProvider = Macros.createCodecProvider[ProblemScore]()
+
   val codecRegistry = fromRegistries(fromProviders(
     classOf[User],
     classOf[Group],
@@ -37,10 +33,12 @@ package object db extends CollectionOps {
     classOf[Answer],
     classOf[Course],
     classOf[CourseStatus],
+    classOf[ProgramRunResult],
+    //    problemScoreCodecProvider,
     classOf[ProblemScore],
     classOf[AnswerStatus],
     //    classOf[ProblemSetScore],
-    classOf[CourseTemplateAvailableForUser]
+    classOf[CourseTemplateAvailableForUser],
   ), DEFAULT_CODEC_REGISTRY)
 
   val mongoClient: MongoClient = MongoClient()

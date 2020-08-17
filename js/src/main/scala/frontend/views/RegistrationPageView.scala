@@ -23,8 +23,8 @@ class RegistrationPageView(
   val firstNameId = "nameInput"
   val lastNameId = "lastNameInput"
 
-  override def getTemplate: Modifier[Element] = div(
-    form()(
+  override def getTemplate: Modifier[Element] = div(styles.Custom.inputContainerPositioner ~)(
+    form(styles.Custom.inputContainer ~)(
       label(`for` := loginId)("Логин:"),
       TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин..."),
       label(`for` := emailId)("Почта:"),
@@ -37,7 +37,7 @@ class RegistrationPageView(
       TextInput(model.subProp(_.firstName))(id := firstNameId, placeholder := "Логин..."),
       label(`for` := lastNameId)("Фамилия:"),
       TextInput(model.subProp(_.lastName))(id := lastNameId, placeholder := "Логин..."),
-      button(onclick :+= ((_: Event) => {
+      button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
         presenter.register()
         true // prevent default
       }))("Зарегистрироваться")

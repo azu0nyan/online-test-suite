@@ -7,10 +7,17 @@ import scalacss.DevDefaults._
 
 
 object Custom extends StyleSheet.Inline {
+
   import dsl._
 
   //header
   val headerImage = style(
+
+    display.block,
+    height(100 %%),
+    marginLeft.auto,
+    marginRight.auto
+
     //    width(50 %%)
   )
 
@@ -25,6 +32,9 @@ object Custom extends StyleSheet.Inline {
 
   val inputContainerPositioner = style(
     backgroundColor.transparent,
+    marginLeft.auto,
+    marginRight.auto,
+    width.fitContent
   )
 
   val defaultBoxBordersPaddingsMargins = mixin(
@@ -64,6 +74,47 @@ object Custom extends StyleSheet.Inline {
     margin(smallMargin),
     textAlign.center
   )
+  //course page
+  val problemContainer = style(
+    display.block,
+    defaultBoxBordersPaddingsMargins
+  )
+
+  val problemAnswersList = style(
+    defaultBoxBordersPaddingsMargins
+  )
+
+  val problemHeader = style(
+
+  )
+
+  val problemStatusContainer = style(
+    float.right
+  )
+
+  val problemStatusSuccess = style(
+      color(successColor)
+  )
+
+  val problemStatusNoAnswer = style(
+    color(warnColor)
+  )
+
+  val problemStatusPartialSucess = problemStatusNoAnswer
+
+  val problemStatusFailure = style(
+    color(failureColor)
+  )
+
+
+
+  val programInputTextArea = style(
+    width(100 %%),
+//    height(600 px),
+//    height.fitContent
+  )
+
+
 
 
 }

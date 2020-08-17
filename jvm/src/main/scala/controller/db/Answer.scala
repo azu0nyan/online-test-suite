@@ -35,7 +35,12 @@ case class Answer(_id: ObjectId, problemId: ObjectId, answer: String, status: An
   )
 
   def changeStatus(newStatus: AnswerStatus): Answer = {
+    println(newStatus)
+    println("BEFORE")
+    println(answers.byField("_id", this._id))
     answers.updateField(this, "status", newStatus)
+    println("AFTER")
+    println(answers.byField("_id", this._id))
     this.copy(status = newStatus)
   }
 }

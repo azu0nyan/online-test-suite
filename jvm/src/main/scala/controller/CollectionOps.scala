@@ -86,6 +86,7 @@ trait CollectionOps {
     def updateFieldWhenMatches[M, F](fieldToMatchName: String, matchValue: M, fieldName: String, f: F, session: Option[ClientSession] = None): Option[UpdateResult] =
       Await.result({
         if (session.isEmpty)
+//          col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f))
           col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f))
         else
           col.updateOne(session.get, equal(fieldToMatchName, matchValue), set(fieldName, f))

@@ -17,6 +17,8 @@ object Course {
 }
 
 case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
+  def idAlias = s"[${_id.toHexString} $templateAlias]"
+
   def changeStatus(newStatus: CourseStatus): Course = {
     problems.updateField(this, "status", newStatus)
     this.copy(status = newStatus)

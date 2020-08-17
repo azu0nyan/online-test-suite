@@ -7,7 +7,8 @@ object Base extends StyleSheet.Standalone {
   import dsl._
 
   "div" - (
-    fontFamily :=! "\"Open Sans\", \"Clear Sans\", \"Helvetica Neue\", Helvetica, Arial, sans-serif;"
+    fontFamily :=! "\"Open Sans\", \"Clear Sans\", \"Helvetica Neue\", Helvetica, Arial, sans-serif;",
+    color(defaultFontColor)
   )
 
   ("button") - (
@@ -40,7 +41,8 @@ object Base extends StyleSheet.Standalone {
     borderWidth(smallBorderWidth),
     borderColor(bordersColor),
     padding(horizontalPadding, verticalPadding),
-    fontSize(biggerFontSize)
+    fontSize(biggerFontSize),
+    backgroundColor(defaultInputBgColor)
   )
 
   "label" - (
