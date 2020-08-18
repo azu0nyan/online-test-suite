@@ -9,6 +9,8 @@ import frontend._
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom._
+import otsbridge.ProblemScore._
+import otsbridge.ProgramRunResult.ProgramRunResult
 import otsbridge._
 import scalatags.JsDom.all.{button, _}
 import scalatags.generic.Modifier

@@ -70,7 +70,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     libraryDependencies += "com.sparkjava" % "spark-core" % "2.9.1",
     libraryDependencies += "com.pauldijou" %% "jwt-core" % "4.2.0",
 
-    mainClass in reStart := Some("db.DBInit"),
+    mainClass in reStart := Some("app.App"),
     baseDirectory in reStart := file(workdir)
     //    fork in run := true,
     //    baseDirectory in run := file("workdir")

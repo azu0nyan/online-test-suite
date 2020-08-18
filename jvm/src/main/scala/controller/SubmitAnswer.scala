@@ -8,14 +8,16 @@ import otsbridge.{CantVerify, AnswerVerificationResult, VerificationDelayed, Ver
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
 import clientRequests._
-import com.typesafe.scalalogging.Logger
-import org.slf4j.LoggerFactory
+//import com.typesafe.scalalogging.Logger
+//import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
 object SubmitAnswer {
+  import com.typesafe.scalalogging.Logger
+  import org.slf4j.LoggerFactory
   val log: Logger = Logger(LoggerFactory.getLogger("controller.SubmitAnswer"))
 
   def submitAnswer(req: SubmitAnswerRequest): SubmitAnswerResponse = {

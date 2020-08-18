@@ -1,4 +1,6 @@
 package app
+import java.nio.file.Paths
+
 import clientRequests.{LoginRequest, LoginSuccessResponse}
 import constants.Skeleton
 import controller.{CoursesOps, LoginUserOps, RegisterUser, SubmitAnswer}
@@ -8,7 +10,10 @@ import viewData.UserViewData
 object HttpServer {
 
   def initRoutesAndStart(): Unit ={
-    externalStaticFileLocation("workdir")
+    log.info(s"set external static files location to ${Paths.get("").toAbsolutePath.toString}")
+    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
+//    staticFileLocation("")
+
 //    println(Spark.staticFiles.)
     port(8080)
     get("/", (request: Request, response: Response) => {Skeleton()})

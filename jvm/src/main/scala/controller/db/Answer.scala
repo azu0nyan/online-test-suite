@@ -5,8 +5,8 @@ import java.time.{Clock, Instant}
 import controller.db.Answer.{AnswerStatus, Verified}
 import otsbridge.{CantVerify, ProblemScore}
 import org.bson.types.ObjectId
+import otsbridge.ProblemScore.ProblemScore
 import viewData.AnswerViewData
-
 object Answer {
   sealed trait AnswerStatus
   case class Verified(score: ProblemScore,
@@ -35,12 +35,12 @@ case class Answer(_id: ObjectId, problemId: ObjectId, answer: String, status: An
   )
 
   def changeStatus(newStatus: AnswerStatus): Answer = {
-    println(newStatus)
-    println("BEFORE")
-    println(answers.byField("_id", this._id))
+//    println(newStatus)
+//    println("BEFORE")
+//    println(answers.byField("_id", this._id))
     answers.updateField(this, "status", newStatus)
-    println("AFTER")
-    println(answers.byField("_id", this._id))
+//    println("AFTER")
+//    println(answers.byField("_id", this._id))
     this.copy(status = newStatus)
   }
 }

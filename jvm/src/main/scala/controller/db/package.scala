@@ -9,6 +9,8 @@ import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.slf4j.LoggerFactory
+import otsbridge.ProblemScore.ProblemScore
+import otsbridge.ProgramRunResult.ProgramRunResult
 import otsbridge.{ProblemScore, ProgramRunResult}
 //import otsbridge.{ProblemScore, ProgramRunResult}
 
@@ -33,9 +35,11 @@ package object db extends CollectionOps {
     classOf[Answer],
     classOf[Course],
     classOf[CourseStatus],
+//    classOf[ProgramRunResult2],
     classOf[ProgramRunResult],
-    //    problemScoreCodecProvider,
     classOf[ProblemScore],
+    //    mongoHelper.problemRunResultCodecProvider,
+    //    mongoHelper.problemScoreCodecProvider,
     classOf[AnswerStatus],
     //    classOf[ProblemSetScore],
     classOf[CourseTemplateAvailableForUser],

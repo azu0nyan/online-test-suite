@@ -4,6 +4,7 @@ import controller.{TemplatesRegistry, db}
 import otsbridge._
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Updates._
+import otsbridge.ProblemScore.ProblemScore
 import viewData.ProblemViewData
 
 import scala.concurrent.Await
