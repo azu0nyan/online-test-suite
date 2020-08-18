@@ -1,5 +1,6 @@
 package frontend.views
 
+import DbViewsShared.CourseShared
 import clientRequests.{CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, SubmitAnswerRequest}
 import constants.Text
 
@@ -9,10 +10,13 @@ import frontend._
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom._
+import org.scalajs.dom.html.Table
 import otsbridge.ProblemScore._
 import otsbridge.ProgramRunResult.ProgramRunResult
 import otsbridge._
+import scalatags.JsDom
 import scalatags.JsDom.all.{button, _}
+import scalatags.JsDom.tags2.{details, summary}
 import scalatags.generic.Modifier
 import viewData.{AnswerViewData, CourseInfoViewData, CourseTemplateViewData, UserViewData}
 //import Model._
@@ -61,43 +65,75 @@ class CoursePageView(
     }
   }
 
-  private def score(score: ProblemScore, dontHaveAnswers: Boolean) = score match {
+  private def score(score: ProblemScore, dontHaveAnswers: Boolean) = p(styles.Custom.problemScoreText)(score match {
     //    case a@_ => div(a.toString)
     case BinaryScore(passed) =>
-      if (passed) div(styles.Custom.problemStatusSuccess)(Text.pStatusAccepted)
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswer)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailure)(Text.pStatusFailure)
+      if (passed) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusAccepted)
+      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
+      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusFailure)
     case IntScore(score) =>
-      if (score > 0) div(styles.Custom.problemStatusSuccess)(Text.pStatusYourScore(score))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswer)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailure)(Text.pStatusYourScore(score))
+      if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScore(score))
+      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
+      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScore(score))
     case DoubleScore(score, max) =>
-      if (score == max) div(styles.Custom.problemStatusSuccess)(Text.pStatusYourScoreOutOf(score, max))
-      else if (score > 0) div(styles.Custom.problemStatusSuccess)(Text.pStatusYourScoreOutOf(score, max))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswer)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailure)(Text.pStatusYourScoreOutOf(score, max))
+      if (score == max) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
+      else if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
+      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
+      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScoreOutOf(score, max))
     case XOutOfYScore(score, max) =>
-      if (score == max) div(styles.Custom.problemStatusSuccess)(Text.pStatusYourScoreOutOf(score, max))
-      else if (score > 0) div(styles.Custom.problemStatusSuccess)(Text.pStatusYourScoreOutOf(score, max))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswer)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailure)(Text.pStatusYourScoreOutOf(score, max))
+      if (score == max) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
+      else if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
+      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
+      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScoreOutOf(score, max))
     case mr@MultipleRunsResultScore(runResults) =>
       val score = mr.successesTotal
       val max = mr.tasksTotal
-      if (score == max) div(styles.Custom.problemStatusSuccess)(Text.pStatusYourScoreOutOf(score, max))
-      else if (score > 0) div(styles.Custom.problemStatusSuccess)(Text.pStatusYourScoreOutOf(score, max))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswer)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailure)(Text.pStatusYourScoreOutOf(score, max))
-    //runResultsTable(runResults)
+      if (score == max) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
+      else if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
+      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
+      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScoreOutOf(score, max))
 
-  }
 
-  def runResultsTable(seq: Seq[ProgramRunResult]) = div(seq.flatMap(pr => Seq(p(pr.toString), br)))
+  })
+
+  def expandable(sumary:JsDom.TypedTag[_], det:JsDom.TypedTag[_]) = details(
+    summary(sumary),
+    det
+  )
+
+  val maxRunsWithoutFold:Int = 3
+
+  def runResultsTable(runs: Seq[ProgramRunResult]) =
+    if(runs.size > maxRunsWithoutFold) expandable(div(Text.pShowRuns.toString), runResultsTableRaw(runs))
+    else runResultsTableRaw(runs)
+
+  def runResultsTableRaw(runs: Seq[ProgramRunResult]): JsDom.TypedTag[Table] =
+    table(styles.Custom.problemAnswersTable ~)(
+      tr(
+        th(width := "20px")(Text.pAnswerNumber),
+        th(width := "50px")(Text.pRunResult),
+        th(Text.pRunMessage),
+      ),
+      for ((run, i) <- runs.zipWithIndex) yield tr(
+        td((i + 1).toString),
+        td(run match {
+          case ProgramRunResult.ProgramRunResultSuccess(timeMS, message) => div(styles.Custom.problemStatusSuccessFontColor)(Text.pRunTimeMs(timeMS))
+          case ProgramRunResult.ProgramRunResultWrongAnswer(message) => div(styles.Custom.problemStatusPartialSucessFontColor)(Text.pRunWrongAnswer)
+          case ProgramRunResult.ProgramRunResultFailure(message) => div(styles.Custom.problemStatusFailureFontColor)(Text.pRunRuntimeException)
+        }),
+        td(run match {
+          case ProgramRunResult.ProgramRunResultSuccess(timeMS, message) => pre(overflowX.auto)(message.getOrElse("").toString)
+          case ProgramRunResult.ProgramRunResultWrongAnswer(message) => pre(overflowX.auto)(message.getOrElse("").toString)
+          case ProgramRunResult.ProgramRunResultFailure(message) => pre(overflowX.auto)(message.getOrElse("").toString)
+        })
+      )
+    )
+    //div(seq.flatMap(pr => Seq(p(pr.toString), br)))
 
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
     div(styles.Custom.problemContainer ~)(
       //data.get.title.map(t => h4(t)).getOrElse(""),
-      div(styles.Custom.problemStatusContainer ~)(score(problemData.subProp(_.score).get, problemData.subProp(_.answers).get.isEmpty)), //floats right
+      div(styles.Custom.problemStatusContainer ~)(score(problemData.subProp(_.score).get, dontHaveAnswers = problemData.subProp(_.answers).get.isEmpty)), //floats right
       h3(styles.Custom.problemHeader)(problemData.get.title),
       scalatags.JsDom.all.raw(problemData.subProp(_.problemHtml).get),
       answerField(problemData, nested),
@@ -107,25 +143,36 @@ class CoursePageView(
   def answersList(answers: Seq[AnswerViewData]) = if (answers.isEmpty) div() else
     div(styles.Custom.problemAnswersList ~)(
       h3(Text.pYourAnswers),
-      table(width := "100%")(
+      table(styles.Custom.problemAnswersTable ~)(
         tr(
-          th(Text.pAnswerNumber),
-          th(Text.pAnswerAnsweredAt),
-          th(Text.pAnswerScore),
-          th(Text.pAnswerSystemMessage),
-          th(Text.pAnswerReview),
-          th(Text.pAnswerAnswerText),
+          th(width := "20px")(Text.pAnswerNumber),
+          th(width := "50px")(Text.pAnswerAnsweredAt),
+          th(width := "50px")(Text.pAnswerScore),
+          th(width := "450px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerSystemMessage),
+          th(width := "150px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerReview),
+          th(width := "150px", minWidth := "100px",maxWidth := "40%")(Text.pAnswerAnswerText),
         ),
-        for ((ans, i) <- answers.sortBy(_.answeredAt).zipWithIndex) yield tr(
-          td(i.toString),
+        for ((ans, i) <- answers.sortBy(_.answeredAt).zipWithIndex.reverse) yield tr(
+          td((i + 1).toString),
           td(ans.answeredAt.toString),
           td(ans.score match {
             case Some(value) => score(value, false)
-            case None => div(styles.Custom.problemStatusNoAnswer)(Text.pAnswerNoScore)
+            case None => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
           }),
-          td(ans.systemMessage.getOrElse("").toString),
-          td(ans.review.getOrElse("").toString),
-          td(ans.answerText),
+          td(ans.status match {
+            case CourseShared.Verified(score, review, systemMessage, verifiedAt) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto) (systemMessage.getOrElse("").toString)
+            case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto) (systemMessage.getOrElse("").toString)
+            case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto) ()
+            case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto) (systemMessage.getOrElse("").toString)
+          }, ans.score match {
+            case Some(MultipleRunsResultScore(runs)) =>runResultsTable(runs)
+            case _ =>p()
+          }),
+          td(ans.status match {
+            case CourseShared.Verified(_, review, _, _) =>pre(overflowX.auto)(review.getOrElse("").toString)
+            case _ => ""
+          }),
+          td(expandable(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
         )
       )
     )

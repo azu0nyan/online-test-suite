@@ -81,28 +81,60 @@ object Custom extends StyleSheet.Inline {
   )
 
   val problemAnswersList = style(
-    defaultBoxBordersPaddingsMargins
+    defaultBoxBordersPaddingsMargins,
+
+  )
+
+  val problemAnswersTable = style(
+    width(100 %%),
+    tableLayout.fixed,
+    overflowX.hidden,
+    color(defaultFontColor),
+    fontSize(mediumFontSize),
+    borderCollapse.collapse,
+    unsafeChild("td")(
+      overflowX.hidden,
+      padding(smallPadding),
+      textAlign.left,
+      borderWidth(tableBorderWidth),
+      borderStyle.solid,
+      borderColor(tableBordersColor)
+    ),
+    unsafeChild("th")(
+      overflowX.hidden,
+      padding(smallPadding),
+      textAlign.left,
+      borderWidth(tableBorderWidth),
+      borderStyle.solid,
+      borderColor(tableBordersColor)
+    )
   )
 
   val problemHeader = style(
 
   )
 
+
+  val problemScoreText = style(
+    fontSize(biggerFontSize),
+    fontWeight.bold
+  )
+
   val problemStatusContainer = style(
     float.right
   )
 
-  val problemStatusSuccess = style(
+  val problemStatusSuccessFontColor = style(
       color(successColor)
   )
 
-  val problemStatusNoAnswer = style(
+  val problemStatusNoAnswerFontColor = style(
     color(warnColor)
   )
 
-  val problemStatusPartialSucess = problemStatusNoAnswer
+  val problemStatusPartialSucessFontColor = problemStatusNoAnswerFontColor
 
-  val problemStatusFailure = style(
+  val problemStatusFailureFontColor = style(
     color(failureColor)
   )
 

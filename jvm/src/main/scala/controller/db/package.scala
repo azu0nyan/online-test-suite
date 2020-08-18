@@ -1,8 +1,7 @@
 package controller
 
-import DbViewsShared.CourseShared.CourseStatus
+import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import com.typesafe.scalalogging.Logger
-import controller.db.Answer.AnswerStatus
 import org.bson.types.ObjectId
 import org.mongodb.scala.{ClientSession, Completed, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, ReadConcern, SingleObservable, TransactionOptions, WriteConcern}
 import org.mongodb.scala.bson.codecs.Macros._

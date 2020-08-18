@@ -13,6 +13,7 @@ package object styles {
 
   val roundCornerRadius = 2 px
   val smallBorderWidth = 4 px
+  val tableBorderWidth = 2 px
   val bigBorderWidth = 6 px
 
   val horizontalMargin = 10 px
@@ -34,6 +35,7 @@ package object styles {
 
 //  val bordersColor = c"#fbb03b"
   val bordersColor = c"#fbb03b"
+  val tableBordersColor = c"#3fa9f5"
 //  val buttonBorderColor = c"#a13030"
   val buttonBorderColor = c"#fbb03b"
   val bgColor = c"#EBE2E9"
@@ -43,7 +45,7 @@ package object styles {
   val defaultInputBgColor =c"#ffffff"
   val defaultFontColor = c"#000000"
 
-  val successColor = c"#00FF00"
+  val successColor = c"#248f24"
   val warnColor = c"#fbb03b"
   val failureColor = c"#FF0000"
 }

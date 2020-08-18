@@ -28,7 +28,8 @@ object Text {
   val pStatusFailure: String = "Незачтено"
   val pStatusNoAnswer: String = "Нет ответа"
   val pAnswerNoScore: String = "Нет оценки"
-  val pAnswerNumber: String = "Номер"
+  val pAnswerWaitingForVerify: String = "Ожидает проверки"
+  val pAnswerNumber: String = "№"
   val pAnswerAnsweredAt: String = "Время"
   val pAnswerScore: String = "Баллы"
   val pAnswerSystemMessage: String = "Системное сообщение"
@@ -36,6 +37,15 @@ object Text {
   val pAnswerAnswerText: String = "Текст ответа"
   def pStatusYourScore(score: Any): String = s" $score"
   def pStatusYourScoreOutOf(score: Any, outOf: Any): String = s" $score / $outOf"
+
+  def pRunTimeMs(ms:Long) :String = s"$ms мс."
+  def pRunWrongAnswer :String = s"Неверный ответ"
+  def pRunRuntimeException :String = s"Ошибка при выполнении"
+  def pRunMessage :String = s"Сообщение"
+  def pRunResult :String = s"Результат"
+
+  def details :String = s"Подробнее"
+  def pShowRuns :String = s"Показать отдельные тесты"
 
 
   val pYourAnswers: String = "Ваши ответы"

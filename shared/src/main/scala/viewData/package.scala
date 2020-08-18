@@ -1,6 +1,7 @@
 import java.time.Instant
 
-import DbViewsShared.CourseShared.CourseStatus
+import DbViewsShared.CourseShared
+import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import otsbridge.{AnswerField, ProblemScore}
 import io.circe.generic.auto._
 import otsbridge.ProblemScore.ProblemScore
@@ -16,12 +17,14 @@ package object viewData {
   case class AnswerViewData(
                            problemId: String,
                            answerText:String,
-                           score: Option[ProblemScore],
-                           verifiedAt: Option[Instant],
                            answeredAt: Instant,
-                           review: Option[String],
-                           systemMessage: Option[String]
-                           )
+                           status:AnswerStatus
+                           ) {
+    def score: Option[ProblemScore] = status match {
+      case CourseShared.Verified(score, review, systemMessage, verifiedAt) =>  Some(score)
+      case _ => None
+    }
+  }
 
   /**Информация о проблеме для отображения пользователю */
   case class ProblemViewData(problemId: String,

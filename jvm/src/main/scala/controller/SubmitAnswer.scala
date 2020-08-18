@@ -2,9 +2,10 @@ package controller
 
 import java.time.Clock
 
-import controller.db.Answer.{BeingVerified, Rejected}
+import DbViewsShared.CourseShared._
 import controller.db.{Answer, Problem, User}
-import otsbridge.{CantVerify, AnswerVerificationResult, VerificationDelayed, Verified}
+import otsbridge.AnswerVerificationResult
+//import otsbridge.{AnswerVerificationResult, CantVerify, VerificationDelayed, Verified}
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
 import clientRequests._
@@ -83,17 +84,17 @@ object SubmitAnswer {
 
   def processSubmissionResult(sr: AnswerVerificationResult, answer: Answer, user: User): Unit = UsersRegistry.doSynchronized(user._id) {
     sr match {
-      case Verified(score, review, systemMessage) =>
+      case otsbridge.Verified(score, review, systemMessage) =>
         log.info(s"Answer : ${answer._id} verified")
-        answer.changeStatus(Answer.Verified(score, review, systemMessage, Clock.systemUTC().instant()))
+        answer.changeStatus(Verified(score, review, systemMessage, Clock.systemUTC().instant()))
         db.problems.byId(answer.problemId).foreach { p =>
           val bestScore = otsbridge.CompareProblemScore.bestOf(p.score, score)
           if (p.score != bestScore) p.updateScore(score)
         }
-      case CantVerify(systemMessage) =>
+      case otsbridge.CantVerify(systemMessage) =>
         log.info(s"Answer : ${answer._id} cant verify cause : ${systemMessage.getOrElse("No message, unknown")}")
         answer.changeStatus(Rejected(systemMessage, Clock.systemUTC().instant()))
-      case VerificationDelayed(systemMessage) =>
+      case otsbridge.VerificationDelayed(systemMessage) =>
         log.info(s"Answer : ${answer._id} verification delayed")
 
     }
