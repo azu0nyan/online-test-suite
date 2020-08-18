@@ -30,12 +30,12 @@ object Text {
   val pAnswerNoScore: String = "Нет оценки"
   val pAnswerNumber: String = "Номер"
   val pAnswerAnsweredAt: String = "Время"
-  val pAnswerScore: String = "Оценка"
+  val pAnswerScore: String = "Баллы"
   val pAnswerSystemMessage: String = "Системное сообщение"
   val pAnswerReview: String = "Отзыв преподавателя"
   val pAnswerAnswerText: String = "Текст ответа"
-  def pStatusYourScore(score: Any): String = s"Счет : $score"
-  def pStatusYourScoreOutOf(score: Any, outOf: Any): String = s"Счет : $score / $outOf"
+  def pStatusYourScore(score: Any): String = s" $score"
+  def pStatusYourScoreOutOf(score: Any, outOf: Any): String = s" $score / $outOf"
 
 
   val pYourAnswers: String = "Ваши ответы"
