@@ -11,6 +11,12 @@ object UserToGroup {
     if (current.isEmpty) userToGroup.insert(UserToGroup(user._id, group._id), Some(s))
   }
 
+  def removeUserFromGroup(user: User, group: Group): Unit = {
+    userToGroup.byTwoFields("userId", user._id, "groupId", group._id).foreach { current =>
+      userToGroup.delete(current)
+    }
+  }
+
   def userInGroup(group: Group): Seq[User] =
     userToGroup.byFieldMany("groupId", group._id).flatMap(utg => users.byId(utg.userId))
 

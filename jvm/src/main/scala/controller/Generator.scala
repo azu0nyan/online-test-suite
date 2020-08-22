@@ -11,7 +11,7 @@ import scala.concurrent.{Future, Promise}
 object Generator {
 
   def generateCourseForUserFromAvailableTemplate(pltafu: CourseTemplateAvailableForUser): (Course, Seq[Problem]) = {
-    val res = generateCourseForUserIgnoringTemplate(pltafu.userId, TemplatesRegistry.getCourseTemplate(pltafu.templateAlias).get)
+    val res = generateCourseForUser(pltafu.userId, TemplatesRegistry.getCourseTemplate(pltafu.templateAlias).get)
     if (pltafu.attempts <= 1) db.coursesAvailableForUser.delete(pltafu)
     else pltafu.updateAttempts(pltafu.attempts - 1)
     res
@@ -37,7 +37,7 @@ object Generator {
      }
    }*/
 
-  def generateCourseForUserIgnoringTemplate(userId: ObjectId, template: CourseTemplate, seed: Int = 0): (Course, Seq[Problem]) = {
+  def generateCourseForUser(userId: ObjectId, template: CourseTemplate, seed: Int = 0): (Course, Seq[Problem]) = {
     val courseId = new ObjectId()
     val generated = template.generate(seed)
     val problems = generated.map(gp => Problem(courseId, gp.template.uniqueAlias, gp.seed, gp.attempts, gp.initialScore))

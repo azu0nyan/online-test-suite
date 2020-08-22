@@ -41,6 +41,7 @@ package object db extends CollectionOps {
     //    mongoHelper.problemScoreCodecProvider,
     classOf[AnswerStatus],
     //    classOf[ProblemSetScore],
+    classOf[CourseTemplateForGroup],
     classOf[CourseTemplateAvailableForUser],
   ), DEFAULT_CODEC_REGISTRY)
 
@@ -54,5 +55,6 @@ package object db extends CollectionOps {
   val problems: MongoCollection[Problem] = database.getCollection("problems")
   val courses: MongoCollection[Course] = database.getCollection("courses")
   val coursesAvailableForUser: MongoCollection[CourseTemplateAvailableForUser] = database.getCollection("coursesAvailableForUser")
+  val courseTemplateForGroup: MongoCollection[CourseTemplateForGroup] = database.getCollection("CourseTemplateForGroup")
 
 }

@@ -11,8 +11,11 @@ import otsbridge.ProblemScore.ProblemScore
  */
 package object viewData {
 
+
+  case class GroupViewData(groupId:String, groupTitle:String, description: Option[String])
+
   /**Информация о пользователе для отображения*/
-  case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String])
+  case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups:Seq[GroupViewData])
 
   case class AnswerViewData(
                            problemId: String,

@@ -5,6 +5,7 @@ import java.time.{Clock, Instant, ZonedDateTime}
 import controller.{PasswordHashingSalting, TemplatesRegistry, ToViewData}
 import org.mongodb.scala._
 import org.bson.types.ObjectId
+import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.Filters._
 
 import scala.concurrent.{Await, Future}
@@ -23,6 +24,15 @@ object User {
 
   /** blocking */
   def byLogin(login: String): Option[User] = users.byField("login", login) //Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
+
+  def byIdOrLogin(idOrLogin:String): Option[User] =
+  try {
+    val res = byLogin(idOrLogin)
+    if(res.isDefined) res
+    else users.byId(new ObjectId(idOrLogin))
+  } catch {
+    case t:Throwable => None
+  }
 
   /** blocking */
   def checkPassword(user: User, password: String): Boolean = PasswordHashingSalting.checkPassword(password, user.passwordHash, user.passwordSalt)
@@ -48,7 +58,7 @@ case class User(_id: ObjectId,
 
   def groups: Seq[Group] = UserToGroup.userGroups(this)
 
-  def toViewData: UserViewData = UserViewData(login, firstName, lastName, email)
+  def toViewData: UserViewData = UserViewData(login, firstName, lastName, email, groups.map(_.toViewData))
 
   def courses: Seq[Course] = Course.forUser(this)
 

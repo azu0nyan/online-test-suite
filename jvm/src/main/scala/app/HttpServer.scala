@@ -27,12 +27,24 @@ object HttpServer {
   }
 
 
-  def addRoute[REQ, RES](reqRes:clientRequests.Route[REQ, RES], action: REQ => RES):Unit  =
+  def addRoute[REQ, RES](reqRes:clientRequests.Route[REQ, RES], action: REQ => RES, checkPermissions: REQ => Boolean):Unit  =
     post(reqRes.route,  (request: Request, response: Response) => {
-      val req:REQ = reqRes.decodeRequest(request.body())
-      val res:RES = action(req)
-      val resStr = reqRes.encodeResponse(res)
-      resStr
+      try {
+        val req: REQ = reqRes.decodeRequest(request.body())
+        if(checkPermissions(req)) {
+          val res: RES = action(req)
+          val resStr = reqRes.encodeResponse(res)
+          resStr
+        } else {
+          log.error(s"!!! Someone trying to hack in, insufficient permissions for $req ")
+          response.status(403)
+          "no no 403"
+        }
+      } catch {
+        case t:Throwable => log.error(s"Error during request processing $request $t")
+          response.status(500)
+          "error 500"
+      }
     })
 
 
