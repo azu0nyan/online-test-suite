@@ -1,0 +1,30 @@
+package frontend.views
+
+import frontend._
+import io.udash.core.ContainerView
+import io.udash._
+import org.scalajs.dom.Element
+import scalatags.JsDom.all._
+import scalatags.generic.Modifier
+
+class STATEView(
+                   presenter:STATEPresenter
+                   ) extends ContainerView{
+
+  override def getTemplate: Modifier[Element] = ???
+}
+
+case class STATEPresenter(app: Application[RoutingState]) extends GenericPresenter [STATEState.type ]{
+  override def handleState(state: STATEState.type): Unit = {
+
+  }
+}
+
+case object STATEViewFactory extends ViewFactory[STATEState.type] {
+  override def create(): (View, Presenter[STATEState.type]) = {
+    println(s"Admin  page view factory creating..")
+    val presenter = STATEPresenter( frontend.applicationInstance)
+    val view = new STATEView( presenter)
+    (view, presenter)
+  }
+}

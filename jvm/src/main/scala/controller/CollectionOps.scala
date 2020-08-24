@@ -14,6 +14,16 @@ import scala.reflect.ClassTag
 trait CollectionOps {
 
   implicit class CollectionOps[T](col: MongoCollection[T])(implicit c: ClassTag[T]) {
+
+    def all(session: Option[ClientSession]= None): Seq[T] = {
+      Await.result({
+        if (session.isEmpty)
+          col.find()
+        else
+          col.find(session.get)
+      }.toFuture(), Duration.Inf)
+    }
+
     /** blocking */
     def deleteById(id: ObjectId, session: Option[ClientSession] = None): Unit =
       Await.result({
@@ -48,7 +58,7 @@ trait CollectionOps {
 
 
     /** blocking */
-    def byTwoFields[F1, F2](fieldName1: String, fieldValue1: F1, fieldName2:String, fieldValue2:F2,  session: Option[ClientSession] = None): Option[T] =
+    def byTwoFields[F1, F2](fieldName1: String, fieldValue1: F1, fieldName2: String, fieldValue2: F2, session: Option[ClientSession] = None): Option[T] =
       Await.result({
         if (session.isEmpty)
           col.find(and(equal(fieldName1, fieldValue1), equal(fieldName2, fieldValue2)))
@@ -86,7 +96,7 @@ trait CollectionOps {
     def updateFieldWhenMatches[M, F](fieldToMatchName: String, matchValue: M, fieldName: String, f: F, session: Option[ClientSession] = None): Option[UpdateResult] =
       Await.result({
         if (session.isEmpty)
-//          col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f))
+        //          col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f))
           col.updateOne(equal(fieldToMatchName, matchValue), set(fieldName, f))
         else
           col.updateOne(session.get, equal(fieldToMatchName, matchValue), set(fieldName, f))

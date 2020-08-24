@@ -1,30 +1,35 @@
 package controller.db
 
+import controller.{TemplatesRegistry, ToViewData}
 import org.mongodb.scala.bson.ObjectId
-import viewData.GroupViewData
+import viewData.{GroupDetailedInfoViewData, GroupInfoViewData}
 
-object Group{
+object Group {
   def apply(title: String, description: Option[String]): Group = new Group(new ObjectId, title, description)
 
-  def byIdOrTitle(idOrTitle:String): Option[Group] =
+  def byIdOrTitle(idOrTitle: String): Option[Group] =
     try {
       val res = groups.byField("title", idOrTitle)
-      if(res.isDefined) res
+      if (res.isDefined) res
       else groups.byId(new ObjectId(idOrTitle))
     } catch {
-      case t:Throwable => None
+      case t: Throwable => None
     }
 
 }
 
-case class Group(_id:ObjectId, title:String, description:Option[String]) extends MongoObject {
+case class Group(_id: ObjectId, title: String, description: Option[String]) extends MongoObject {
 
   def templatesForGroup: Seq[CourseTemplateForGroup] = CourseTemplateForGroup.byGroup(this)
 
-  def toViewData: GroupViewData = GroupViewData(_id.toHexString, title, description)
+  def toViewData: GroupInfoViewData = GroupInfoViewData(_id.toHexString, title, description)
 
-  def toIdTitleStr:String = s"[${_id.toHexString} $title]"
+  def toDetailedViewData: GroupDetailedInfoViewData = GroupDetailedInfoViewData(_id.toHexString, title, description,
+    templatesForGroup.flatMap(t => TemplatesRegistry.getCourseTemplate(t.templateAlias)).map(ToViewData(_)),
+    users.map(_.toViewData))
 
-  def users:Seq[User] = UserToGroup.userInGroup(this)
+  def toIdTitleStr: String = s"[${_id.toHexString} $title]"
+
+  def users: Seq[User] = UserToGroup.userInGroup(this)
 
 }

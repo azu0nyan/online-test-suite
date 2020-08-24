@@ -3,8 +3,8 @@ package frontend
 import io.udash._
 import io.udash.core.Url
 
-class RoutingRegistryDef extends RoutingRegistry[RoutingState]{
-  override def matchUrl(url: Url): RoutingState =  {
+class RoutingRegistryDef extends RoutingRegistry[RoutingState] {
+  override def matchUrl(url: Url): RoutingState = {
     val res = url2State.applyOrElse(
       url.value.stripSuffix("/"),
       (x: String) => LandingPageState
@@ -13,7 +13,7 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState]{
     res
   }
 
-  override def matchState(state: RoutingState): Url =  {
+  override def matchState(state: RoutingState): Url = {
     val res = Url(state2Url.apply(state))
     println(s"state matched : $state -> $res ")
     res
@@ -23,10 +23,15 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState]{
     case "/" => LandingPageState
     case "/login" => LoginPageState
     case "/register" => RegistrationPageState
-    case "/courseSelection"  => CourseSelectionPageState
+    case "/courseSelection" => CourseSelectionPageState
     case "/course" / id => CoursePageState(id, "")
-//    case "/course" / id  =>  CoursePageState(id, taskId )
+    //    case "/course" / id  =>  CoursePageState(id, taskId )
     case "/app" => AppPageState
+
+    case "/admin" => AdminPageState
+    case "/admin" / "groups" => AdminGroupListPageState
+    case "/admin" / "groups" / id => AdminGroupInfoPageState(id)
+    case "/admin" / "users" => AdminUserListPageState
   }
 
 }

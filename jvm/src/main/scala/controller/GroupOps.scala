@@ -1,9 +1,26 @@
 package controller
 
-import clientRequests.admin.{AddUserToGroupFailure, AddUserToGroupRequest, AddUserToGroupResponse, AddUserToGroupSuccess}
+import clientRequests.admin.{AddUserToGroupFailure, AddUserToGroupRequest, AddUserToGroupResponse, AddUserToGroupSuccess, GroupInfoRequest, GroupInfoResponse, GroupInfoResponseFailure, GroupInfoResponseSuccess, GroupListRequest, GroupListResponse, GroupListResponseFailure, GroupListResponseSuccess, RemoveUserFromGroupFailure, RemoveUserFromGroupRequest, RemoveUserFromGroupResponse, RemoveUserFromGroupSuccess}
 import controller.db._
+import org.mongodb.scala.bson.ObjectId
 
 object GroupOps {
+
+  def groupList(req:GroupListRequest):GroupListResponse = {
+    try {
+      GroupListResponseSuccess(groups.all().map(_.toDetailedViewData))
+    } catch {
+      case _ : Throwable => GroupListResponseFailure()
+    }
+  }
+
+  def group(req:GroupInfoRequest):GroupInfoResponse = {
+    try {
+      GroupInfoResponseSuccess(groups.byId(new ObjectId(req.groupId)).get.toDetailedViewData)
+    } catch {
+      case _: Throwable => GroupInfoResponseFailure()
+    }
+  }
 
   def addUserToGroup(req:AddUserToGroupRequest):AddUserToGroupResponse = {
     User.byIdOrLogin(req.userHexIdOrLogin). flatMap{ u =>
@@ -40,6 +57,15 @@ object GroupOps {
     toRemove.foreach(CoursesOps.removeCourseFromUserByAlias(user, _))
 
 
+  }
+
+  def removeUserFromGroup(req:RemoveUserFromGroupRequest):RemoveUserFromGroupResponse = {
+    User.byIdOrLogin(req.userHexIdOrLogin). flatMap{ u =>
+      Group.byIdOrTitle(req.groupHexIdOrAlias).map{ g =>
+        removeUserFromGroup(u, g, req.forceCourseDelete)
+        RemoveUserFromGroupSuccess()
+      }
+    }.getOrElse(RemoveUserFromGroupFailure())
   }
 
   def removeUserFromGroup(u:User, g:Group, forceCourseDeletion:Boolean): Unit = {

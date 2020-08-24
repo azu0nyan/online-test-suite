@@ -49,6 +49,7 @@ object Custom extends StyleSheet.Inline {
     borderRadius(roundCornerRadius),
   )
 
+
   val inputContainer = style(
     defaultBoxBordersPaddingsMargins,
 
@@ -85,7 +86,7 @@ object Custom extends StyleSheet.Inline {
 
   )
 
-  val problemAnswersTable = style(
+  val defaultTable = style(
     width(100 %%),
     tableLayout.fixed,
     overflowX.hidden,

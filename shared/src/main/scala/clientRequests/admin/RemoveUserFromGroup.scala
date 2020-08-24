@@ -5,12 +5,12 @@ import clientRequests.{GenericRequestFailure, Route}
 import io.circe.generic.auto._
 
 
-object RemoveUserFromGroup extends Route[RemoveUserToGroupRequest, RemoveUserFromGroupResponse] {
+object RemoveUserFromGroup extends Route[RemoveUserFromGroupRequest, RemoveUserFromGroupResponse] {
   override val route: String = "adminRemoveUserToGroup"
 }
 
 //REQ
-case class RemoveUserToGroupRequest(token:String, userHexIdOrLogin:String, groupHexIdOrAlias:String, forceCourseDelete: String)
+case class RemoveUserFromGroupRequest(token:String, userHexIdOrLogin:String, groupHexIdOrAlias:String, forceCourseDelete: Boolean)
 
 //RES
 sealed trait RemoveUserFromGroupResponse

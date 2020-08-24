@@ -108,7 +108,7 @@ class CoursePageView(
     else runResultsTableRaw(runs)
 
   def runResultsTableRaw(runs: Seq[ProgramRunResult]): JsDom.TypedTag[Table] =
-    table(styles.Custom.problemAnswersTable ~)(
+    table(styles.Custom.defaultTable ~)(
       tr(
         th(width := "20px")(Text.pAnswerNumber),
         th(width := "50px")(Text.pRunResult),
@@ -143,7 +143,7 @@ class CoursePageView(
   def answersList(answers: Seq[AnswerViewData]) = if (answers.isEmpty) div() else
     div(styles.Custom.problemAnswersList ~)(
       h3(Text.pYourAnswers),
-      table(styles.Custom.problemAnswersTable ~)(
+      table(styles.Custom.defaultTable ~)(
         tr(
           th(width := "20px")(Text.pAnswerNumber),
           th(width := "50px")(Text.pAnswerAnsweredAt),

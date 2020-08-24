@@ -1,8 +1,5 @@
 package clientRequests.admin
 
-class UserList {
-
-}
 
 import clientRequests.Route
 import io.circe.generic.auto._
