@@ -35,7 +35,7 @@ object GroupOps {
   def ensureGroupCoursesStarted(user: User, group: Group): Unit = {
     val currentCourses = user.courses
     val requiredCourses = group.templatesForGroup
-    requiredCourses.foreach{ rc =>
+    requiredCourses.filter(_.forceStartForGroupMembers).foreach{ rc =>
       if(!currentCourses.exists(_.templateAlias == rc.templateAlias)){
         CoursesOps.startCourseForUser(user, rc.template)
       }
@@ -50,6 +50,7 @@ object GroupOps {
   }
 
   def ensureGroupCoursesDeleted(user: User, group: Group): Unit  = {
+    log.info(s"Checking if new courses start needed for ${user.idAndLoginStr} group ${group.toIdTitleStr}")
     val currentCourses = user.courses.map(_.templateAlias).toSet
     val groupCourses = group.templatesForGroup.map(_.templateAlias).toSet
     val otherGroupsCourses = user.groups.filter(_ != group).flatMap(_.templatesForGroup.map(_.templateAlias)).toSet

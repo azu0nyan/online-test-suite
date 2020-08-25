@@ -15,6 +15,8 @@ trait CollectionOps {
 
   implicit class CollectionOps[T](col: MongoCollection[T])(implicit c: ClassTag[T]) {
 
+
+
     def all(session: Option[ClientSession]= None): Seq[T] = {
       Await.result({
         if (session.isEmpty)

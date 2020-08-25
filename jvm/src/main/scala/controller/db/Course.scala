@@ -5,9 +5,12 @@ import DbViewsShared.CourseShared.CourseStatus
 import controller.TemplatesRegistry
 import otsbridge.CourseTemplate
 import org.mongodb.scala.bson.ObjectId
+import otsbridge.ProblemTemplate.ProblemTemplateAlias
 import viewData.{CourseInfoViewData, CourseTemplateViewData, CourseViewData}
 
 object Course {
+  def byTemplateAlias(templateAlias: String): Seq[Course] = courses.byFieldMany("templateAlias", templateAlias)
+
 
   def apply(userID: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId]): Course =
     Course(new ObjectId(), userID, templateAlias, status, problemIds)

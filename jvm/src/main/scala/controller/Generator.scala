@@ -40,7 +40,7 @@ object Generator {
   def generateCourseForUser(userId: ObjectId, template: CourseTemplate, seed: Int = 0): (Course, Seq[Problem]) = {
     val courseId = new ObjectId()
     val generated = template.generate(seed)
-    val problems = generated.map(gp => Problem(courseId, gp.template.uniqueAlias, gp.seed, gp.attempts, gp.initialScore))
+    val problems = generated.map(gp => Problem.formGenerated(courseId, gp))
     val course = Course(courseId, userId, template.uniqueAlias, Passing(None), problems.map(_._id))
 //    Transaction { s =>
 //      val session = Some(s)

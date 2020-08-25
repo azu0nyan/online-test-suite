@@ -18,7 +18,7 @@ object BinaryCountingOfAncientRussians {
 
     override val allowedInstances: Option[Int] = Some(2)
 
-    override val uniqueTemplates: Seq[ProblemTemplate] = Seq(
+    override val problemsToGenerate: Seq[ProblemTemplate] = Seq(
       BCORProblem("целковый", 1),
       BCORProblem("полушка", 1 / 2d),
       BCORProblem("четвертушка", 1 / 4d),

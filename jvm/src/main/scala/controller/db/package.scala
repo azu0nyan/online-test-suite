@@ -2,12 +2,14 @@ package controller
 
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import com.typesafe.scalalogging.Logger
+import controller.db.CustomCourseTemplate
 import org.bson.types.ObjectId
 import org.mongodb.scala.{ClientSession, Completed, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, ReadConcern, SingleObservable, TransactionOptions, WriteConcern}
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.slf4j.LoggerFactory
+import otsbridge.CoursePiece.CoursePiece
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.ProgramRunResult.ProgramRunResult
 import otsbridge.{ProblemScore, ProgramRunResult}
@@ -20,6 +22,8 @@ package object db extends CollectionOps {
 
   trait MongoObject {
     val _id: ObjectId
+
+    def updatedFromDb[T](implicit col:MongoCollection[T]):T = col.byId(_id).get
   }
 
   val dbName = "myTestDb"
@@ -34,7 +38,7 @@ package object db extends CollectionOps {
     classOf[Answer],
     classOf[Course],
     classOf[CourseStatus],
-//    classOf[ProgramRunResult2],
+    //    classOf[ProgramRunResult2],
     classOf[ProgramRunResult],
     classOf[ProblemScore],
     //    mongoHelper.problemRunResultCodecProvider,
@@ -43,18 +47,21 @@ package object db extends CollectionOps {
     //    classOf[ProblemSetScore],
     classOf[CourseTemplateForGroup],
     classOf[CourseTemplateAvailableForUser],
+    classOf[CoursePiece],
+    classOf[CustomCourseTemplate],
   ), DEFAULT_CODEC_REGISTRY)
 
   val mongoClient: MongoClient = MongoClient()
   val database: MongoDatabase = mongoClient.getDatabase(dbName).withCodecRegistry(codecRegistry)
 
-  val users: MongoCollection[User] = database.getCollection("users")
-  val groups: MongoCollection[Group] = database.getCollection("groups")
-  val userToGroup: MongoCollection[UserToGroup] = database.getCollection("userToGroup")
-  val answers: MongoCollection[Answer] = database.getCollection("answers")
-  val problems: MongoCollection[Problem] = database.getCollection("problems")
-  val courses: MongoCollection[Course] = database.getCollection("courses")
-  val coursesAvailableForUser: MongoCollection[CourseTemplateAvailableForUser] = database.getCollection("coursesAvailableForUser")
-  val courseTemplateForGroup: MongoCollection[CourseTemplateForGroup] = database.getCollection("CourseTemplateForGroup")
+  implicit val users: MongoCollection[User] = database.getCollection("users")
+  implicit   val groups: MongoCollection[Group] = database.getCollection("groups")
+  implicit val userToGroup: MongoCollection[UserToGroup] = database.getCollection("userToGroup")
+  implicit val answers: MongoCollection[Answer] = database.getCollection("answers")
+  implicit val problems: MongoCollection[Problem] = database.getCollection("problems")
+  implicit val courses: MongoCollection[Course] = database.getCollection("courses")
+  implicit val coursesAvailableForUser: MongoCollection[CourseTemplateAvailableForUser] = database.getCollection("coursesAvailableForUser")
+  implicit val courseTemplateForGroup: MongoCollection[CourseTemplateForGroup] = database.getCollection("CourseTemplateForGroup")
+  implicit val customCourseTemplates: MongoCollection[CustomCourseTemplate] = database.getCollection("CustomCourseTemplate")
 
 }

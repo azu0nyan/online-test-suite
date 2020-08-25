@@ -10,8 +10,10 @@ import viewData.ProblemViewData
 import scala.concurrent.Await
 
 object Problem {
+  def formGenerated(courseId:ObjectId, gp: GeneratedProblem): Problem =  Problem(courseId, gp.template.uniqueAlias, gp.seed, gp.attempts, gp.initialScore)
 
-//  sealed trait ProblemStatus
+
+  //  sealed trait ProblemStatus
 //  /**нет ответа*/
 //  case class NotAnswered() extends ProblemStatus
 //  /**Есть засчитанный ответ(возможно неправильный)*/

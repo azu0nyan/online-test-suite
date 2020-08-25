@@ -11,8 +11,8 @@ object App {
   }
 
   def initAliases(): Unit = {
-    TemplatesRegistry.registerCourseTemplate(BinaryCountingOfAncientRussians.template)
-    TemplatesRegistry.registerCourseTemplate(tasks.javaCourse.JavaCourse)
+    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
+    TemplatesRegistry.registerOrUpdateCourseTemplate(tasks.javaCourse.JavaCourse)
   }
 
 

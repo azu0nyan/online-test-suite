@@ -9,15 +9,17 @@ import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 
 object TemplatesRegistry {
+  def problemTemplates: Seq[ProblemTemplate] = aliasToPT.values.toSeq
+
   def templatesForAllUsers: Seq[CourseTemplate] = aliasToCourseTemplate.values.filter(_.allowedForAll).toSeq
 
   val aliasToCourseTemplate:mutable.Map[String, CourseTemplate] = new ConcurrentHashMap[String, CourseTemplate]().asScala
 
   val aliasToPT:mutable.Map[String, ProblemTemplate] = new ConcurrentHashMap[String, ProblemTemplate]().asScala
 
-  def registerCourseTemplate(pl:CourseTemplate):Unit = {
-    aliasToCourseTemplate += pl.uniqueAlias -> pl
-    pl.uniqueTemplates.foreach(registerProblemTemplate)
+  def registerOrUpdateCourseTemplate(pl:CourseTemplate):Unit = {
+    aliasToCourseTemplate.update(pl.uniqueAlias , pl)
+//    pl.problemsToGenerate.foreach(registerProblemTemplate)
   }
 
   def registerProblemTemplate(pt:ProblemTemplate):Unit = {
