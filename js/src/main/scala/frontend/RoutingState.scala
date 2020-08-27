@@ -36,6 +36,7 @@ case object AdminGroupListPageState extends FinalRoutingState(Some(RootState))
 case object AdminUserListPageState extends FinalRoutingState(Some(RootState))
 case class AdminGroupInfoPageState(groupId:String) extends FinalRoutingState(Some(RootState))
 //todo
+case object AdminProblemsPageState extends FinalRoutingState(Some(RootState))
 case object AdminCoursesPageState extends FinalRoutingState(Some(RootState))
 case class AdminCourseTemplateInfoPageState(courseTemplateAlias: String) extends FinalRoutingState(Some(RootState))
 

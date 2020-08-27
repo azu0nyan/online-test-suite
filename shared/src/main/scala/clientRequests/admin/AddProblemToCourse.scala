@@ -1,6 +1,6 @@
 package clientRequests.admin
 
-import clientRequests.{GenericRequestFailure, Route}
+import clientRequests.{GenericRequestFailure, Route, WithToken}
 import io.circe.generic.auto._
 
 
@@ -9,7 +9,7 @@ object AddProblemToCourse extends Route[AddProblemToCourseRequest, AddProblemToC
 }
 
 //REQ
-case class AddProblemToCourseRequest(token: String, courseAlias: String, problemAlias: String)
+case class AddProblemToCourseRequest(token: String, courseAlias: String, problemAlias: String) extends WithToken
 
 //RES
 sealed trait AddProblemToCourseResponse

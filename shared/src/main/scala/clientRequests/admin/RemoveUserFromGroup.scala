@@ -1,7 +1,6 @@
 package clientRequests.admin
 
-import clientRequests.Route
-import clientRequests.{GenericRequestFailure, Route}
+import clientRequests.{GenericRequestFailure, Route, WithToken}
 import io.circe.generic.auto._
 
 
@@ -10,7 +9,7 @@ object RemoveUserFromGroup extends Route[RemoveUserFromGroupRequest, RemoveUserF
 }
 
 //REQ
-case class RemoveUserFromGroupRequest(token:String, userHexIdOrLogin:String, groupHexIdOrAlias:String, forceCourseDelete: Boolean)
+case class RemoveUserFromGroupRequest(token:String, userHexIdOrLogin:String, groupHexIdOrAlias:String, forceCourseDelete: Boolean) extends WithToken
 
 //RES
 sealed trait RemoveUserFromGroupResponse

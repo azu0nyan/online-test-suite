@@ -1,7 +1,7 @@
 package clientRequests.admin
 
 
-import clientRequests.Route
+import clientRequests.{Route, WithToken}
 import io.circe.generic.auto._
 import viewData.UserViewData
 
@@ -14,7 +14,7 @@ sealed trait UserListFilter
 case class FilterUserByGroup(groupHexIdOrAlias:String)
 
 //REQ
-case class UserListRequest(token:String, filters:Seq[UserListFilter])
+case class UserListRequest(token:String, filters:Seq[UserListFilter]) extends WithToken
 
 //RES
 sealed trait UserListResponse

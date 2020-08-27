@@ -3,6 +3,7 @@ package frontend
 import DbViewsShared.CourseShared.Passing
 import io.udash._
 import io.udash.properties.{Blank, ModelPropertyCreator}
+import otsbridge.CoursePiece
 //import viewData.{AvailableCourseViewData, CourseViewData, ProblemViewData, UserViewData}
 
 //bindings of data sent from backend
@@ -19,6 +20,7 @@ trait Bindings {
 
   implicit val blank1: Blank[viewData.UserCoursesInfoViewData] = Blank.Simple(viewData.UserCoursesInfoViewData(Seq(), Seq()))
   implicit val blank2: Blank[viewData.CourseViewData] = Blank.Simple(viewData.CourseViewData("Loading course..", "NO TITLE", Passing(None), Seq(), None))
+  implicit val blank4: Blank[viewData.CustomCourseViewData] = Blank.Simple(viewData.CustomCourseViewData("Loading course..", "NO TITLE", None, false, None, CoursePiece.emptyCourse , Seq()))
   implicit val blank3: Blank[viewData.GroupDetailedInfoViewData] =
     Blank.Simple(viewData.GroupDetailedInfoViewData("Loading..", "Loading..", None, Seq(), Seq() ))
 }

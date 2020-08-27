@@ -1,6 +1,6 @@
 package clientRequests.admin
 
-import clientRequests.{GenericRequestFailure, Route}
+import clientRequests.{GenericRequestFailure, Route, WithToken}
 import io.circe.generic.auto._
 import viewData.CustomCourseViewData
 
@@ -10,7 +10,7 @@ object CustomCourseList extends Route[CustomCourseListRequest, CustomCourseListR
 }
 
 //REQ
-case class CustomCourseListRequest(token:String)
+case class CustomCourseListRequest(token:String) extends WithToken
 
 //RES
 sealed trait CustomCourseListResponse

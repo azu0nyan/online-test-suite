@@ -9,7 +9,7 @@ object GetCoursesList  extends Route[RequestCoursesList, GetCoursesListResponse]
 }
 
 //REQ
-case class RequestCoursesList(token:String)
+case class RequestCoursesList(token:String) extends WithToken
 
 //RES
 sealed trait GetCoursesListResponse

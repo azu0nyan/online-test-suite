@@ -1,6 +1,6 @@
 package clientRequests.admin
 
-import clientRequests.{GenericRequestFailure, Route}
+import clientRequests.{GenericRequestFailure, Route, WithToken}
 import io.circe.generic.auto._
 import viewData.ProblemTemplateExampleViewData
 
@@ -10,7 +10,7 @@ object ProblemTemplateList extends Route[ProblemTemplateListRequest, ProblemTemp
 }
 
 //REQ
-case class ProblemTemplateListRequest(token:String)
+case class ProblemTemplateListRequest(token:String) extends WithToken
 
 //RES
 sealed trait ProblemTemplateListResponse

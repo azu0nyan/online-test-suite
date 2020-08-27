@@ -1,9 +1,10 @@
 package app
 import java.nio.file.Paths
 
-import clientRequests.{LoginRequest, LoginSuccessResponse}
+import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
-import controller.{CoursesOps, LoginUserOps, RegisterUser, SubmitAnswer}
+import controller.{CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, SubmitAnswer}
+import org.eclipse.jetty.security.UserAuthentication
 import spark._
 import spark.Spark._
 import viewData.UserViewData
@@ -18,13 +19,31 @@ object HttpServer {
     port(8080)
     get("/", (request: Request, response: Response) => {Skeleton()})
 
-    addRoute(clientRequests.Login, LoginUserOps.loginUser)
-    addRoute(clientRequests.Registration, RegisterUser.registerUser)
-    addRoute(clientRequests.GetCoursesList, CoursesOps.requestCoursesList)
-    addRoute(clientRequests.GetCourseData, CoursesOps.requestCourse)
-    addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse)
-    addRoute(clientRequests.SubmitAnswer, SubmitAnswer.submitAnswer)
+    addRoute(clientRequests.Login, LoginUserOps.loginUser, all)
+    addRoute(clientRequests.Registration, RegisterUser.registerUser, all)
+    addRoute(clientRequests.GetCoursesList, CoursesOps.requestCoursesList, user)
+    addRoute(clientRequests.GetCourseData, CoursesOps.requestCourse, user)
+    addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse, user)
+    addRoute(clientRequests.SubmitAnswer, SubmitAnswer.submitAnswer, user)
+
+    addRoute(clientRequests.admin.AddCourseToGroup, CustomCourseOps.addCourseToGroup, adminOnly)
+    addRoute(clientRequests.admin.AddProblemToCourse, CustomCourseOps.addProblemToCourse, adminOnly)
+    addRoute(clientRequests.admin.AddUserToGroup, GroupOps.addUserToGroup, adminOnly)
+    addRoute(clientRequests.admin.CustomCourseInfo, CustomCourseOps.customCourseInfo, adminOnly)
+    addRoute(clientRequests.admin.GroupInfo, GroupOps.group, adminOnly)
+    addRoute(clientRequests.admin.GroupList, GroupOps.groupList, adminOnly)
+    addRoute(clientRequests.admin.NewCustomCourse, CustomCourseOps.newCustomCourse, adminOnly)
+    addRoute(clientRequests.admin.ProblemTemplateList, ProblemOps.problemTemplateList, adminOnly)
+    addRoute(clientRequests.admin.RemoveUserFromGroup, GroupOps.removeUserFromGroup, adminOnly)
+    addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
+    addRoute(clientRequests.admin.UserList, UserOps , adminOnly)
   }
+
+  val all: Any => Boolean = _ => true
+  val user: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined
+  val adminOnly: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined //todo
+
+
 
 
   def addRoute[REQ, RES](reqRes:clientRequests.Route[REQ, RES], action: REQ => RES, checkPermissions: REQ => Boolean):Unit  =

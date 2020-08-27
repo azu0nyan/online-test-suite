@@ -5,11 +5,11 @@ import clientRequests.admin.{AddCourseToGroupRequest, AddCourseToGroupResponse, 
 import controller.db._
 import org.bson.types.ObjectId
 import otsbridge.CoursePiece
-import otsbridge.CoursePiece.CourseMainPiece
+import otsbridge.CoursePiece.CourseRoot
 
 import scala.util.Random
 
-class CustomCourseOps {
+object CustomCourseOps {
 
   def addCourseToGroup(req: AddCourseToGroupRequest): AddCourseToGroupResponse = {
     val gr = groups.byId(new ObjectId(req.groupId))
@@ -63,8 +63,8 @@ class CustomCourseOps {
     CustomCourseListSuccess(customCourseTemplates.all().map(_.toViewData))
 
   //todo more templates
-  val defaultCourseStructure: CourseMainPiece =
-    CourseMainPiece("enter title", "course's annotation",
+  val defaultCourseStructure: CourseRoot =
+    CourseRoot("enter title", "course's annotation",
       Seq(
         CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>",
           Seq(

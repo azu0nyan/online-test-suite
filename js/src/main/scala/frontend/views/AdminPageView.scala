@@ -1,6 +1,6 @@
 package frontend.views
 
-import frontend.{AdminCoursesPageState, AdminGroupListPageState, AdminPageState, AdminUserListPageState, RoutingState}
+import frontend.{AdminCoursesPageState, AdminGroupListPageState, AdminPageState, AdminProblemsPageState, AdminUserListPageState, RoutingState}
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom._
@@ -20,6 +20,10 @@ class AdminPageView(
       presenter.app.goTo(AdminCoursesPageState)
       true // prevent default
     }))("Курсы"),
+    button( onclick :+= ((_: Event) => {
+      presenter.app.goTo(AdminProblemsPageState)
+      true // prevent default
+    }))("Задания"),
     button( onclick :+= ((_: Event) => {
       presenter.app.goTo(AdminUserListPageState)
       true // prevent default

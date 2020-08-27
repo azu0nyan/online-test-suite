@@ -7,7 +7,7 @@ object GetCourseData extends Route[CourseDataRequest, CourseDataResponse] {
   override val route: String = "courseData"
 }
 //REQ
-case class CourseDataRequest(token:String, courseId:String)
+case class CourseDataRequest(token:String, courseId:String) extends WithToken
 
 //RES
 sealed trait CourseDataResponse

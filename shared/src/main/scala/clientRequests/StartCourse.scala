@@ -6,7 +6,7 @@ object StartCourse extends Route[StartCourseRequest, StartCourseResponse] {
   override val route: String = "requestStartCourse"
 }
 //REQ
-case class StartCourseRequest(token:String, courseTemplateAlias:String)
+case class StartCourseRequest(token:String, courseTemplateAlias:String) extends WithToken
 
 //RES
 sealed trait StartCourseResponse

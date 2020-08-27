@@ -2,7 +2,7 @@ package clientRequests.admin
 
 import clientRequests.{GenericRequestFailure, Route}
 import io.circe.generic.auto._
-import otsbridge.CoursePiece.CourseMainPiece
+import otsbridge.CoursePiece.CourseRoot
 
 
 object UpdateCustomCourse extends Route[UpdateCustomCourseRequest, UpdateCustomCourseResponse] {
@@ -10,7 +10,7 @@ object UpdateCustomCourse extends Route[UpdateCustomCourseRequest, UpdateCustomC
 }
 
 //REQ
-case class UpdateCustomCourseRequest(token:String, courseAlias: String, title: String, description:Option[String], allowedForAll:Boolean, courseData:CourseMainPiece)
+case class UpdateCustomCourseRequest(token:String, courseAlias: String, title: String, description:Option[String], allowedForAll:Boolean, courseData:CourseRoot)
 
 //RES
 sealed trait UpdateCustomCourseResponse

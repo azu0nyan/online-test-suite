@@ -7,7 +7,7 @@ object SubmitAnswer extends Route[SubmitAnswerRequest , SubmitAnswerResponse] {
 }
 
 //REQ
-case class SubmitAnswerRequest(token:String, problemIdHex:String, answerRaw:String)
+case class SubmitAnswerRequest(token:String, problemIdHex:String, answerRaw:String) extends WithToken
 
 //RES
 sealed trait SubmitAnswerResponse

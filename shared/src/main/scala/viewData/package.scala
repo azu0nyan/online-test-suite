@@ -4,7 +4,7 @@ import DbViewsShared.CourseShared
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import otsbridge.{AnswerField, ProblemScore}
 import io.circe.generic.auto._
-import otsbridge.CoursePiece.CourseMainPiece
+import otsbridge.CoursePiece.CourseRoot
 import otsbridge.ProblemScore.ProblemScore
 
 /**
@@ -16,7 +16,7 @@ package object viewData {
 
   /**admin*/
   case class CustomCourseViewData(courseAlias: String, courseTitle: String, description: Option[String], allowedForAll: Boolean, timeLimitSeconds: Option[Int],
-                                  courseData: CourseMainPiece, problemAliasesToGenerate: Seq[String])
+                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String])
 
   /** Информация о группе пользователе для отображения */
   case class GroupInfoViewData(groupId: String, groupTitle: String, description: Option[String])

@@ -1,7 +1,7 @@
 package clientRequests.admin
 
 import io.circe.generic.auto._
-import clientRequests.Route
+import clientRequests.{Route, WithToken}
 import viewData.GroupDetailedInfoViewData
 
 object GroupInfo extends Route[GroupInfoRequest, GroupInfoResponse] {
@@ -9,7 +9,7 @@ object GroupInfo extends Route[GroupInfoRequest, GroupInfoResponse] {
 }
 
 //REQ
-case class GroupInfoRequest(token:String, groupId:String)
+case class GroupInfoRequest(token:String, groupId:String) extends WithToken
 
 
 //RES
