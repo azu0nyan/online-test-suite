@@ -4,7 +4,9 @@ import clientRequests.admin.{AddUserToGroupRequest, GroupInfoRequest, GroupInfoR
 import frontend._
 import io.udash.core.ContainerView
 import io.udash._
+import org.scalajs.dom.html.Table
 import org.scalajs.dom.{Element, Event}
+import scalatags.JsDom
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
 
@@ -47,7 +49,7 @@ class AdminGroupInfoPageView(
     userTable(groupInfo.get.users)
   )
 
-  def userTable(users: Seq[viewData.UserViewData]) = table(styles.Custom.defaultTable ~)(
+  def userTable(users: Seq[viewData.UserViewData]): JsDom.TypedTag[Table] = table(styles.Custom.defaultTable ~)(
     tr(
       th(width := "150px")("Логин"),
       th(width := "150px")("Имя"),
@@ -56,9 +58,9 @@ class AdminGroupInfoPageView(
     ),
     for (u <- users.sortBy(_.login)) yield tr(
       td(u.login),
-      td(u.firstName.getOrElse("")),
-      td(u.lastName.getOrElse("")),
-      td(u.email.getOrElse("")),
+      td(u.firstName.getOrElse("").toString),
+      td(u.lastName.getOrElse("").toString),
+      td(u.email.getOrElse("").toString),
     )
   )
 }

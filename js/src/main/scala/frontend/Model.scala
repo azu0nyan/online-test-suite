@@ -17,6 +17,7 @@ trait Bindings {
   implicit val e: ModelPropertyCreator[viewData.CourseInfoViewData] = ModelPropertyCreator.materialize[viewData.CourseInfoViewData]
   implicit val f: ModelPropertyCreator[viewData.UserCoursesInfoViewData] = ModelPropertyCreator.materialize[viewData.UserCoursesInfoViewData]
   implicit val g: ModelPropertyCreator[viewData.GroupDetailedInfoViewData] = ModelPropertyCreator.materialize[viewData.GroupDetailedInfoViewData]
+  implicit val h: ModelPropertyCreator[viewData.CustomCourseViewData] = ModelPropertyCreator.materialize[viewData.CustomCourseViewData]
 
   implicit val blank1: Blank[viewData.UserCoursesInfoViewData] = Blank.Simple(viewData.UserCoursesInfoViewData(Seq(), Seq()))
   implicit val blank2: Blank[viewData.CourseViewData] = Blank.Simple(viewData.CourseViewData("Loading course..", "NO TITLE", Passing(None), Seq(), None))

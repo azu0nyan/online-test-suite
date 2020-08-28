@@ -3,7 +3,7 @@ import java.nio.file.Paths
 
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
-import controller.{CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, SubmitAnswer}
+import controller.{CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, SubmitAnswer, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
 import spark.Spark._
@@ -36,7 +36,7 @@ object HttpServer {
     addRoute(clientRequests.admin.ProblemTemplateList, ProblemOps.problemTemplateList, adminOnly)
     addRoute(clientRequests.admin.RemoveUserFromGroup, GroupOps.removeUserFromGroup, adminOnly)
     addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
-    addRoute(clientRequests.admin.UserList, UserOps , adminOnly)
+    addRoute(clientRequests.admin.UserList, UserOps.userList , adminOnly)
   }
 
   val all: Any => Boolean = _ => true

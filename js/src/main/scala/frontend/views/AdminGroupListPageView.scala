@@ -33,7 +33,7 @@ class AdminGroupListPageView(
   def groupRow(data: Property[GroupDetailedInfoViewData]) = tr(
     td(data.get.groupId),
     td(data.get.groupTitle),
-    td(pre(overflowX.auto)(data.get.description.getOrElse(""))),
+    td(pre(overflowX.auto)(data.get.description.getOrElse("").toString)),
     td(for (c <- data.get.courses) yield
       button(onclick :+= ((_: Event) => {
         presenter.app.goTo(AdminCourseTemplateInfoPageState(c.courseTemplateAlias))
@@ -71,7 +71,7 @@ case class AdminGroupListPagePresenter(
 case object AdminGroupListPageViewFactory extends ViewFactory[AdminGroupListPageState.type] {
   override def create(): (View, Presenter[AdminGroupListPageState.type]) = {
     println(s"Admin groups page view factory creating..")
-    val coursesModel: SeqProperty[viewData.GroupDetailedInfoViewData] = SeqProperty()
+    val coursesModel: SeqProperty[viewData.GroupDetailedInfoViewData] = SeqProperty.blank
     val presenter = AdminGroupListPagePresenter(coursesModel, frontend.applicationInstance)
     val view = new AdminGroupListPageView(presenter)
     (view, presenter)

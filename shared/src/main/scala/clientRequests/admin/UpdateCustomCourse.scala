@@ -1,6 +1,6 @@
 package clientRequests.admin
 
-import clientRequests.{GenericRequestFailure, Route}
+import clientRequests.{GenericRequestFailure, Route, WithToken}
 import io.circe.generic.auto._
 import otsbridge.CoursePiece.CourseRoot
 
@@ -10,7 +10,7 @@ object UpdateCustomCourse extends Route[UpdateCustomCourseRequest, UpdateCustomC
 }
 
 //REQ
-case class UpdateCustomCourseRequest(token:String, courseAlias: String, title: String, description:Option[String], allowedForAll:Boolean, courseData:CourseRoot)
+case class UpdateCustomCourseRequest(token:String, courseAlias: String, title: String, description:Option[String], allowedForAll:Boolean, courseData:CourseRoot) extends WithToken
 
 //RES
 sealed trait UpdateCustomCourseResponse

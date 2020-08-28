@@ -60,7 +60,7 @@ case class AdminProblemsPagePresenter( problems:SeqProperty[viewData.ProblemTemp
 case object AdminProblemsPageViewFactory extends ViewFactory[AdminProblemsPageState.type] {
   override def create(): (View, Presenter[AdminProblemsPageState.type]) = {
     println(s"Admin  AdminProblemsPagepage view factory creating..")
-    val model:SeqProperty[viewData.ProblemTemplateExampleViewData] = SeqProperty()
+    val model:SeqProperty[viewData.ProblemTemplateExampleViewData] = SeqProperty.blank
     val presenter = AdminProblemsPagePresenter(model, frontend.applicationInstance)
     val view = new AdminProblemsPageView(presenter)
     (view, presenter)

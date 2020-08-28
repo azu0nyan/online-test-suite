@@ -13,6 +13,8 @@ import otsbridge.CoursePiece.CoursePiece
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.ProgramRunResult.ProgramRunResult
 import otsbridge.{ProblemScore, ProgramRunResult}
+
+import scala.reflect.ClassTag
 //import otsbridge.{ProblemScore, ProgramRunResult}
 
 
@@ -23,7 +25,7 @@ package object db extends CollectionOps {
   trait MongoObject {
     val _id: ObjectId
 
-    def updatedFromDb[T](implicit col:MongoCollection[T]):T = col.byId(_id).get
+    def updatedFromDb[T](implicit col:MongoCollection[T], c: ClassTag[T]):T = CollectionOps(col).byId(_id).get
   }
 
   val dbName = "myTestDb"
@@ -41,6 +43,7 @@ package object db extends CollectionOps {
     //    classOf[ProgramRunResult2],
     classOf[ProgramRunResult],
     classOf[ProblemScore],
+    classOf[UserToGroup],
     //    mongoHelper.problemRunResultCodecProvider,
     //    mongoHelper.problemScoreCodecProvider,
     classOf[AnswerStatus],

@@ -11,7 +11,7 @@ object UserList extends Route[UserListRequest, UserListResponse] {
 }
 
 sealed trait UserListFilter
-case class FilterUserByGroup(groupHexIdOrAlias:String)
+case class FilterUserByGroup(groupHexIdOrAlias:String) extends UserListFilter
 
 //REQ
 case class UserListRequest(token:String, filters:Seq[UserListFilter]) extends WithToken

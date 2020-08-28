@@ -29,7 +29,7 @@ case class CustomCourseTemplate(
 
   def addProblem(problem: ProblemTemplate) :CustomCourseTemplate = {
     customCourseTemplates.updateField(this, "problemAliasesToGenerate", problemAliasesToGenerate :+ problem)
-    updatedFromDb
+    updatedFromDb[CustomCourseTemplate]
   }
 
 

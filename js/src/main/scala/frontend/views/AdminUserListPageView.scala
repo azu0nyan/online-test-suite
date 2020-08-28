@@ -30,9 +30,9 @@ class AdminUserListPageView(
     ),
     repeat(users)(u => tr(
       td(u.get.login),
-      td(u.get.firstName.getOrElse("")),
-      td(u.get.lastName.getOrElse("")),
-      td(u.get.email.getOrElse("")),
+      td(u.get.firstName.getOrElse("").toString),
+      td(u.get.lastName.getOrElse("").toString),
+      td(u.get.email.getOrElse("").toString),
       td(for (g <- u.get.groups) yield button(onclick :+= ((_: Event) => {
         presenter.app.goTo(AdminGroupInfoPageState(g.groupId))
         true // prevent default
@@ -55,7 +55,7 @@ case class AdminUserListPagePresenter(
 case object AdminUserListPageViewFactory extends ViewFactory[AdminUserListPageState.type] {
   override def create(): (View, Presenter[AdminUserListPageState.type]) = {
     println(s"Admin  page view factory creating..")
-    val model: SeqProperty[viewData.UserViewData] = SeqProperty()
+    val model: SeqProperty[viewData.UserViewData] = SeqProperty.blank
     val presenter = AdminUserListPagePresenter(model, frontend.applicationInstance)
     val view = new AdminUserListPageView(presenter, model)
     (view, presenter)

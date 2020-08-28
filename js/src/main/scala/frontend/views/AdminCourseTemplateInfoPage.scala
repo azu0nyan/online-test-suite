@@ -19,6 +19,7 @@ case class AdminCourseTemplateInfoPagePresenter(
 
                                                ) extends GenericPresenter[AdminCourseTemplateInfoPageState] {
   val currentCourse: ModelProperty[viewData.CustomCourseViewData] = ModelProperty.blank[viewData.CustomCourseViewData]
+
   override def handleState(state: AdminCourseTemplateInfoPageState): Unit = {
 
   }

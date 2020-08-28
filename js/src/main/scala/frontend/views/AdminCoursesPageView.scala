@@ -30,7 +30,7 @@ class AdminCoursesPageView(
         tr(
           td(pr.get.courseAlias),
           td(pr.get.courseTitle),
-          td(pr.get.description.getOrElse("")),
+          td(pr.get.description.getOrElse("").toString),
           td(pr.get.timeLimitSeconds.toString),
           td(pr.get.problemAliasesToGenerate.mkString(", ")),
           td(button( onclick :+= ((_: Event) => {
@@ -60,7 +60,7 @@ case class AdminCoursesPagePresenter(
 case object AdminCoursesPageViewFactory extends ViewFactory[AdminCoursesPageState.type] {
   override def create(): (View, Presenter[AdminCoursesPageState.type]) = {
     println(s"Admin  AdminCoursesPagepage view factory creating..")
-    val model: SeqProperty[viewData.CustomCourseViewData] = SeqProperty()
+    val model: SeqProperty[viewData.CustomCourseViewData] = SeqProperty.blank
     val presenter = AdminCoursesPagePresenter(frontend.applicationInstance, model)
     val view = new AdminCoursesPageView(presenter)
     (view, presenter)

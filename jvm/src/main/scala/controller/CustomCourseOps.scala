@@ -94,7 +94,7 @@ object CustomCourseOps {
         if(req.courseData != cct.courseData) customCourseTemplates.updateField(cct, "courseData", req.courseData)
         if(req.description != cct.description) customCourseTemplates.updateField(cct, "description", req.description)
         if(req.title != cct.courseTitle) customCourseTemplates.updateField(cct, "courseTitle", req.title)
-        TemplatesRegistry.registerOrUpdateCourseTemplate(cct.updatedFromDb)
+        TemplatesRegistry.registerOrUpdateCourseTemplate(cct.updatedFromDb[CustomCourseTemplate])
         UpdateCustomCourseSuccess()
       case None =>UnknownUpdateCustomCourseFailure()
     }
