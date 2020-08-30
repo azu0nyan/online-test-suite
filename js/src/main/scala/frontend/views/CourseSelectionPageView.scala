@@ -52,7 +52,7 @@ class CourseSelectionPageView(
     ).render
 
 
-  override def getTemplate: Modifier[Element] = div(
+  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
     h2(constants.Text.existingCourses),
     div(repeat(courses.subSeq(_.existing))(p => courseHtml(p.get))),
     h2(constants.Text.startNewCourse),

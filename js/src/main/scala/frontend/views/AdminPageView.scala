@@ -17,7 +17,7 @@ class AdminPageView(
   ).render
 
 
-  override def getTemplate: Modifier[Element] = div(
+  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
     button( onclick :+= ((_: Event) => {
       presenter.app.goTo(AdminGroupListPageState)
       true // prevent default

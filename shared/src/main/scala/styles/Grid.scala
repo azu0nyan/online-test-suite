@@ -50,17 +50,17 @@ object Grid extends StyleSheet.Inline{
     gridColumn := s"${middleColumnStart} / ${rightColumnEnd}"
   )
 
-  val leftMenu = style(
+  val leftContent = style(
     //  backgroundColor := topRowColor,
 //    "place-self" := "stretch",
     gridRow := s"${contentRowStart} / ${contentEndRowStart}",
     gridColumn := s"${leftColumn}"
   )
 
-  val rightMenu = style(
+  val rightContent = style(
 //    backgroundColor := "#AAAAAA",
     gridRow := s"${contentRowStart} / ${contentEndRowStart}",
-    gridColumn := s"${leftColumn}"
+    gridColumn := s"${rightColumn}"
   )
 
   val userInfo = style(

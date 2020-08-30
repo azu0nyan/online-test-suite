@@ -13,7 +13,7 @@ class LandingPageView(
                        presenter: LandingPagePresenter) extends ContainerView {
 
 
-  override def getTemplate: Modifier[Element] = div(
+  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
     h3("WELCOME "),
     h3("Some landing  page html"),
     p("Some text about courses and gow good courses are, theay are really good you know? .. pss wanna some courses, if u can afford it."),

@@ -18,9 +18,9 @@ class LoginPageView(
 
   val loginId = "loginInput"
   val passwordId = "passwordInput"
-  override def getTemplate: Modifier[Element] = div(styles.Custom.inputContainerPositioner ~)(
+  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(div(styles.Custom.inputContainerPositioner ~)(
     form(styles.Custom.inputContainer ~)(
-      label( `for` := loginId)("Логин:"),
+      label(`for` := loginId)("Логин:"),
       TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин..."),
       label(`for` := loginId)("Пароль:"),
       PasswordInput(model.subProp(_.password))(id := passwordId, placeholder := "Пароль..."),
@@ -32,10 +32,11 @@ class LoginPageView(
         presenter.toLandingPage()
         true // prevent default
       }))("Назад")
-//      genButton("Войти", () => presenter.logIn()),
-//      genButton("Назад", () => presenter.toLandingPage()
+      //      genButton("Войти", () => presenter.logIn()),
+      //      genButton("Назад", () => presenter.toLandingPage()
 
     ),
+  )
   )
 
 }
@@ -77,7 +78,7 @@ case class LoginPagePresenter(
 case object LoginPageViewFactory extends ViewFactory[LoginPageState.type] {
   override def create(): (View, Presenter[LoginPageState.type]) = {
     println(s"Login  page view factory creating..")
-//      println(extractHost(document.documentURI))
+    //      println(extractHost(document.documentURI))
     val model = ModelProperty(UserCredentialsData("", ""))
     val presenter = new LoginPagePresenter(model, frontend.applicationInstance)
     val view = new LoginPageView(model, presenter)

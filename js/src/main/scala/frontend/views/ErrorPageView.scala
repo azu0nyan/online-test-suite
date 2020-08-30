@@ -14,7 +14,7 @@ class ErrorPageView( ) extends ContainerView {
 
 
 
-  override def getTemplate: Modifier[Element] = div(
+  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
     h1(color := "red")("ERROR"),
     childViewContainer
   )

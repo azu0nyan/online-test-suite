@@ -178,7 +178,7 @@ class CoursePageView(
     )
 
   //  implicit val b: ModelPropertyCreator[viewData.ProblemViewData] = ModelPropertyCreator.materialize[viewData.ProblemViewData]
-  override def getTemplate: Modifier[Element] = div(
+  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
     repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
       presenter.toCourseSelectionPage()

@@ -14,7 +14,7 @@ class RootPageView extends ContainerView {
     img(src := Paths.headerImage, alt := "Nodes", styles.Custom.headerImage ~),
     //    h1("This is header"),
   )
-  override protected val childViewContainer: Element = div(styles.Grid.content ~)(
+  override protected val childViewContainer: Element = div(
 
   ).render
 
