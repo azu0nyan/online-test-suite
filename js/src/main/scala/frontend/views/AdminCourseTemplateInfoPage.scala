@@ -22,7 +22,7 @@ case class AdminCourseTemplateInfoPagePresenter(
                                                  app: Application[RoutingState],
 
                                                ) extends GenericPresenter[AdminCourseTemplateInfoPageState] {
-  val currentCourse: ModelProperty[viewData.CustomCourseViewData] = ModelProperty.blank[viewData.CustomCourseViewData]
+  val currentCourse: ModelProperty[viewData.AdminCourseViewData] = ModelProperty.blank[viewData.AdminCourseViewData]
 
   override def handleState(state: AdminCourseTemplateInfoPageState): Unit = {
     frontend.sendRequest(clientRequests.admin.CustomCourseInfo, CustomCourseInfoRequest(currentToken.get, state.courseTemplateAlias)) onComplete {

@@ -4,7 +4,7 @@ import controller.TemplatesRegistry
 import org.bson.types.ObjectId
 import otsbridge.CoursePiece.CourseRoot
 import otsbridge.{CourseTemplate, ProblemTemplate}
-import viewData.CustomCourseViewData
+import viewData.AdminCourseViewData
 
 
 object CustomCourseTemplate {
@@ -35,14 +35,15 @@ case class CustomCourseTemplate(
 
   override val problemsToGenerate: Seq[ProblemTemplate] = problemAliasesToGenerate.flatMap(TemplatesRegistry.getProblemTemplate)
 
-  def toViewData: CustomCourseViewData = CustomCourseViewData(
+  def toViewData: AdminCourseViewData = AdminCourseViewData(
     uniqueAlias,
     courseTitle,
     description,
     allowedForAll,
     timeLimitSeconds,
     courseData,
-    problemAliasesToGenerate
+    problemAliasesToGenerate,
+    true
   )
 
 }

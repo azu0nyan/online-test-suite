@@ -1,7 +1,7 @@
 package controller
 
 import clientRequests.UnknownException
-import clientRequests.admin.{AddCourseToGroupRequest, AddCourseToGroupResponse, AddCourseToGroupSuccess, AddProblemToCourseRequest, AddProblemToCourseResponse, AddProblemToCourseSuccess, AddProblemToCourseUnknownFailure, AliasAlreadyAdded, AliasNotUnique, CustomCourseInfoRequest, CustomCourseInfoResponse, CustomCourseInfoSuccess, CustomCourseListRequest, CustomCourseListResponse, CustomCourseListSuccess, NewCustomCourseRequest, NewCustomCourseResponse, NewCustomCourseSuccess, UnknownAddCourseToGroupFailure, UnknownCustomCourseInfoFailure, UnknownFailure, UnknownUpdateCustomCourseFailure, UpdateCustomCourseRequest, UpdateCustomCourseResponse, UpdateCustomCourseSuccess}
+import clientRequests.admin.{AddCourseToGroupRequest, AddCourseToGroupResponse, AddCourseToGroupSuccess, AddProblemToCourseRequest, AddProblemToCourseResponse, AddProblemToCourseSuccess, AddProblemToCourseUnknownFailure, AliasAlreadyAdded, AliasNotUnique, CourseListRequest, CourseListResponse, CourseListSuccess, CustomCourseInfoRequest, CustomCourseInfoResponse, CustomCourseInfoSuccess,    NewCustomCourseRequest, NewCustomCourseResponse, NewCustomCourseSuccess, UnknownAddCourseToGroupFailure, UnknownCustomCourseInfoFailure, UnknownFailure, UnknownUpdateCustomCourseFailure, UpdateCustomCourseRequest, UpdateCustomCourseResponse, UpdateCustomCourseSuccess}
 import controller.db._
 import org.bson.types.ObjectId
 import otsbridge.CoursePiece
@@ -59,8 +59,11 @@ object CustomCourseOps {
     }
   }
 
-  def customCourseList(req: CustomCourseListRequest): CustomCourseListResponse =
-    CustomCourseListSuccess(customCourseTemplates.all().map(_.toViewData))
+  def courseList(req: CourseListRequest): CourseListResponse = {
+   val customCourses = customCourseTemplates.all().map(_.toViewData)
+   val courses = TemplatesRegistry.courses.filter(c => !customCourses.exists(_.courseAlias == c.uniqueAlias ))
+    CourseListSuccess(customCourseTemplates.all().map(_.toViewData) ++ courses.map(ToViewData.toCustomCourseViewData(_)))
+  }
 
   //todo more templates
   /* val defaultCourseStructure: CourseRoot =

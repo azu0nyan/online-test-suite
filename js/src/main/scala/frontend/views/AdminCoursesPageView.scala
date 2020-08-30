@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.admin.{CustomCourseListRequest, CustomCourseListSuccess, NewCustomCourseRequest}
+import clientRequests.admin.{CourseListRequest, CourseListSuccess,   NewCustomCourseRequest}
 import frontend._
 import io.udash.core.ContainerView
 import io.udash._
@@ -31,7 +31,7 @@ class AdminCoursesPageView(
         th(width := "350px")("Описание"),
         th(width := "100px")("Лимит времени"),
         th(width := "250px")("Задания"),
-        th(width := "100px")(""),
+        th(width := "150px")(""),
       ),
       repeat(presenter.courses)(pr => {
         tr(
@@ -43,7 +43,7 @@ class AdminCoursesPageView(
           td(button(onclick :+= ((_: Event) => {
             presenter.app.goTo(AdminCourseTemplateInfoPageState(pr.get.courseAlias))
             true // prevent default
-          }))("Подробнее"))
+          }))(if(pr.get.editable) "Подробнее/ изменить" else "Подробнее"))
         )
       }.render)
     )
@@ -53,7 +53,7 @@ class AdminCoursesPageView(
 
 case class AdminCoursesPagePresenter(
                                       app: Application[RoutingState],
-                                      courses: SeqProperty[viewData.CustomCourseViewData]
+                                      courses: SeqProperty[viewData.AdminCourseViewData]
 
                                     ) extends GenericPresenter[AdminCoursesPageState.type] {
   def newCourse() = {
@@ -63,8 +63,8 @@ case class AdminCoursesPagePresenter(
   }
 
   def updateList() = {
-    frontend.sendRequest(clientRequests.admin.CustomCourseList, CustomCourseListRequest(currentToken.get)) onComplete {
-      case Success(CustomCourseListSuccess(customCourses)) => courses.set(customCourses)
+    frontend.sendRequest(clientRequests.admin.CourseList, CourseListRequest(currentToken.get)) onComplete {
+      case Success(CourseListSuccess(customCourses)) => courses.set(customCourses)
       case _ =>
     }
   }
@@ -80,7 +80,7 @@ case class AdminCoursesPagePresenter(
 case object AdminCoursesPageViewFactory extends ViewFactory[AdminCoursesPageState.type] {
   override def create(): (View, Presenter[AdminCoursesPageState.type]) = {
     println(s"Admin  AdminCoursesPagepage view factory creating..")
-    val model: SeqProperty[viewData.CustomCourseViewData] = SeqProperty.blank
+    val model: SeqProperty[viewData.AdminCourseViewData] = SeqProperty.blank
     val presenter = AdminCoursesPagePresenter(frontend.applicationInstance, model)
     val view = new AdminCoursesPageView(presenter)
     (view, presenter)

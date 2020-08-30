@@ -9,6 +9,8 @@ import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 
 object TemplatesRegistry {
+  def courses:Seq[CourseTemplate] =  aliasToCourseTemplate.values.toSeq
+
   def problemTemplates: Seq[ProblemTemplate] = aliasToPT.values.toSeq
 
   def templatesForAllUsers: Seq[CourseTemplate] = aliasToCourseTemplate.values.filter(_.allowedForAll).toSeq

@@ -15,8 +15,8 @@ package object viewData {
   case class ProblemTemplateExampleViewData(title:String, initialScore:ProblemScore, alias:String, allowedAttempts:Option[Int], exampleHtml:String, answerField:AnswerField)
 
   /**admin*/
-  case class CustomCourseViewData(courseAlias: String, courseTitle: String, description: Option[String], allowedForAll: Boolean, timeLimitSeconds: Option[Int],
-                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String])
+  case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: Option[String], allowedForAll: Boolean, timeLimitSeconds: Option[Int],
+                                 courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable:Boolean)
 
   /** Информация о группе пользователе для отображения */
   case class GroupInfoViewData(groupId: String, groupTitle: String, description: Option[String])

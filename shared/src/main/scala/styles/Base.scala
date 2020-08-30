@@ -19,7 +19,7 @@ object Base extends StyleSheet.Standalone {
       marginRight(horizontalMargin),
       padding(horizontalPadding, verticalPadding),
       textAlign.center,
-      whiteSpace.nowrap,
+//      whiteSpace.nowrap,
       verticalAlign.middle,
       cursor.pointer,
       borderWidth(smallBorderWidth),
