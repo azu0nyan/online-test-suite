@@ -1,7 +1,7 @@
 package frontend.views
 
 
-import clientRequests.admin.{GroupListRequest, GroupListResponseSuccess}
+import clientRequests.admin.{GroupListRequest, GroupListResponseSuccess, NewGroupRequest}
 import constants.Text
 import frontend._
 import io.udash.core.ContainerView
@@ -15,10 +15,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Success
 
 class AdminGroupListPageView(
-                           presenter: AdminGroupListPagePresenter
-                         ) extends ContainerView {
+                              presenter: AdminGroupListPagePresenter
+                            ) extends ContainerView {
 
-  override def getTemplate: Modifier[Element] = table(styles.Custom.defaultTable ~)(
+  override def getTemplate: Modifier[Element] =
+    div(
+      h2("Группы"),
+      div(styles.Custom.inputContainer ~)(
+        label(`for` := "newGroup")("Создать новую группу:"),
+        TextInput(presenter.newGroupTitle)(id := "newGroup", placeholder := "Название"),
+        button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
+          presenter.newGroup()
+          true // prevent default
+        }))("Создать")),
+      groupTable
+    )
+
+
+  def groupTable: Modifier[Element] = table(styles.Custom.defaultTable ~)(
     tr(
       th(width := "100px")("ID"),
       th(width := "100px")("TITLE"),
@@ -33,7 +47,7 @@ class AdminGroupListPageView(
   def groupRow(data: Property[GroupDetailedInfoViewData]) = tr(
     td(data.get.groupId),
     td(data.get.groupTitle),
-    td(pre(overflowX.auto)(data.get.description.getOrElse("").toString)),
+    td(pre(overflowX.auto)(data.get.description.toString)),
     td(for (c <- data.get.courses) yield
       button(onclick :+= ((_: Event) => {
         presenter.app.goTo(AdminCourseTemplateInfoPageState(c.courseTemplateAlias))
@@ -50,13 +64,22 @@ class AdminGroupListPageView(
 }
 
 case class AdminGroupListPagePresenter(
-                                     groupList: SeqProperty[viewData.GroupDetailedInfoViewData],
-                                     app: Application[RoutingState],
-                                   ) extends GenericPresenter[AdminGroupListPageState.type] {
+                                        app: Application[RoutingState],
+                                        groupList: SeqProperty[viewData.GroupDetailedInfoViewData]
+                                      ) extends GenericPresenter[AdminGroupListPageState.type] {
+  def newGroup() = {
+    frontend.sendRequest(clientRequests.admin.NewGroup, NewGroupRequest(currentToken.get, newGroupTitle.get)) onComplete { _ =>
+      requestGroupListUpdate()
+    }
+  }
+
+
+  val newGroupTitle: Property[String] = Property.blank[String]
 
   def requestGroupListUpdate(): Unit = {
     frontend.sendRequest(clientRequests.admin.GroupList, GroupListRequest(currentToken.get)) onComplete {
       case Success(GroupListResponseSuccess(list)) => groupList.set(list)
+        println("updated group list")
       case _ => println(s"error")
     }
 
@@ -72,7 +95,7 @@ case object AdminGroupListPageViewFactory extends ViewFactory[AdminGroupListPage
   override def create(): (View, Presenter[AdminGroupListPageState.type]) = {
     println(s"Admin groups page view factory creating..")
     val coursesModel: SeqProperty[viewData.GroupDetailedInfoViewData] = SeqProperty.blank
-    val presenter = AdminGroupListPagePresenter(coursesModel, frontend.applicationInstance)
+    val presenter = AdminGroupListPagePresenter(frontend.applicationInstance, coursesModel)
     val view = new AdminGroupListPageView(presenter)
     (view, presenter)
   }

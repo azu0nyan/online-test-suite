@@ -1,10 +1,23 @@
 package controller
 
-import clientRequests.admin.{AddUserToGroupFailure, AddUserToGroupRequest, AddUserToGroupResponse, AddUserToGroupSuccess, GroupInfoRequest, GroupInfoResponse, GroupInfoResponseFailure, GroupInfoResponseSuccess, GroupListRequest, GroupListResponse, GroupListResponseFailure, GroupListResponseSuccess, RemoveUserFromGroupFailure, RemoveUserFromGroupRequest, RemoveUserFromGroupResponse, RemoveUserFromGroupSuccess}
+import clientRequests.admin.{AddUserToGroupFailure, AddUserToGroupRequest, AddUserToGroupResponse, AddUserToGroupSuccess, GroupInfoRequest, GroupInfoResponse, GroupInfoResponseFailure, GroupInfoResponseSuccess, GroupListRequest, GroupListResponse, GroupListResponseFailure, GroupListResponseSuccess, NewGroupRequest, NewGroupResponse, NewGroupSuccess, RemoveUserFromGroupFailure, RemoveUserFromGroupRequest, RemoveUserFromGroupResponse, RemoveUserFromGroupSuccess, TitleAlreadyClaimed, UnknownNewGroupFailure}
 import controller.db._
 import org.mongodb.scala.bson.ObjectId
 
 object GroupOps {
+  def newGroup(req:NewGroupRequest) : NewGroupResponse  =
+    try {
+      Group.byIdOrTitle(req.title) match {
+        case Some(value) => TitleAlreadyClaimed()
+        case None =>
+          val g = Group(req.title, "")
+          groups.insert(g)
+          NewGroupSuccess(g._id.toHexString)
+      }
+    } catch {
+      case  _:Throwable => UnknownNewGroupFailure()
+    }
+
 
   def groupList(req:GroupListRequest):GroupListResponse = {
     try {

@@ -19,10 +19,10 @@ package object viewData {
                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable:Boolean)
 
   /** Информация о группе пользователе для отображения */
-  case class GroupInfoViewData(groupId: String, groupTitle: String, description: Option[String])
+  case class GroupInfoViewData(groupId: String, groupTitle: String, description: String)
 
   /** Информация о группе пользователе для отображения в админке */
-  case class GroupDetailedInfoViewData(groupId: String, groupTitle: String, description: Option[String], courses: Seq[CourseTemplateViewData], users: Seq[UserViewData])
+  case class GroupDetailedInfoViewData(groupId: String, groupTitle: String, description: String, courses: Seq[CourseTemplateViewData], users: Seq[UserViewData])
 
   /** Информация о пользователе для отображения */
   case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData])

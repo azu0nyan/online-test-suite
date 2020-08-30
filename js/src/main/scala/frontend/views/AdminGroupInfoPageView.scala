@@ -19,11 +19,11 @@ class AdminGroupInfoPageView(
                             ) extends ContainerView {
 
 
-  override def getTemplate: Modifier[Element] = div(
-    h2(groupInfo.get.groupTitle),
-    h3(s"id: ${groupInfo.get.groupId}"),
-    p(s"${groupInfo.get.description.getOrElse("")}"),
-    for (c <- groupInfo.get.courses) yield
+  override def getTemplate: Modifier[Element] = produce(groupInfo)(groupInfo => div(
+    h2(groupInfo.groupTitle),
+    h3(s"id: ${groupInfo.groupId}"),
+    p(s"${groupInfo.description}"),
+    for (c <- groupInfo.courses) yield
       button(onclick :+= ((_: Event) => {
         presenter.app.goTo(AdminCourseTemplateInfoPageState(c.courseTemplateAlias))
         true // prevent default
@@ -46,7 +46,8 @@ class AdminGroupInfoPageView(
         true // prevent default
       }))("Удалить"),
     ),
-    userTable(groupInfo.get.users)
+    userTable(groupInfo.users)
+  ).render
   )
 
   def userTable(users: Seq[viewData.UserViewData]): JsDom.TypedTag[Table] = table(styles.Custom.defaultTable ~)(

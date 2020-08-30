@@ -33,6 +33,7 @@ object HttpServer {
     addRoute(clientRequests.admin.CourseList, CustomCourseOps.courseList, adminOnly)
     addRoute(clientRequests.admin.GroupInfo, GroupOps.group, adminOnly)
     addRoute(clientRequests.admin.GroupList, GroupOps.groupList, adminOnly)
+    addRoute(clientRequests.admin.NewGroup, GroupOps.newGroup, adminOnly)
     addRoute(clientRequests.admin.NewCustomCourse, CustomCourseOps.newCustomCourse, adminOnly)
     addRoute(clientRequests.admin.ProblemTemplateList, ProblemOps.problemTemplateList, adminOnly)
     addRoute(clientRequests.admin.RemoveUserFromGroup, GroupOps.removeUserFromGroup, adminOnly)

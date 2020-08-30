@@ -62,23 +62,23 @@ object CustomCourseOps {
   def courseList(req: CourseListRequest): CourseListResponse = {
    val customCourses = customCourseTemplates.all().map(_.toViewData)
    val courses = TemplatesRegistry.courses.filter(c => !customCourses.exists(_.courseAlias == c.uniqueAlias ))
-    CourseListSuccess(customCourseTemplates.all().map(_.toViewData) ++ courses.map(ToViewData.toCustomCourseViewData(_)))
+    CourseListSuccess(customCourseTemplates.all().map(_.toViewData) ++ courses.map(ToViewData.toCustomCourseViewData))
   }
 
   //todo more templates
-  /* val defaultCourseStructure: CourseRoot =
+   val defaultCourseStructure: CourseRoot =
      CourseRoot("enter title", "course's annotation",
        Seq(
          CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>",
            Seq(
              CoursePiece.SubTheme("subtheme1", "Subtheme 1 title", "<p> some subtheme text</p>", Seq())
            )
-         )))*/
+         )))
 
-  val defaultCourseStructure: CourseRoot =
-    CourseRoot("enter title", "course's annotation",
-      Seq(CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>", Seq()
-      )))
+//  val defaultCourseStructure: CourseRoot =
+//    CourseRoot("enter title", "course's annotation",
+//      Seq(CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>", Seq()
+//      )))
 
   def newCustomCourse(req: NewCustomCourseRequest): NewCustomCourseResponse = {
     if (TemplatesRegistry.getProblemTemplate(req.uniqueAlias).isEmpty &&

@@ -1,14 +1,15 @@
 package controller.db
 
+import controller.{LoginUserOps, UsersRegistry}
 import org.mongodb.scala.bson.ObjectId
 
 object UserToGroup {
 
   def apply(userId: ObjectId, groupId: ObjectId): UserToGroup = new UserToGroup(new ObjectId, userId, groupId)
 
-  def addUserToGroup(user: User, group: Group): Unit = Transaction { s =>
-    val current = userToGroup.byTwoFields("userId", user._id, "groupId", group._id, Some(s))
-    if (current.isEmpty) userToGroup.insert(UserToGroup(user._id, group._id), Some(s))
+  def addUserToGroup(user: User, group: Group): Unit = UsersRegistry.doSynchronized(user._id){
+    val current = userToGroup.byTwoFields("userId", user._id, "groupId", group._id)
+    if (current.isEmpty) userToGroup.insert(UserToGroup(user._id, group._id))
   }
 
   def removeUserFromGroup(user: User, group: Group): Unit = {

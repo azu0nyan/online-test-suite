@@ -5,7 +5,7 @@ import org.mongodb.scala.bson.ObjectId
 import viewData.{GroupDetailedInfoViewData, GroupInfoViewData}
 
 object Group {
-  def apply(title: String, description: Option[String]): Group = new Group(new ObjectId, title, description)
+  def apply(title: String, description: String): Group = new Group(new ObjectId, title, description)
 
   def byIdOrTitle(idOrTitle: String): Option[Group] =
     try {
@@ -18,7 +18,7 @@ object Group {
 
 }
 
-case class Group(_id: ObjectId, title: String, description: Option[String]) extends MongoObject {
+case class Group(_id: ObjectId, title: String, description: String) extends MongoObject {
 
   def templatesForGroup: Seq[CourseTemplateForGroup] = CourseTemplateForGroup.byGroup(this)
 
