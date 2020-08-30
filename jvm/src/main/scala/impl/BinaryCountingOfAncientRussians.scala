@@ -1,8 +1,8 @@
 package impl
 
-import otsbridge.CoursePiece.{CourseRoot, Inline, Problem}
+import otsbridge.CoursePiece.{CourseRoot, Problem}
 import otsbridge.ProblemScore.{BinaryScore, ProblemScore}
-import otsbridge.{AnswerField, AnswerVerificationResult, CantVerify, CoursePiece, CourseTemplate, DoubleNumberField, ProblemTemplate, Verified}
+import otsbridge.{AnswerField, AnswerVerificationResult, CantVerify, CoursePiece, CourseTemplate, DisplayMe, DoubleNumberField, ProblemTemplate, Verified}
 
 import scala.concurrent.Future
 
@@ -33,7 +33,7 @@ object BinaryCountingOfAncientRussians {
     override val courseTitle: String = "Двоичный счет древних русов. Базовые понятия"
     override val uniqueAlias: String = "BinaryCountingOfAncientRussians"
     override def courseData: CoursePiece.CourseRoot = CourseRoot("Успей решить задания", "",
-    problemsToGenerate.map(ptg => Problem(ptg.uniqueAlias, Inline )))
+    problemsToGenerate.map(ptg => Problem(ptg.uniqueAlias, DisplayMe.Inline )))
   }
 
   // ноль-0, целковый-1, полушка-1/2, четвертушка-1/4, осьмушка-1/8, пудовичок-1/16, медячок-1/32, серебрячок-1/64, золотничок-1/128;

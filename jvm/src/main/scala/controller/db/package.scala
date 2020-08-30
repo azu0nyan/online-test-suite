@@ -3,6 +3,7 @@ package controller
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import com.typesafe.scalalogging.Logger
 import controller.db.CustomCourseTemplate
+import controller.db.codecs.DisplayMeCodecProvider
 import org.bson.types.ObjectId
 import org.mongodb.scala.{ClientSession, Completed, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, ReadConcern, SingleObservable, TransactionOptions, WriteConcern}
 import org.mongodb.scala.bson.codecs.Macros._
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory
 import otsbridge.CoursePiece.CoursePiece
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.ProgramRunResult.ProgramRunResult
-import otsbridge.{ProblemScore, ProgramRunResult}
+import otsbridge.{DisplayMe, ProblemScore, ProgramRunResult}
 
 import scala.reflect.ClassTag
 //import otsbridge.{ProblemScore, ProgramRunResult}
@@ -50,7 +51,15 @@ package object db extends CollectionOps {
     //    classOf[ProblemSetScore],
     classOf[CourseTemplateForGroup],
     classOf[CourseTemplateAvailableForUser],
+
+    DisplayMeCodecProvider,
+//    classOf[DisplayMe],
+
+
+
     classOf[CoursePiece],
+
+
     classOf[CustomCourseTemplate],
   ), DEFAULT_CODEC_REGISTRY)
 

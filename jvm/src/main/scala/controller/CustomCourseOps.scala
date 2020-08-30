@@ -63,14 +63,19 @@ object CustomCourseOps {
     CustomCourseListSuccess(customCourseTemplates.all().map(_.toViewData))
 
   //todo more templates
+  /* val defaultCourseStructure: CourseRoot =
+     CourseRoot("enter title", "course's annotation",
+       Seq(
+         CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>",
+           Seq(
+             CoursePiece.SubTheme("subtheme1", "Subtheme 1 title", "<p> some subtheme text</p>", Seq())
+           )
+         )))*/
+
   val defaultCourseStructure: CourseRoot =
     CourseRoot("enter title", "course's annotation",
-      Seq(
-        CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>",
-          Seq(
-            CoursePiece.SubTheme("subtheme1", "Subtheme 1 title", "<p> some subtheme text</p>", Seq())
-          )
-        )))
+      Seq(CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>", Seq()
+      )))
 
   def newCustomCourse(req: NewCustomCourseRequest): NewCustomCourseResponse = {
     if (TemplatesRegistry.getProblemTemplate(req.uniqueAlias).isEmpty &&
@@ -90,13 +95,13 @@ object CustomCourseOps {
   def updateCustomCourse(req: UpdateCustomCourseRequest): UpdateCustomCourseResponse = {
     CustomCourseTemplate.byAlias(req.courseAlias) match {
       case Some(cct) =>
-        if(req.allowedForAll != cct.allowedForAll) customCourseTemplates.updateField(cct, "allowedForAll", req.allowedForAll)
-        if(req.courseData != cct.courseData) customCourseTemplates.updateField(cct, "courseData", req.courseData)
-        if(req.description != cct.description) customCourseTemplates.updateField(cct, "description", req.description)
-        if(req.title != cct.courseTitle) customCourseTemplates.updateField(cct, "courseTitle", req.title)
+        if (req.allowedForAll != cct.allowedForAll) customCourseTemplates.updateField(cct, "allowedForAll", req.allowedForAll)
+        if (req.courseData != cct.courseData) customCourseTemplates.updateField(cct, "courseData", req.courseData)
+        if (req.description != cct.description) customCourseTemplates.updateField(cct, "description", req.description)
+        if (req.title != cct.courseTitle) customCourseTemplates.updateField(cct, "courseTitle", req.title)
         TemplatesRegistry.registerOrUpdateCourseTemplate(cct.updatedFromDb[CustomCourseTemplate])
         UpdateCustomCourseSuccess()
-      case None =>UnknownUpdateCustomCourseFailure()
+      case None => UnknownUpdateCustomCourseFailure()
     }
   }
 

@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.admin.{CustomCourseListRequest, CustomCourseListSuccess}
+import clientRequests.admin.{CustomCourseListRequest, CustomCourseListSuccess, NewCustomCourseRequest}
 import frontend._
 import io.udash.core.ContainerView
 import io.udash._
@@ -17,6 +17,13 @@ class AdminCoursesPageView(
 
   override def getTemplate: Modifier[Element] = div(
     h2("Курсы"),
+    div(styles.Custom.inputContainer ~)(
+      label(`for` := "newCourse")("Создать новый курс:"),
+      TextInput(presenter.newCourseName)(id := "newCourse", placeholder := "Alias"),
+      button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
+        presenter.newCourse()
+        true // prevent default
+      }))("Создать")),
     table(styles.Custom.defaultTable ~)(
       tr(
         th(width := "150px")("Alias"),
@@ -33,7 +40,7 @@ class AdminCoursesPageView(
           td(pr.get.description.getOrElse("").toString),
           td(pr.get.timeLimitSeconds.toString),
           td(pr.get.problemAliasesToGenerate.mkString(", ")),
-          td(button( onclick :+= ((_: Event) => {
+          td(button(onclick :+= ((_: Event) => {
             presenter.app.goTo(AdminCourseTemplateInfoPageState(pr.get.courseAlias))
             true // prevent default
           }))("Подробнее"))
@@ -49,11 +56,24 @@ case class AdminCoursesPagePresenter(
                                       courses: SeqProperty[viewData.CustomCourseViewData]
 
                                     ) extends GenericPresenter[AdminCoursesPageState.type] {
-  override def handleState(state: AdminCoursesPageState.type): Unit = {
-    frontend.sendRequest(clientRequests.admin.CustomCourseList, CustomCourseListRequest(currentToken.get)) onComplete{
+  def newCourse() = {
+    frontend.sendRequest(clientRequests.admin.NewCustomCourse, NewCustomCourseRequest(currentToken.get, newCourseName.get)) onComplete { _ =>
+      updateList()
+    }
+  }
+
+  def updateList() = {
+    frontend.sendRequest(clientRequests.admin.CustomCourseList, CustomCourseListRequest(currentToken.get)) onComplete {
       case Success(CustomCourseListSuccess(customCourses)) => courses.set(customCourses)
       case _ =>
     }
+  }
+
+
+  val newCourseName: Property[String] = Property.blank[String]
+
+  override def handleState(state: AdminCoursesPageState.type): Unit = {
+    updateList()
   }
 }
 
