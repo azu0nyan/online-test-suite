@@ -31,14 +31,13 @@ case class CoursePageState(courseId:String, taskId:String) extends FinalRoutingS
 
 case object AppPageState extends FinalRoutingState(Some(RootState))
 
-case object AdminPageState extends FinalRoutingState(Some(RootState))
-case object AdminGroupListPageState extends FinalRoutingState(Some(RootState))
-case object AdminUserListPageState extends FinalRoutingState(Some(RootState))
-case class AdminGroupInfoPageState(groupId:String) extends FinalRoutingState(Some(RootState))
-//todo
-case object AdminProblemsPageState extends FinalRoutingState(Some(RootState))
-case object AdminCoursesPageState extends FinalRoutingState(Some(RootState))
-case class AdminCourseTemplateInfoPageState(courseTemplateAlias: String) extends FinalRoutingState(Some(RootState))
+case object AdminPageState extends ContainerRoutingState(Some(RootState))
+case object AdminGroupListPageState extends FinalRoutingState(Some(AdminPageState))
+case object AdminUserListPageState extends FinalRoutingState(Some(AdminPageState))
+case class AdminGroupInfoPageState(groupId:String) extends FinalRoutingState(Some(AdminPageState))
+case object AdminProblemsPageState extends FinalRoutingState(Some(AdminPageState))
+case object AdminCoursesPageState extends FinalRoutingState(Some(AdminPageState))
+case class AdminCourseTemplateInfoPageState(courseTemplateAlias: String) extends FinalRoutingState(Some(AdminPageState))
 
 //case object AdminGroupsPageState extends FinalRoutingState(Some(RootState))
 //case object CourseSelectionPage extends FinalRoutingState(Some(RootState))

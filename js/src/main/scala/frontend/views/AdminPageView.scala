@@ -1,5 +1,6 @@
 package frontend.views
 
+import constants.Text
 import frontend.{AdminCoursesPageState, AdminGroupListPageState, AdminPageState, AdminProblemsPageState, AdminUserListPageState, RoutingState}
 import io.udash.core.ContainerView
 import io.udash._
@@ -10,6 +11,11 @@ import scalatags.generic.Modifier
 class AdminPageView(
                    presenter:AdminPagePresenter
                    ) extends ContainerView{
+
+  override protected val childViewContainer: Element = div(
+
+  ).render
+
 
   override def getTemplate: Modifier[Element] = div(
     button( onclick :+= ((_: Event) => {
@@ -28,6 +34,7 @@ class AdminPageView(
       presenter.app.goTo(AdminUserListPageState)
       true // prevent default
     }))("Пользователи"),
+    childViewContainer
   )
 }
 

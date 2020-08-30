@@ -29,6 +29,9 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState] {
     case "/app" => AppPageState
 
     case "/admin" => AdminPageState
+    case "/admin" /"courses"  => AdminCoursesPageState
+    case "/admin" /"courses" / alias => AdminCourseTemplateInfoPageState(alias)
+    case "/admin" /"problems" => AdminProblemsPageState
     case "/admin" / "groups" => AdminGroupListPageState
     case "/admin" / "groups" / id => AdminGroupInfoPageState(id)
     case "/admin" / "users" => AdminUserListPageState
