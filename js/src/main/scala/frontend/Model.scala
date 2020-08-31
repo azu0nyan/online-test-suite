@@ -5,6 +5,7 @@ import io.udash._
 import io.udash.properties.{Blank, ModelPropertyCreator}
 import otsbridge.CoursePiece
 import otsbridge.CoursePiece.CourseRoot
+import otsbridge.ProblemScore.{BinaryScore, ProblemScore}
 //import viewData.{AvailableCourseViewData, CourseViewData, ProblemViewData, UserViewData}
 
 //bindings of data sent from backend
@@ -19,10 +20,11 @@ trait Bindings {
   implicit val f: ModelPropertyCreator[viewData.UserCoursesInfoViewData] = ModelPropertyCreator.materialize[viewData.UserCoursesInfoViewData]
   implicit val g: ModelPropertyCreator[viewData.GroupDetailedInfoViewData] = ModelPropertyCreator.materialize[viewData.GroupDetailedInfoViewData]
   implicit val h: ModelPropertyCreator[viewData.AdminCourseViewData] = ModelPropertyCreator.materialize[viewData.AdminCourseViewData]
-
-  implicit val i: ModelPropertyCreator[CourseRoot] = ModelPropertyCreator.materialize[CourseRoot]
+  implicit val i: ModelPropertyCreator[viewData.AnswerForConfirmationViewData] = ModelPropertyCreator.materialize[viewData.AnswerForConfirmationViewData]
+  implicit val k: ModelPropertyCreator[CourseRoot] = ModelPropertyCreator.materialize[CourseRoot]
 
   implicit val blank1: Blank[viewData.UserCoursesInfoViewData] = Blank.Simple(viewData.UserCoursesInfoViewData(Seq(), Seq()))
+  implicit val blank5: Blank[ProblemScore] = Blank.Simple(BinaryScore(false))
   implicit val blank2: Blank[viewData.CourseViewData] = Blank.Simple(viewData.CourseViewData("Loading course..", "NO TITLE", Passing(None), CoursePiece.emptyCourse, Seq(), None))
   implicit val blank4: Blank[viewData.AdminCourseViewData] = Blank.Simple(viewData.AdminCourseViewData("Loading course..", "NO TITLE", None, false, None, CoursePiece.emptyCourse , Seq(), false))
   implicit val blank3: Blank[viewData.GroupDetailedInfoViewData] =

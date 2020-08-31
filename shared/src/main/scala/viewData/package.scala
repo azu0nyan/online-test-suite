@@ -18,6 +18,9 @@ package object viewData {
   case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: Option[String], allowedForAll: Boolean, timeLimitSeconds: Option[Int],
                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable:Boolean)
 
+  /**teacher*/
+  case class AnswerForConfirmationViewData(answerId:String, score: ProblemScore, problemViewData: ProblemViewData, review:Option[String])
+
   /** Информация о группе пользователе для отображения */
   case class GroupInfoViewData(groupId: String, groupTitle: String, description: String)
 
@@ -34,7 +37,7 @@ package object viewData {
                              status: AnswerStatus
                            ) {
     def score: Option[ProblemScore] = status match {
-      case CourseShared.Verified(score, review, systemMessage, verifiedAt) => Some(score)
+      case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => Some(score)
       case _ => None
     }
   }

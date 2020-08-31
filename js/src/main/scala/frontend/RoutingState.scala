@@ -26,10 +26,11 @@ case object LoginPageState extends FinalRoutingState(Some(RootState))
 case object RegistrationPageState extends FinalRoutingState(Some(RootState))
 
 case object CourseSelectionPageState extends FinalRoutingState(Some(RootState))
-
 case class CoursePageState(courseId:String, lookAt:String) extends FinalRoutingState(Some(RootState))
 
 case object AppPageState extends FinalRoutingState(Some(RootState))
+
+case class TeacherConfirmAnswersPageState(problemId:Option[String], groupId:Option[String]) extends FinalRoutingState(Some(AdminPageState))
 
 case object AdminPageState extends ContainerRoutingState(Some(RootState))
 case object AdminGroupListPageState extends FinalRoutingState(Some(AdminPageState))
@@ -38,6 +39,7 @@ case class AdminGroupInfoPageState(groupId:String) extends FinalRoutingState(Som
 case object AdminProblemsPageState extends FinalRoutingState(Some(AdminPageState))
 case object AdminCoursesPageState extends FinalRoutingState(Some(AdminPageState))
 case class AdminCourseTemplateInfoPageState(courseTemplateAlias: String) extends FinalRoutingState(Some(AdminPageState))
+
 
 //case object AdminGroupsPageState extends FinalRoutingState(Some(RootState))
 //case object CourseSelectionPage extends FinalRoutingState(Some(RootState))

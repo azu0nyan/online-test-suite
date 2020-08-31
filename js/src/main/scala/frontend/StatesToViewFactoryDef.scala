@@ -1,6 +1,6 @@
 package frontend
 
-import frontend.views.{AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory}
+import frontend.views.{AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
 import io.udash.core.{ViewFactory, ViewFactoryRegistry}
 
 class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
@@ -19,6 +19,7 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
       case LoginPageState => LoginPageViewFactory
       case RegistrationPageState => RegistrationPageViewFactory
       case RootState => RootPageViewFactory
+      case TeacherConfirmAnswersPageState(_, _) => TeacherConfirmAnswersPageViewFactory
       //case AppPageState => AppPageViewFactory
       case _ => ErrorPageViewFactory
     }

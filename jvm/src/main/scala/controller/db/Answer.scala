@@ -11,10 +11,15 @@ import viewData.AnswerViewData
 object Answer {
 
   def apply(problemId: ObjectId, answer: String, status: AnswerStatus, answeredAt: Instant): Answer = new Answer(new ObjectId(), problemId, answer, status, answeredAt)
+
+  //todo faster request
+  def answersForConfirmation(groupId:Option[String], problemId:Option[String]):Seq[Answer] = answers.all().filter(_.status.isInstanceOf[VerifiedAwaitingConfirmation])
 }
 
 
 case class Answer(_id: ObjectId, problemId: ObjectId, answer: String, status: AnswerStatus, answeredAt: Instant) extends MongoObject {
+  def problem: Problem = problems.byId(problemId).get
+
   def toViewData: AnswerViewData = AnswerViewData(
     problemId.toHexString,
     answer,

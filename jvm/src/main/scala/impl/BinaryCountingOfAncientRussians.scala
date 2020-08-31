@@ -61,7 +61,7 @@ object BinaryCountingOfAncientRussians {
     override val initialScore: ProblemScore = BinaryScore(false)
 
     override def verifyAnswer(seed: Int, answer: String): AnswerVerificationResult = answer.toDoubleOption match {
-      case Some(x) => Verified(BinaryScore(x == value), None, None)
+      case Some(x) => Verified(BinaryScore(x == value), None)
       case None => CantVerify(Some("Неправильный формат данных"))
     }
     override def answerField(seed: Int): DoubleNumberField = DoubleNumberField("")

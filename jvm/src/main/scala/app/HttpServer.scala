@@ -1,9 +1,10 @@
 package app
 import java.nio.file.Paths
 
+import clientRequests.teacher.{AnswersForConfirmation, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
-import controller.{CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, SubmitAnswer, UserOps}
+import controller.{AnswerOps, CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
 import spark.Spark._
@@ -24,7 +25,10 @@ object HttpServer {
     addRoute(clientRequests.GetCoursesList, CoursesOps.requestCoursesList, user)
     addRoute(clientRequests.GetCourseData, CoursesOps.requestCourse, user)
     addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse, user)
-    addRoute(clientRequests.SubmitAnswer, SubmitAnswer.submitAnswer, user)
+    addRoute(clientRequests.SubmitAnswer, AnswerOps.submitAnswer, user)
+
+    addRoute(TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
+    addRoute(AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
 
     addRoute(clientRequests.admin.AddCourseToGroup, CustomCourseOps.addCourseToGroup, adminOnly)
     addRoute(clientRequests.admin.AddProblemToCourse, CustomCourseOps.addProblemToCourse, adminOnly)
@@ -43,6 +47,8 @@ object HttpServer {
 
   val all: Any => Boolean = _ => true
   val user: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined
+  val gradesWatcher: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined //todo
+  val teacher: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined //todo
   val adminOnly: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined //todo
 
 

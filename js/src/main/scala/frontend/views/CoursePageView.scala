@@ -163,7 +163,7 @@ class CoursePageView(
             case None => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
           }),
           td(ans.status match {
-            case CourseShared.Verified(score, review, systemMessage, verifiedAt) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
+            case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
             case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
             case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)()
             case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
@@ -172,7 +172,7 @@ class CoursePageView(
             case _ => p()
           }),
           td(ans.status match {
-            case CourseShared.Verified(_, review, _, _) => pre(overflowX.auto)(review.getOrElse("").toString)
+            case CourseShared.Verified(_, review, _, _, _) => pre(overflowX.auto)(review.getOrElse("").toString)
             case _ => ""
           }),
           td(expandable(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
