@@ -35,6 +35,22 @@ object Grid extends StyleSheet.Inline{
 //  )
   )
 
+  //NESTED in grid container
+  val contentWithLeftAndRight = style(
+    padding(0 px ),
+    margin(0 px),
+    display.grid,
+    gridTemplateColumns := s"[${leftColumn}]1fr [${middleColumnStart}]3fr [${rightColumn}]1fr [${rightColumnEnd}]",
+    gridTemplateRows :=
+      s"[${contentRowStart}] $rowCellHeight$rowCellVal [${contentMiddleRowStart}] auto [${contentEndRowStart}] $rowCellHeight$rowCellVal",
+
+        //    gridRow := s"${contentRowStart} / ${contentEndRowStart}",
+    gridRow := s"${contentRowStart} / ${contentEndRowStart}",
+    gridColumn := s"${leftColumn} / ${rightColumnEnd}",
+    //    backgroundColor := contentBgColor,
+
+  )
+
 
   val header = style(
     gridRow := headerRowStart,
@@ -72,10 +88,14 @@ object Grid extends StyleSheet.Inline{
     height.fitContent
   )
 
+
+
+
   val content = style(
     padding(horizontalPadding),
+//    gridRow := s"${contentRowStart} / ${contentEndRowStart}",
     gridRow := s"${contentRowStart} / ${contentEndRowStart}",
-    gridColumn := middleColumnStart,
+    gridColumn :=   middleColumnStart,
 //    backgroundColor := contentBgColor,
 
   )

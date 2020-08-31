@@ -177,8 +177,11 @@ class CoursePageView(
       )
     )
 
-  //  implicit val b: ModelPropertyCreator[viewData.ProblemViewData] = ModelPropertyCreator.materialize[viewData.ProblemViewData]
-  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
+  def left:Modifier[Element] = div(styles.Grid.leftContent)("LEFT")
+
+  def right:Modifier[Element] = div(styles.Grid.rightContent)("RIGHT")
+
+  def center:Modifier[Element] = div(styles.Grid.content ~)(
     repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
       presenter.toCourseSelectionPage()
@@ -188,6 +191,13 @@ class CoursePageView(
       presenter.logOut()
       true // prevent default
     }))("Выйти"))
+
+  //  implicit val b: ModelPropertyCreator[viewData.ProblemViewData] = ModelPropertyCreator.materialize[viewData.ProblemViewData]
+  override def getTemplate: Modifier[Element] = div(styles.Grid.contentWithLeftAndRight)(
+    left,
+    center,
+    right
+  )
 
 }
 
