@@ -4,7 +4,7 @@ import DbViewsShared.CourseShared
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import otsbridge.{AnswerField, ProblemScore}
 import io.circe.generic.auto._
-import otsbridge.CoursePiece.CourseRoot
+import otsbridge.CoursePiece.{CoursePiece, CourseRoot}
 import otsbridge.ProblemScore.ProblemScore
 
 /**
@@ -41,6 +41,7 @@ package object viewData {
 
   /** Информация о проблеме для отображения пользователю */
   case class ProblemViewData(problemId: String,
+                             templateAlias: String,
                              title: String,
                              problemHtml: String,
                              answerFieldType: AnswerField,
@@ -50,7 +51,7 @@ package object viewData {
                             )
 
   /** Вся информация о курсе, отображаемая во время его выполнения */
-  case class CourseViewData(courseId: String, title: String, status: CourseStatus, problems: Seq[ProblemViewData], description: Option[String])
+  case class CourseViewData(courseId: String, title: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemViewData], description: Option[String])
 
   /** Информация видная в списке активных курсов */
   case class CourseInfoViewData(courseId: String, title: String, status: CourseStatus, description: Option[String])

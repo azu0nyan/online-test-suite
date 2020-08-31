@@ -51,6 +51,7 @@ case class Problem(
 
   def toView:ProblemViewData =
     ProblemViewData(_id.toHexString,
+      templateAlias,
       template.title(seed),
       template.generateProblemHtml(seed),
       template.answerField(seed),

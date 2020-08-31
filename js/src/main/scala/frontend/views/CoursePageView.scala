@@ -9,8 +9,10 @@ import io.udash._
 import frontend._
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
-import org.scalajs.dom._
-import org.scalajs.dom.html.Table
+import org.scalajs.dom.{Element, Event}
+//import org.scalajs.dom._
+import org.scalajs.dom.html.{Div, Table}
+import otsbridge.CoursePiece.{CoursePiece, PiecePath, pathToString}
 import otsbridge.ProblemScore._
 import otsbridge.ProgramRunResult.ProgramRunResult
 import otsbridge._
@@ -96,15 +98,15 @@ class CoursePageView(
 
   })
 
-  def expandable(sumary:JsDom.TypedTag[_], det:JsDom.TypedTag[_]) = details(
+  def expandable(sumary: JsDom.TypedTag[_], det: JsDom.TypedTag[_]) = details(
     summary(sumary),
     det
   )
 
-  val maxRunsWithoutFold:Int = 3
+  val maxRunsWithoutFold: Int = 3
 
   def runResultsTable(runs: Seq[ProgramRunResult]) =
-    if(runs.size > maxRunsWithoutFold) expandable(div(Text.pShowRuns.toString), runResultsTableRaw(runs))
+    if (runs.size > maxRunsWithoutFold) expandable(div(Text.pShowRuns.toString), runResultsTableRaw(runs))
     else runResultsTableRaw(runs)
 
   def runResultsTableRaw(runs: Seq[ProgramRunResult]): JsDom.TypedTag[Table] =
@@ -128,7 +130,7 @@ class CoursePageView(
         })
       )
     )
-    //div(seq.flatMap(pr => Seq(p(pr.toString), br)))
+  //div(seq.flatMap(pr => Seq(p(pr.toString), br)))
 
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
     div(styles.Custom.problemContainer ~)(
@@ -150,7 +152,7 @@ class CoursePageView(
           th(width := "50px")(Text.pAnswerScore),
           th(width := "450px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerSystemMessage),
           th(width := "150px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerReview),
-          th(width := "150px", minWidth := "100px",maxWidth := "40%")(Text.pAnswerAnswerText),
+          th(width := "150px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerAnswerText),
         ),
         for ((ans, i) <- answers.sortBy(_.answeredAt).zipWithIndex.reverse) yield tr(
           td((i + 1).toString),
@@ -160,16 +162,16 @@ class CoursePageView(
             case None => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
           }),
           td(ans.status match {
-            case CourseShared.Verified(score, review, systemMessage, verifiedAt) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto) (systemMessage.getOrElse("").toString)
-            case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto) (systemMessage.getOrElse("").toString)
-            case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto) ()
-            case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto) (systemMessage.getOrElse("").toString)
+            case CourseShared.Verified(score, review, systemMessage, verifiedAt) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
+            case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
+            case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)()
+            case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
           }, ans.score match {
-            case Some(MultipleRunsResultScore(runs)) =>runResultsTable(runs)
-            case _ =>p()
+            case Some(MultipleRunsResultScore(runs)) => runResultsTable(runs)
+            case _ => p()
           }),
           td(ans.status match {
-            case CourseShared.Verified(_, review, _, _) =>pre(overflowX.auto)(review.getOrElse("").toString)
+            case CourseShared.Verified(_, review, _, _) => pre(overflowX.auto)(review.getOrElse("").toString)
             case _ => ""
           }),
           td(expandable(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
@@ -177,11 +179,85 @@ class CoursePageView(
       )
     )
 
-  def left:Modifier[Element] = div(styles.Grid.leftContent)("LEFT")
 
-  def right:Modifier[Element] = div(styles.Grid.rightContent)("RIGHT")
+  //CONTENTS
+  def shouldBeDisplayedInContents(cp: CoursePiece): Boolean =
+    cp match {
+      case CoursePiece.Problem(_, _) | _ if cp.displayInContentsHtml.nonEmpty => return true
+      case container: CoursePiece.Container => container.childs.exists(shouldBeDisplayedInContents)
+      case _ => return false
+    }
 
-  def center:Modifier[Element] = div(styles.Grid.content ~)(
+
+  /*def buildContentsFromSeq(seq: Seq[(CoursePiece, PiecePath)]) =
+    if (seq.isEmpty) {
+      None
+    } else {
+      val head = seq.head._1  match {
+        case _ if seq.head._1 .displayInContentsHtml.nonEmpty => raw(seq.head._1.displayInContentsHtml.get)
+        case CoursePiece.Problem(problemAlias, displayMe) => h4(presenter.problemByAlias(problemAlias).map(_.title).getOrElse("Задача"))
+        case _ => p()
+      }
+      val firstDepth = seq.head._2.size
+      val (childs, tail) = seq.tail.span(_._2.size > firstDepth)
+      div(
+        head,
+      ul(
+        childs.tails.filter(_.head._2)
+      )
+
+    }*/
+
+
+  def buildContents(cd: CoursePiece, currentPath: Seq[String]): JsDom.TypedTag[Div] = {
+    val pathToMe = currentPath :+ cd.alias
+    val pathToMeStr = pathToString(pathToMe)
+    val me = cd match {
+      case CoursePiece.Problem(problemAlias, displayMe) =>
+        div(onclick :+= ((_: Event) => {
+          presenter.app.goTo(CoursePageState(presenter.courseId.get, pathToMeStr))
+          true // prevent default
+        }))(
+          presenter.problemByAlias(problemAlias).map(_.title).getOrElse("Задача").toString
+        )
+      case _ if cd.displayInContentsHtml.nonEmpty =>
+        div(onclick :+= ((_: Event) => {
+          presenter.app.goTo(CoursePageState(presenter.courseId.get, pathToMeStr))
+          true // prevent default
+        }))(
+          raw(cd.displayInContentsHtml.get)
+        )
+      case _ => div()
+    }
+    val childs = cd match {
+      case container: CoursePiece.Container =>
+        val displayedChilds = container.childs.filter(shouldBeDisplayedInContents)
+        if(displayedChilds.nonEmpty){
+          ul(
+            for(c <- displayedChilds) yield li(buildContents(c, pathToMe))
+          )
+        } else div()
+      case _ => div()
+    }
+
+    div(
+      me,
+      childs
+    )
+  }
+
+
+
+  def left: Modifier[Element] = div(styles.Grid.leftContent)(
+    produce(course.subProp(_.courseData)) { cd =>
+      buildContents(cd, Seq()).render
+    }
+
+  )
+
+  def right: Modifier[Element] = div(styles.Grid.rightContent)("RIGHT")
+
+  def center: Modifier[Element] = div(styles.Grid.content ~)(
     repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
       presenter.toCourseSelectionPage()
@@ -206,6 +282,9 @@ case class CoursePagePresenter(
                                 course: ModelProperty[viewData.CourseViewData],
                                 app: Application[RoutingState],
                               ) extends GenericPresenter[CoursePageState] {
+
+  def problemByAlias(alias: String): Option[viewData.ProblemViewData] = course.subProp(_.problems).get.find(_.templateAlias == alias)
+
   def submitAnswer(problemId: String, answerRaw: String): Unit =
     frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw))
 
@@ -213,7 +292,8 @@ case class CoursePagePresenter(
   def requestCoursesListUpdate(courseHexId: String): Unit = {
     frontend.sendRequest(clientRequests.GetCourseData, CourseDataRequest(currentToken.get, courseHexId)) onComplete {
       case Success(GetCourseDataSuccess(cs)) =>
-        println(s"course request success2 : ${cs.courseId} ${cs.title}")
+        println(s"course request success : ${cs.courseId} ${cs.title}")
+        courseId.set(cs.courseId)
         course.set(cs)
       case Success(failure@_) =>
         println(s"course request failure $failure")
@@ -223,9 +303,16 @@ case class CoursePagePresenter(
     }
   }
 
+  val courseId: Property[String] = Property.blank[String]
+  val currentPath: Property[String] = Property.blank[String]
+
   override def handleState(state: CoursePageState): Unit = {
     println(s"Course page presenter,  handling state : $state")
-    requestCoursesListUpdate(state.courseId)
+    if(courseId.get != state.courseId){
+      requestCoursesListUpdate(state.courseId)
+    }
+    courseId.set(state.courseId)
+    currentPath.set(state.lookAt)
   }
 }
 
