@@ -10,6 +10,7 @@ import frontend._
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom.{Element, Event}
+import otsbridge.CoursePiece.stringToPath
 //import org.scalajs.dom._
 import org.scalajs.dom.html.{Div, Table}
 import otsbridge.CoursePiece.{CoursePiece, PiecePath, pathToString}
@@ -189,26 +190,6 @@ class CoursePageView(
     }
 
 
-  /*def buildContentsFromSeq(seq: Seq[(CoursePiece, PiecePath)]) =
-    if (seq.isEmpty) {
-      None
-    } else {
-      val head = seq.head._1  match {
-        case _ if seq.head._1 .displayInContentsHtml.nonEmpty => raw(seq.head._1.displayInContentsHtml.get)
-        case CoursePiece.Problem(problemAlias, displayMe) => h4(presenter.problemByAlias(problemAlias).map(_.title).getOrElse("Задача"))
-        case _ => p()
-      }
-      val firstDepth = seq.head._2.size
-      val (childs, tail) = seq.tail.span(_._2.size > firstDepth)
-      div(
-        head,
-      ul(
-        childs.tails.filter(_.head._2)
-      )
-
-    }*/
-
-
   def buildContents(cd: CoursePiece, currentPath: Seq[String]): JsDom.TypedTag[Div] = {
     val pathToMe = currentPath :+ cd.alias
     val pathToMeStr = pathToString(pathToMe)
@@ -232,9 +213,9 @@ class CoursePageView(
     val childs = cd match {
       case container: CoursePiece.Container =>
         val displayedChilds = container.childs.filter(shouldBeDisplayedInContents)
-        if(displayedChilds.nonEmpty){
+        if (displayedChilds.nonEmpty) {
           ul(
-            for(c <- displayedChilds) yield li(buildContents(c, pathToMe))
+            for (c <- displayedChilds) yield li(buildContents(c, pathToMe))
           )
         } else div()
       case _ => div()
@@ -247,7 +228,6 @@ class CoursePageView(
   }
 
 
-
   def left: Modifier[Element] = div(styles.Grid.leftContent)(
     produce(course.subProp(_.courseData)) { cd =>
       buildContents(cd, Seq()).render
@@ -257,8 +237,57 @@ class CoursePageView(
 
   def right: Modifier[Element] = div(styles.Grid.rightContent)("RIGHT")
 
+
+  def displayOnNewPageLinkText(cp: CoursePiece): String = cp.displayInContentsHtml.getOrElse(cp match {
+    case problem: CoursePiece.Problem =>
+      presenter.problemByAlias(problem.problemAlias).map(_.title).getOrElse("Задача").toString
+    case _ => cp.alias
+  })
+
+  def renderChilds(childs: Seq[CoursePiece], pathToParent: Seq[String], nested:NestedInterceptor) : Modifier[Element]  = div(
+    for (c <- childs) yield c.displayMe match {
+      case DisplayMe.OwnPage =>
+        h3(onclick :+= ((_: Event) => {
+          presenter.app.goTo(CoursePageState(presenter.courseId.get, pathToString(pathToParent :+ c.alias)))
+          true // prevent default
+        }))(
+          displayOnNewPageLinkText(c)
+        )
+      case DisplayMe.Inline =>
+        div(renderPiece(c, pathToParent, nested))
+    }
+  )
+
+  def renderPiece(cp: CoursePiece, parentPath: Seq[String], nested:NestedInterceptor) : Modifier[Element] = {
+    val pathToMe = parentPath :+ cp.alias
+    val pathToMeStr = pathToString(pathToMe)
+    cp match {
+      case CoursePiece.Theme(a, t, tHTML, childs, _) => div(
+        h1(t),
+        raw(tHTML),
+        renderChilds(childs, pathToMe, nested)
+      )
+      case CoursePiece.SubTheme(a, t, tHTML, childs, _) => div(
+        h1(t),
+        raw(tHTML),
+        renderChilds(childs, pathToMe, nested)
+      )
+      case CoursePiece.Paragraph(alias, tHTML, _) => raw(tHTML)
+      case CoursePiece.HtmlToDisplay(alias, displayMe, htmlRaw) => raw(htmlRaw)
+      case CoursePiece.TextWithHeading(alias, heading, bodyHtml, displayMe) =>
+        div(
+          h1(heading),
+          raw(bodyHtml)
+        )
+      case CoursePiece.Problem(problemAlias, displayMe) =>
+        nested(repeatWithNested(course.subSeq(_.problems).filter(_.templateAlias == problemAlias))((p , nested) => problemHtml(p.asModel, nested )))
+
+      case container: CoursePiece.Container => renderChilds(container.childs, pathToMe, nested)
+    }
+  }
+
   def center: Modifier[Element] = div(styles.Grid.content ~)(
-    repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
+    //repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
       presenter.toCourseSelectionPage()
       true // prevent default
@@ -266,7 +295,15 @@ class CoursePageView(
     button(onclick :+= ((_: Event) => {
       presenter.logOut()
       true // prevent default
-    }))("Выйти"))
+    }))("Выйти"),
+    produceWithNested(presenter.currentPath){ (p, nested) =>
+      presenter.course.get.courseData.pieceByPath.get(p) match {
+        case Some(piece) => div(renderPiece(piece, stringToPath(p).dropRight(1), nested)).render
+        case None =>div("Не могу найти указанную часть курса, воспользуйтесь содержанием, расположеным слева").render
+      }
+    }
+
+  )
 
   //  implicit val b: ModelPropertyCreator[viewData.ProblemViewData] = ModelPropertyCreator.materialize[viewData.ProblemViewData]
   override def getTemplate: Modifier[Element] = div(styles.Grid.contentWithLeftAndRight)(
@@ -308,7 +345,7 @@ case class CoursePagePresenter(
 
   override def handleState(state: CoursePageState): Unit = {
     println(s"Course page presenter,  handling state : $state")
-    if(courseId.get != state.courseId){
+    if (courseId.get != state.courseId) {
       requestCoursesListUpdate(state.courseId)
     }
     courseId.set(state.courseId)
