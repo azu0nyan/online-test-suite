@@ -13,7 +13,9 @@ object HttpServer {
 
   def initRoutesAndStart(): Unit ={
     log.info(s"set external static files location to ${Paths.get("").toAbsolutePath.toString}")
-    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
+    staticFileLocation("/")
+//    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
+//    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
 //    staticFileLocation("")
 
 //    println(Spark.staticFiles.)

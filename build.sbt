@@ -1,6 +1,9 @@
+
 ThisBuild / scalaVersion := "2.13.3"
 
 cancelable in Global := true
+
+//enablePlugins(JavaAppPackaging)
 
 val scalacOpts = Seq(
   "-encoding", "utf8", // Option and arguments on same  line
@@ -60,7 +63,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
       "io.circe" %%% "circe-parser"
     ).map(_ % circeVersion)
   )
-  .jvmConfigure(_.dependsOn(contentProject))
+  .jvmConfigure(_.dependsOn(contentProject).enablePlugins(JavaAppPackaging))
   .jsConfigure(_.dependsOn(extensionsBridgeJs))
   .jvmSettings(
     // Add JVM-specific settings here
@@ -70,8 +73,28 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     libraryDependencies += "com.sparkjava" % "spark-core" % "2.9.1",
     libraryDependencies += "com.pauldijou" %% "jwt-core" % "4.2.0",
 
-    mainClass in reStart := Some("app.App"),
-    baseDirectory in reStart := file(workdir)
+    mainClass in  reStart := Some("app.App"),
+    mainClass in  Compile := Some("app.App"),
+    mainClass in  (Compile, run) := Some("app.App"),
+    mainClass in  (Compile, packageBin) := Some("app.App"),
+    baseDirectory in reStart := file(workdir),
+
+    Compile / unmanagedResourceDirectories += file(workdir),
+
+    javaOptions in Universal ++= Seq(
+      // -J params will be added as jvm parameters
+      "-J-Xmx512m",
+      "-J-Xms64m",
+
+      // others will be added as app parameters
+//      "-Dproperty=true",
+//      "-port=8080",
+
+      // you can access any build setting/task here
+//      s"-version=${version.value}"
+    ),
+
+//    publishTo := Some(Resolver.file("testPublish", file("/tmp/")))
     //    fork in run := true,
     //    baseDirectory in run := file("workdir")
   ).
@@ -114,6 +137,8 @@ lazy val fooJS = foo.js.settings(
 )
 //lazy val fooJS = foo.js.dependsOn(extensionsBridge)
 //lazy val fooJVM = foo.jvm.dependsOn(extensionsBridge, contentProject)
+
+
 
 
 //addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
