@@ -167,6 +167,10 @@ class CoursePageView(
             case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
             case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)()
             case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
+            case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
+              div(p("Ожидает подтверждения преподавателя"),
+                pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString))
+
           }, ans.score match {
             case Some(MultipleRunsResultScore(runs)) => runResultsTable(runs)
             case _ => p()
@@ -235,7 +239,7 @@ class CoursePageView(
 
   )
 
-  def right: Modifier[Element] = div(styles.Grid.rightContent)("RIGHT")
+  def right: Modifier[Element] = div(styles.Grid.rightContent)("RIGHTu")
 
 
   def displayOnNewPageLinkText(cp: CoursePiece): String = cp.displayInContentsHtml.getOrElse(cp match {
@@ -244,7 +248,7 @@ class CoursePageView(
     case _ => cp.alias
   })
 
-  def renderChilds(childs: Seq[CoursePiece], pathToParent: Seq[String], nested:NestedInterceptor) : Modifier[Element]  = div(
+  def renderChilds(childs: Seq[CoursePiece], pathToParent: Seq[String], nested: NestedInterceptor): Modifier[Element] = div(
     for (c <- childs) yield c.displayMe match {
       case DisplayMe.OwnPage =>
         h3(onclick :+= ((_: Event) => {
@@ -258,7 +262,7 @@ class CoursePageView(
     }
   )
 
-  def renderPiece(cp: CoursePiece, parentPath: Seq[String], nested:NestedInterceptor) : Modifier[Element] = {
+  def renderPiece(cp: CoursePiece, parentPath: Seq[String], nested: NestedInterceptor): Modifier[Element] = {
     val pathToMe = parentPath :+ cp.alias
     val pathToMeStr = pathToString(pathToMe)
     cp match {
@@ -280,7 +284,7 @@ class CoursePageView(
           raw(bodyHtml)
         )
       case CoursePiece.Problem(problemAlias, displayMe) =>
-        nested(repeatWithNested(course.subSeq(_.problems).filter(_.templateAlias == problemAlias))((p , nested) => problemHtml(p.asModel, nested )))
+        nested(repeatWithNested(course.subSeq(_.problems).filter(_.templateAlias == problemAlias))((p, nested) => problemHtml(p.asModel, nested)))
 
       case container: CoursePiece.Container => renderChilds(container.childs, pathToMe, nested)
     }
@@ -296,10 +300,10 @@ class CoursePageView(
       presenter.logOut()
       true // prevent default
     }))("Выйти"),
-    produceWithNested(presenter.currentPath){ (p, nested) =>
+    produceWithNested(presenter.currentPath) { (p, nested) =>
       presenter.course.get.courseData.pieceByPath.get(p) match {
         case Some(piece) => div(renderPiece(piece, stringToPath(p).dropRight(1), nested)).render
-        case None =>div("Не могу найти указанную часть курса, воспользуйтесь содержанием, расположеным слева").render
+        case None => div("Не могу найти указанную часть курса, воспользуйтесь содержанием, расположеным слева").render
       }
     }
 

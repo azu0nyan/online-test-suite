@@ -4,6 +4,7 @@ import java.nio.file.Paths
 import clientRequests.teacher.{AnswersForConfirmation, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
+import controller.UserRole.{Admin, Teacher, Watcher}
 import controller.{AnswerOps, CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
@@ -13,7 +14,7 @@ object HttpServer {
 
   def initRoutesAndStart(): Unit ={
     log.info(s"set external static files location to ${Paths.get("").toAbsolutePath.toString}")
-    staticFileLocation("/")
+    staticFileLocation("/")//todo
 //    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
 //    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
 //    staticFileLocation("")
@@ -49,10 +50,18 @@ object HttpServer {
 
   val all: Any => Boolean = _ => true
   val user: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined
-  val gradesWatcher: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined //todo
-  val teacher: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined //todo
-  val adminOnly: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined //todo
-
+  val gradesWatcher: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token) match {
+    case Some(u) =>u.role.isInstanceOf[Watcher] || u.role.isInstanceOf[Admin] || u.role.isInstanceOf[Teacher]
+    case None => false
+  }
+  val teacher: WithToken => Boolean = req  =>  LoginUserOps.decodeAndValidateToken(req.token) match {
+    case Some(u) =>  u.role.isInstanceOf[Admin] || u.role.isInstanceOf[Teacher]
+    case None => false
+  }
+  val adminOnly: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token) match {
+    case Some(u) =>  u.role.isInstanceOf[Admin]
+    case None => false
+  }
 
 
 

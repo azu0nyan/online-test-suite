@@ -36,6 +36,7 @@ package object db extends CollectionOps {
 
   val codecRegistry = fromRegistries(fromProviders(
     classOf[User],
+    classOf[UserRole],
     classOf[Group],
     classOf[Problem],
     classOf[Answer],

@@ -2,7 +2,7 @@ package controller.db
 
 import java.time.{Clock, Instant, ZonedDateTime}
 
-import controller.{PasswordHashingSalting, TemplatesRegistry, ToViewData}
+import controller.{PasswordHashingSalting, TemplatesRegistry, ToViewData, UserRole}
 import org.mongodb.scala._
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.ObjectId
@@ -15,9 +15,8 @@ import org.mongodb.scala.model.Updates._
 import viewData.{UserCoursesInfoViewData, UserViewData}
 
 object User {
-  def apply(login: String, passwordHash: String, passwordSalt: String, firstName: Option[String], lsatName: Option[String], email: Option[String],
-            registeredAt: Option[Instant], lastLogin: Option[Instant]): User =
-    new User(new ObjectId(), login, passwordHash, passwordSalt, firstName, lsatName, email, registeredAt, lastLogin)
+  def apply(login: String, passwordHash: String, passwordSalt: String, firstName: Option[String], lsatName: Option[String], email: Option[String], registeredAt: Option[Instant], lastLogin: Option[Instant], role: UserRole) =
+    new User(new ObjectId(), login, passwordHash, passwordSalt, firstName, lsatName, email, registeredAt, lastLogin, role)
 
   /** blocking */
   def exists(login: String): Boolean = byLogin(login).nonEmpty
@@ -48,7 +47,8 @@ case class User(_id: ObjectId,
                 lastName: Option[String] = None,
                 email: Option[String] = None,
                 registeredAt: Option[Instant],
-                lastLogin: Option[Instant]) extends MongoObject {
+                lastLogin: Option[Instant],
+                role: UserRole) extends MongoObject {
   def idAndLoginStr = s"[${_id} - $login]"
 
   def updateLastLogin(): User = {
@@ -58,7 +58,7 @@ case class User(_id: ObjectId,
 
   def groups: Seq[Group] = UserToGroup.userGroups(this)
 
-  def toViewData: UserViewData = UserViewData(login, firstName, lastName, email, groups.map(_.toViewData))
+  def toViewData: UserViewData = UserViewData(login, firstName, lastName, email, groups.map(_.toViewData), role.toString)
 
   def courses: Seq[Course] = Course.forUser(this)
 

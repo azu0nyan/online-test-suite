@@ -27,6 +27,7 @@ class AdminUserListPageView(
       th(width := "150px")("LAST NAME"),
       th(width := "150px")("EMAIL"),
       th(width := "150px")("GROUPS"),
+      th(width := "100px")("ROLE"),
     ),
     repeat(users)(u => tr(
       td(u.get.login),
@@ -37,6 +38,7 @@ class AdminUserListPageView(
         presenter.app.goTo(AdminGroupInfoPageState(g.groupId))
         true // prevent default
       }))(g.groupTitle)),
+      td(u.get.firstName.getOrElse("").toString)
     ).render)
   )
 }

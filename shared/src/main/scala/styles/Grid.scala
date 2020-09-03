@@ -69,13 +69,13 @@ object Grid extends StyleSheet.Inline{
   val leftContent = style(
     //  backgroundColor := topRowColor,
 //    "place-self" := "stretch",
-    gridRow := s"${contentRowStart} / ${contentEndRowStart}",
+    gridRow := s"${contentMiddleRowStart} / ${contentEndRowStart}",
     gridColumn := s"${leftColumn}"
   )
 
   val rightContent = style(
 //    backgroundColor := "#AAAAAA",
-    gridRow := s"${contentRowStart} / ${contentEndRowStart}",
+    gridRow := s"${contentMiddleRowStart} / ${contentEndRowStart}",
     gridColumn := s"${rightColumn}"
   )
 

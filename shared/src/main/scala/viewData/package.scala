@@ -28,7 +28,7 @@ package object viewData {
   case class GroupDetailedInfoViewData(groupId: String, groupTitle: String, description: String, courses: Seq[CourseTemplateViewData], users: Seq[UserViewData])
 
   /** Информация о пользователе для отображения */
-  case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData])
+  case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String)
 
   case class AnswerViewData(
                              problemId: String,
