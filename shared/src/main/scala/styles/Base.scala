@@ -5,7 +5,9 @@ import scalacss.DevDefaults._
 object Base extends StyleSheet.Standalone {
 
   import dsl._
-
+  "body" - (
+    lineHeight(25 px)
+  )
   "div" - (
     fontFamily :=! "\"Open Sans\", \"Clear Sans\", \"Helvetica Neue\", Helvetica, Arial, sans-serif;",
     color(defaultFontColor)
@@ -49,6 +51,24 @@ object Base extends StyleSheet.Standalone {
     marginLeft(horizontalMargin),
     marginTop(inputVerticalSpacingMargin),
     display.block
+  )
+
+  "code" - (
+    backgroundColor(defaultCodeBg),
+    paddingLeft(4 px),
+    paddingRight(4 px)
+
+  )
+  "pre" - (
+    whiteSpace.preWrap,
+    backgroundColor(defaultCodeBg),
+    width.fitContent,
+    padding(horizontalPadding),
+    paddingRight(30 px),
+    borderRadius(roundCornerRadius),
+    &.empty(
+      display.none
+    )
   )
 
 

@@ -67,6 +67,7 @@ object Grid extends StyleSheet.Inline{
   )
 
   val leftContent = style(
+    marginLeft(10 %%),
     //  backgroundColor := topRowColor,
 //    "place-self" := "stretch",
     gridRow := s"${contentMiddleRowStart} / ${contentEndRowStart}",
@@ -74,6 +75,7 @@ object Grid extends StyleSheet.Inline{
   )
 
   val rightContent = style(
+    marginRight(10 %%),
 //    backgroundColor := "#AAAAAA",
     gridRow := s"${contentMiddleRowStart} / ${contentEndRowStart}",
     gridColumn := s"${rightColumn}"
@@ -92,7 +94,7 @@ object Grid extends StyleSheet.Inline{
 
 
   val content = style(
-    padding(horizontalPadding),
+//    padding(horizontalPadding),
 //    gridRow := s"${contentRowStart} / ${contentEndRowStart}",
     gridRow := s"${contentRowStart} / ${contentEndRowStart}",
     gridColumn :=   middleColumnStart,

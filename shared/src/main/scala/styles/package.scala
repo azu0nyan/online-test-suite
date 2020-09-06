@@ -44,6 +44,7 @@ package object styles {
   val primaryButtonColor = c"#fbb03b"
   val defaultInputBgColor =c"#ffffff"
   val defaultFontColor = c"#000000"
+  val defaultCodeBg = c"#C7D4EB"
 
   val successColor = c"#248f24"
   val warnColor = c"#fbb03b"

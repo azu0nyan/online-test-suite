@@ -147,6 +147,7 @@ object Custom extends StyleSheet.Inline {
     //    height.fitContent
   )
 
+  //ALERTS
 
   val alertBox = style(
     backgroundColor.transparent,
@@ -159,22 +160,11 @@ object Custom extends StyleSheet.Inline {
 
   val closeButton = style(
     margin(0 px),
-    //    position.absolute,
     float.right,
-    //    right(0 px),
-    //    top(0 px),
     opacity(0.5),
     &.hover(
       opacity(1)
     )
-    /*,
-    &.before.after(
-      position.absolute,
-      left(15 px),
-      content := " ",
-      height(30 px),
-      width(20 px)
-    )*/
   )
 
   import japgolly.univeq.UnivEq.AutoDerive.autoDeriveUnivEq
@@ -186,21 +176,23 @@ object Custom extends StyleSheet.Inline {
       flexFlow := "row",
       justifyContent.spaceBetween,
       alignItems.center,
-
       pointerEvents := "all",
-
-      //      position.relative,
-      //      height(40 px),
       marginLeft(100 px),
       marginRight(100 px),
-      //      marginTop(verticalMargin),
-      //      marginBottom(verticalMargin),
-      //      padding(horizontalPadding),
       borderColor.transparent,
       backgroundColor(l.color),
-      //      width(100 %%),
     )
   }
+
+  //LEFT MENU
+
+  val contentsList = style(
+    defaultBoxBordersPaddingsMargins
+  )
+
+  val mainContent = style(
+    defaultBoxBordersPaddingsMargins
+  )
 
 
 }

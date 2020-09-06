@@ -233,10 +233,11 @@ class CoursePageView(
 
 
   def left: Modifier[Element] = div(styles.Grid.leftContent)(
-    produce(course.subProp(_.courseData)) { cd =>
-      buildContents(cd, Seq()).render
-    }
-
+    div(styles.Custom.contentsList)(
+      produce(course.subProp(_.courseData)) { cd =>
+        buildContents(cd, Seq()).render
+      }
+    )
   )
 
   def right: Modifier[Element] = div(styles.Grid.rightContent)("RIGHTu")
@@ -290,7 +291,7 @@ class CoursePageView(
     }
   }
 
-  def center: Modifier[Element] = div(styles.Grid.content ~)(
+  def center: Modifier[Element] = div(styles.Grid.content ~)(div(styles.Custom.mainContent)(
     //repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
     button(onclick :+= ((_: Event) => {
       presenter.toCourseSelectionPage()
@@ -307,7 +308,7 @@ class CoursePageView(
       }
     }
 
-  )
+  ))
 
   //  implicit val b: ModelPropertyCreator[viewData.ProblemViewData] = ModelPropertyCreator.materialize[viewData.ProblemViewData]
   override def getTemplate: Modifier[Element] = div(styles.Grid.contentWithLeftAndRight)(
@@ -327,7 +328,7 @@ case class CoursePagePresenter(
   def problemByAlias(alias: String): Option[viewData.ProblemViewData] = course.subProp(_.problems).get.find(_.templateAlias == alias)
 
   def submitAnswer(problemId: String, answerRaw: String): Unit =
-    frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw)) onComplete{
+    frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw)) onComplete {
       case Success(value) => value match {
         case AnswerSubmitted() =>
           showWarningAlert("Отправлено на проверку") //todo
@@ -335,8 +336,8 @@ case class CoursePagePresenter(
           showErrorAlert(s"Превышено максимальное колличество попыток")
         case _ => showErrorAlert()
       }
-    case Failure(exception) =>
-      showErrorAlert()
+      case Failure(exception) =>
+        showErrorAlert()
     }
 
 
