@@ -2,7 +2,6 @@ package app
 
 import controller.TemplatesRegistry
 import impl.BinaryCountingOfAncientRussians
-import tasks.javaCourse.JavaCourse
 
 object App {
 
@@ -13,7 +12,7 @@ object App {
 
   def initAliases(): Unit = {
     TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
-    TemplatesRegistry.registerDataPack(tasks.javaCourse.data)
+    TemplatesRegistry.registerDataPack(courses.javaCourse.data)
 //    TemplatesRegistry.registerOrUpdateCourseTemplate(tasks.javaCourse.JavaCourse)
   }
 

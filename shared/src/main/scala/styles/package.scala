@@ -1,6 +1,6 @@
 import java.awt.Color
 
-import scalacss.internal.Attrs
+import scalacss.internal.{Attrs, Macros}
 import scalacss.internal.Dsl._
 //import styles.Base.dsl
 import scalacss.DevDefaults._
@@ -48,4 +48,26 @@ package object styles {
   val successColor = c"#248f24"
   val warnColor = c"#fbb03b"
   val failureColor = c"#FF0000"
+
+  sealed trait ActionResultEv{
+    val color: Macros.Color
+  }
+
+  case object SuccessEv extends ActionResultEv {
+    override val color: Macros.Color = successColor
+  }
+
+  case object PartialSucessEv extends ActionResultEv {
+    override val color: Macros.Color = warnColor
+  }
+
+  case object FailureEv extends ActionResultEv {
+    override val color: Macros.Color = failureColor
+  }
+
+
+
+
+
+
 }

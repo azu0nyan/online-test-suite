@@ -1,12 +1,15 @@
 package frontend.views
 
+import com.sun.net.httpserver.Authenticator.Success
 import constants.Text
+import frontend._
 import frontend.{AdminCoursesPageState, AdminGroupListPageState, AdminPageState, AdminProblemsPageState, AdminUserListPageState, RoutingState, TeacherConfirmAnswersPageState}
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom._
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
+import styles.{FailureEv, PartialSucessEv, SuccessEv}
 
 class AdminPageView(
                    presenter:AdminPagePresenter
@@ -38,6 +41,14 @@ class AdminPageView(
       presenter.app.goTo(TeacherConfirmAnswersPageState(None, None))
       true // prevent default
     }))("Проверка работ"),
+    button( onclick :+= ((_: Event) => {
+      showAlert("TIMEOUT", Some(3000), false, SuccessEv )
+      showAlert("DISM", None, true, PartialSucessEv )
+      showAlert("COMBO", Some(3000), true, FailureEv )
+      true // prevent default
+    }))("TEST"),
+
+
     childViewContainer
   )
 }

@@ -1,6 +1,7 @@
 package styles
 
 import constants.Paths
+
 import scalacss.DevDefaults._
 //import scalacss.internal.Dsl
 //import scalacss.internal.Dsl.style
@@ -126,7 +127,7 @@ object Custom extends StyleSheet.Inline {
   )
 
   val problemStatusSuccessFontColor = style(
-      color(successColor)
+    color(successColor)
   )
 
   val problemStatusNoAnswerFontColor = style(
@@ -140,14 +141,63 @@ object Custom extends StyleSheet.Inline {
   )
 
 
-
   val programInputTextArea = style(
     width(100 %%),
-//    height(600 px),
-//    height.fitContent
+    //    height(600 px),
+    //    height.fitContent
   )
 
 
+  val alertBox = style(
+    backgroundColor.transparent,
+    width(100 vw),
+    position.fixed,
+    bottom(20 %%),
+    height(100 px)
+  )
+
+  val closeButton = style(
+    margin(0 px),
+    //    position.absolute,
+    float.right,
+    //    right(0 px),
+    //    top(0 px),
+    opacity(0.5),
+    &.hover(
+      opacity(1)
+    )
+    /*,
+    &.before.after(
+      position.absolute,
+      left(15 px),
+      content := " ",
+      height(30 px),
+      width(20 px)
+    )*/
+  )
+
+  import japgolly.univeq.UnivEq.AutoDerive.autoDeriveUnivEq
+
+  val alertMessageBox = styleF(Domain.ofValues[ActionResultEv](SuccessEv, FailureEv, PartialSucessEv)) { l =>
+    styleS(
+      defaultBoxBordersPaddingsMargins,
+      display.flex,
+      flexFlow := "row",
+      justifyContent.spaceBetween,
+      alignItems.center,
+
+      //      position.relative,
+      //      height(40 px),
+      marginLeft(100 px),
+      marginRight(100 px),
+      //      marginTop(verticalMargin),
+      //      marginBottom(verticalMargin),
+      //      padding(horizontalPadding),
+      borderColor.transparent,
+      backgroundColor(l.color),
+      //      width(100 %%),
+    )
+  }
 
 
 }

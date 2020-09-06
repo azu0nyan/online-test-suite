@@ -31,7 +31,8 @@ class LoginPageView(
       button(onclick :+= ((_: Event) => {
         presenter.toLandingPage()
         true // prevent default
-      }))("Назад")
+      }))("Назад"),
+
       //      genButton("Войти", () => presenter.logIn()),
       //      genButton("Назад", () => presenter.toLandingPage()
 

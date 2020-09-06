@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.matching.Regex
 
 
-package object frontend extends Bindings {
+package object frontend extends Bindings with Alerts {
 
   type Token = String
 
