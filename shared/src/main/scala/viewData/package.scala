@@ -31,6 +31,7 @@ package object viewData {
   case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String)
 
   case class AnswerViewData(
+                             answerId:String,
                              problemId: String,
                              answerText: String,
                              answeredAt: Instant,

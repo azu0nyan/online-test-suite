@@ -32,6 +32,7 @@ case class Problem(
                     seed: Int,
                     attemptsMax:Option[Int],
                     score: ProblemScore)  extends MongoObject {
+  def course: Course = courses.byId(courseId).get
 
 
   def updateScore(score: ProblemScore):Problem = {

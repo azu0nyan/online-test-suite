@@ -31,7 +31,7 @@ object AnswerOps {
 
   val log: Logger = Logger(LoggerFactory.getLogger("controller.SubmitAnswer"))
 
-  val awaitVerification = Duration.create(6, TimeUnit.SECONDS)
+  val awaitVerification = Duration.create(10, TimeUnit.SECONDS)
 
   def submitAnswer(req: SubmitAnswerRequest): SubmitAnswerResponse = {
     LoginUserOps.decodeAndValidateToken(req.token) match {
@@ -56,14 +56,8 @@ object AnswerOps {
                   val answer = db.answers.insert(Answer(problem._id, req.answerRaw, BeingVerified(), Clock.systemUTC().instant())).pure[Option]
                   log.info(s"User ${user.idAndLoginStr} submitted answer ${answer.map(_._id.toHexString).getOrElse("NONE")} for problem ${problem.idAlias} from course ${course.get.idAlias}")
                   val template = TemplatesRegistry.getProblemTemplate(problem.templateAlias).get
-                  try {
-                    Await.result(Future {
-                      template.verifyAnswer(problem.seed, req.answerRaw)
-                    }.map(processSubmissionResult(_, answer.get, user, template)), awaitVerification)
-                  } catch {
-                    case _: Throwable =>
-                  }
-//                  AnswerSubmitted(answers.byId(answer.get._id).get.toViewData)
+                  val res = template.verifyAnswer(problem.seed, req.answerRaw)
+                  processSubmissionResult(res, answer.get, user, template)
                   AnswerSubmitted(answer.get.updatedFromDb(answers, implicitly[ClassTag[Answer]]).toViewData)
                 }
               }

@@ -21,6 +21,7 @@ case class Answer(_id: ObjectId, problemId: ObjectId, answer: String, status: An
   def problem: Problem = problems.byId(problemId).get
 
   def toViewData: AnswerViewData = AnswerViewData(
+    _id.toHexString,
     problemId.toHexString,
     answer,
     answeredAt,

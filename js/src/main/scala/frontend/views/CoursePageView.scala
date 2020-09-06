@@ -1,7 +1,8 @@
 package frontend.views
 
 import DbViewsShared.CourseShared
-import clientRequests.{AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
+import DbViewsShared.CourseShared.AnswerStatus
+import clientRequests.{AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, GetProblemDataRequest, GetProblemDataSuccess, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
 import constants.Text
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,6 +12,7 @@ import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom.{Element, Event}
 import otsbridge.CoursePiece.stringToPath
+import viewData.ProblemViewData
 //import org.scalajs.dom._
 import org.scalajs.dom.html.{Div, Table}
 import otsbridge.CoursePiece.{CoursePiece, PiecePath, pathToString}
@@ -143,6 +145,17 @@ class CoursePageView(
       answersList(problemData.subProp(_.answers).get)
     ).render
 
+  def answerStatus(status:AnswerStatus) = status match {
+    case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("Принят").toString)
+    case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("Отклонен").toString)
+    case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)("Проходит проверку")
+    case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверка отложена").toString)
+    case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
+      div(p("Ожидает проверки преподавателем"),
+        pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString))
+
+  }
+
   def answersList(answers: Seq[AnswerViewData]) = if (answers.isEmpty) div() else
     div(styles.Custom.problemAnswersList ~)(
       h3(Text.pYourAnswers),
@@ -162,16 +175,7 @@ class CoursePageView(
             case Some(value) => score(value, false)
             case None => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
           }),
-          td(ans.status match {
-            case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
-            case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
-            case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)()
-            case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString)
-            case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
-              div(p("Ожидает подтверждения преподавателя"),
-                pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString))
-
-          }, ans.score match {
+          td(answerStatus(ans.status), ans.score match {
             case Some(MultipleRunsResultScore(runs)) => runResultsTable(runs)
             case _ => p()
           }),
@@ -334,15 +338,41 @@ case class CoursePagePresenter(
   def problemById(id: String): Option[viewData.ProblemViewData] = course.subProp(_.problems).get.find(_.problemId == id)
 
 
+  def updateAnswerData(avd: AnswerViewData) = {
+    val p: SeqProperty[ProblemViewData] = course.subSeq(_.problems)
+    val problemWithId = p.zipWithIndex.filter { case (p, i) => p.problemId == avd.problemId }.get.headOption
+    problemWithId.foreach { case (problem, id) =>
+      val replAnsw = problem.answers.indexWhere(_.answerId == avd.answerId)
+      val newAnsws =
+        if (replAnsw >= 0) {
+          if(problem.answers(replAnsw).status != avd.status) showWarningAlert(s"Статуст задачи ${problem.title} изменисля")
+          problem.answers.updated(replAnsw, avd)
+        } else {
+          showWarningAlert(s"Статуст задачи ${problem.title} изменисля")
+          avd +: problem.answers
+        }
+      val updatedProblem = problem.copy(answers = newAnsws)
+      p.replace(id, 1, updatedProblem)
+
+    }
+  }
+
+  def requestProblemUpdate(problemId: String): Unit = {
+    frontend.sendRequest(clientRequests.GetProblemData, GetProblemDataRequest(currentToken.get, problemId)) onComplete {
+      case Success(GetProblemDataSuccess(pd)) =>
+        val p: SeqProperty[ProblemViewData] = course.subSeq(_.problems)
+        val problemWithId = p.zipWithIndex.filter { case (p, _) => p.problemId == problemId }.get.headOption
+        problemWithId.foreach { case (_, id) => p.replace(id, 1, pd) }
+      case _ =>
+    }
+  }
+
   def submitAnswer(problemId: String, answerRaw: String): Unit =
     frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw)) onComplete {
       case Success(value) => value match {
-        case AnswerSubmitted(awd) =>
-          problemById(problemId).foreach { p =>
-            //            p.
-
-          }
-          showWarningAlert("Отправлено на проверку") //todo
+        case AnswerSubmitted(avd) =>
+          updateAnswerData(avd)
+          requestProblemUpdate(problemId)
         case MaximumAttemptsLimitExceeded(attempts) =>
           showErrorAlert(s"Превышено максимальное колличество попыток")
         case _ => showErrorAlert()

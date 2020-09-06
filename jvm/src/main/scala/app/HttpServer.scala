@@ -29,6 +29,7 @@ object HttpServer {
     addRoute(clientRequests.GetCourseData, CoursesOps.requestCourse, user)
     addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse, user)
     addRoute(clientRequests.SubmitAnswer, AnswerOps.submitAnswer, user)
+    addRoute(clientRequests.GetProblemData, ProblemOps.getProblemForUser, user)
 
     addRoute(TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
     addRoute(AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
