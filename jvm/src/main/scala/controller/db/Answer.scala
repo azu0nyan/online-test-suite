@@ -18,6 +18,8 @@ object Answer {
 
 
 case class Answer(_id: ObjectId, problemId: ObjectId, answer: String, status: AnswerStatus, answeredAt: Instant) extends MongoObject {
+  def user: User = problem.user
+
   def problem: Problem = problems.byId(problemId).get
 
   def toViewData: AnswerViewData = AnswerViewData(

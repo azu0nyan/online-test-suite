@@ -1,8 +1,8 @@
 package styles
 
 import constants.Paths
-
 import scalacss.DevDefaults._
+import styles.Base.&
 //import scalacss.internal.Dsl
 //import scalacss.internal.Dsl.style
 
@@ -176,7 +176,7 @@ object Custom extends StyleSheet.Inline {
       flexFlow := "row",
       justifyContent.spaceBetween,
       alignItems.center,
-      pointerEvents := "all",
+      pointerEvents :=! "all",
       marginLeft(100 px),
       marginRight(100 px),
       borderColor.transparent,
@@ -187,11 +187,28 @@ object Custom extends StyleSheet.Inline {
   //LEFT MENU
 
   val contentsList = style(
-    defaultBoxBordersPaddingsMargins
+    defaultBoxBordersPaddingsMargins,
+    unsafeChild("li")(
+      cursor.pointer,
+    )
   )
 
   val mainContent = style(
     defaultBoxBordersPaddingsMargins
+  )
+  val taskList = style(
+    defaultBoxBordersPaddingsMargins,
+
+  )
+  val taskItem = style(
+    display.flex,
+    flexFlow := "row",
+    justifyContent.spaceBetween,
+    alignItems.center,
+    cursor.pointer,
+    &.hover {
+      backgroundColor(highlightColor)
+    }
   )
 
 

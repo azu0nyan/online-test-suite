@@ -20,6 +20,8 @@ object Course {
 }
 
 case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
+  def user: User = users.byId(userId).get
+
   def idAlias = s"[${_id.toHexString} $templateAlias]"
 
   def changeStatus(newStatus: CourseStatus): Course = {
@@ -31,7 +33,7 @@ case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, status
 
   def toInfoViewData: CourseInfoViewData = CourseInfoViewData(_id.toHexString, template.courseTitle, status, template.description)
 
-  def toViewData: CourseViewData = CourseViewData(_id.toHexString, template.courseTitle, status, template.courseData, problemIds.flatMap(problems.byId(_)).map(_.toView), template.description)
+  def toViewData: CourseViewData = CourseViewData(_id.toHexString, template.courseTitle, status, template.courseData, problemIds.flatMap(problems.byId(_)).map(_.toViewData), template.description)
 
   def ownProblems:Seq[Problem] = problemIds.flatMap(problems.byId(_))
 }

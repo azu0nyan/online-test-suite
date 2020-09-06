@@ -19,7 +19,7 @@ package object viewData {
                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable:Boolean)
 
   /**teacher*/
-  case class AnswerForConfirmationViewData(answerId:String, score: ProblemScore, problemViewData: ProblemViewData, review:Option[String])
+  case class AnswerForConfirmationViewData(answerId:String,answer:String, score: ProblemScore, user:UserViewData, problemViewData: ProblemViewData,  review:Option[String])
 
   /** Информация о группе пользователе для отображения */
   case class GroupInfoViewData(groupId: String, groupTitle: String, description: String)
@@ -28,7 +28,7 @@ package object viewData {
   case class GroupDetailedInfoViewData(groupId: String, groupTitle: String, description: String, courses: Seq[CourseTemplateViewData], users: Seq[UserViewData])
 
   /** Информация о пользователе для отображения */
-  case class UserViewData(login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String)
+  case class UserViewData(id:String, login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String)
 
   case class AnswerViewData(
                              answerId:String,

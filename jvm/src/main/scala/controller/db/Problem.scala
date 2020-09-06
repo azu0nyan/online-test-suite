@@ -32,6 +32,8 @@ case class Problem(
                     seed: Int,
                     attemptsMax:Option[Int],
                     score: ProblemScore)  extends MongoObject {
+  def user: User = course.user
+
   def course: Course = courses.byId(courseId).get
 
 
@@ -60,7 +62,7 @@ case class Problem(
 
   def idAlias = s"[${_id.toHexString} $templateAlias]"
 
-  def toView:ProblemViewData =
+  def toViewData:ProblemViewData =
     ProblemViewData(_id.toHexString,
       templateAlias,
       template.title(seed),

@@ -70,36 +70,7 @@ class CoursePageView(
     }
   }
 
-  private def score(score: ProblemScore, dontHaveAnswers: Boolean) = p(styles.Custom.problemScoreText)(score match {
-    //    case a@_ => div(a.toString)
-    case BinaryScore(passed) =>
-      if (passed) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusAccepted)
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusFailure)
-    case IntScore(score) =>
-      if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScore(score))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScore(score))
-    case DoubleScore(score, max) =>
-      if (score == max) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
-      else if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScoreOutOf(score, max))
-    case XOutOfYScore(score, max) =>
-      if (score == max) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
-      else if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScoreOutOf(score, max))
-    case mr@MultipleRunsResultScore(runResults) =>
-      val score = mr.successesTotal
-      val max = mr.tasksTotal
-      if (score == max) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
-      else if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScoreOutOf(score, max))
 
-
-  })
 
   def expandable(sumary: JsDom.TypedTag[_], det: JsDom.TypedTag[_]) = details(
     summary(sumary),
@@ -138,16 +109,16 @@ class CoursePageView(
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
     div(styles.Custom.problemContainer ~)(
       //data.get.title.map(t => h4(t)).getOrElse(""),
-      div(styles.Custom.problemStatusContainer ~)(score(problemData.subProp(_.score).get, dontHaveAnswers = problemData.subProp(_.answers).get.isEmpty)), //floats right
+      div(styles.Custom.problemStatusContainer ~)(elements.Score(problemData.subProp(_.score).get, dontHaveAnswers = problemData.subProp(_.answers).get.isEmpty)), //floats right
       h3(styles.Custom.problemHeader)(problemData.get.title),
       scalatags.JsDom.all.raw(problemData.subProp(_.problemHtml).get),
       answerField(problemData, nested),
       answersList(problemData.subProp(_.answers).get)
     ).render
 
-  def answerStatus(status:AnswerStatus) = status match {
-    case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("Принят").toString)
-    case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("Отклонен").toString)
+  def answerStatus(status: AnswerStatus) = status match {
+    case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверено").toString)
+    case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("Нельзя проверить").toString)
     case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)("Проходит проверку")
     case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверка отложена").toString)
     case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
@@ -156,6 +127,8 @@ class CoursePageView(
 
   }
 
+
+
   def answersList(answers: Seq[AnswerViewData]) = if (answers.isEmpty) div() else
     div(styles.Custom.problemAnswersList ~)(
       h3(Text.pYourAnswers),
@@ -163,16 +136,16 @@ class CoursePageView(
         tr(
           th(width := "20px")(Text.pAnswerNumber),
           th(width := "50px")(Text.pAnswerAnsweredAt),
-          th(width := "50px")(Text.pAnswerScore),
+          th(width := "80px")(Text.pAnswerScore),
           th(width := "450px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerSystemMessage),
           th(width := "150px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerReview),
           th(width := "150px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerAnswerText),
         ),
         for ((ans, i) <- answers.sortBy(_.answeredAt).zipWithIndex.reverse) yield tr(
           td((i + 1).toString),
-          td(ans.answeredAt.toString),
+          td(dateFormatter.format(ans.answeredAt)),
           td(ans.score match {
-            case Some(value) => score(value, false)
+            case Some(value) => elements.Score(value, false)
             case None => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
           }),
           td(answerStatus(ans.status), ans.score match {
@@ -198,13 +171,15 @@ class CoursePageView(
     }
 
 
+  def problempPath(pIdOrALias: String): String = pathToString(Seq("problem", pIdOrALias))
+
   def buildContents(cd: CoursePiece, currentPath: Seq[String]): JsDom.TypedTag[Div] = {
     val pathToMe = currentPath :+ cd.alias
     val pathToMeStr = pathToString(pathToMe)
     val me = cd match {
       case CoursePiece.Problem(problemAlias, displayMe) =>
         div(onclick :+= ((_: Event) => {
-          presenter.app.goTo(CoursePageState(presenter.courseId.get, pathToMeStr))
+          presenter.app.goTo(CoursePageState(presenter.courseId.get, problempPath(problemAlias)))
           true // prevent default
         }))(
           presenter.problemByAlias(problemAlias).map(_.title).getOrElse("Задача").toString
@@ -238,13 +213,24 @@ class CoursePageView(
 
   def left: Modifier[Element] = div(styles.Grid.leftContent)(
     div(styles.Custom.contentsList)(
+      h3("Оглавление"),
       produce(course.subProp(_.courseData)) { cd =>
         buildContents(cd, Seq()).render
       }
     )
   )
 
-  def right: Modifier[Element] = div(styles.Grid.rightContent)("RIGHTu")
+  def right: Modifier[Element] = div(styles.Grid.rightContent)(div(styles.Custom.taskList)(
+    h3("Задачи"),
+
+    repeat(presenter.course.subSeq(_.problems)) { pr =>
+      div(styles.Custom.taskItem,onclick :+= ((_: Event) => {
+        presenter.app.goTo(CoursePageState(presenter.courseId.get, problempPath(pr.get.templateAlias)))
+        true // prevent default
+      }))(pr.get.title, elements.Score(pr.get.score, pr.get.answers.isEmpty)).render
+    }
+
+  ))
 
 
   def displayOnNewPageLinkText(cp: CoursePiece): String = cp.displayInContentsHtml.getOrElse(cp match {
@@ -308,9 +294,20 @@ class CoursePageView(
     produceWithNested(presenter.course) { (c, oNested) =>
       div(
         oNested(produceWithNested(presenter.currentPath) { (p, nested) =>
-          presenter.course.get.courseData.pieceByPath.get(p) match {
-            case Some(piece) => div(renderPiece(piece, stringToPath(p).dropRight(1), nested)).render
-            case None => div("Не могу найти указанную часть курса, воспользуйтесь содержанием, расположеным слева").render
+          if (p.startsWith("problem")) {
+            val path = stringToPath(p)
+            if (path.length >= 2) {
+              val pIdOrAlias = stringToPath(p)(1)
+              div(nested(repeatWithNested(course.subSeq(_.problems).filter(pr => pr.problemId == pIdOrAlias || pr.templateAlias == pIdOrAlias))
+              ((p, nested) => problemHtml(p.asModel, nested)))).render
+            } else {
+              div("Немогу найти задачу с таким номером").render
+            }
+          } else {
+            presenter.course.get.courseData.pieceByPath.get(p) match {
+              case Some(piece) => div(renderPiece(piece, stringToPath(p).dropRight(1), nested)).render
+              case None => div("Не могу найти указанную часть курса, воспользуйтесь содержанием, расположеным слева").render
+            }
           }
         })
       ).render
@@ -345,7 +342,7 @@ case class CoursePagePresenter(
       val replAnsw = problem.answers.indexWhere(_.answerId == avd.answerId)
       val newAnsws =
         if (replAnsw >= 0) {
-          if(problem.answers(replAnsw).status != avd.status) showWarningAlert(s"Статуст задачи ${problem.title} изменисля")
+          if (problem.answers(replAnsw).status != avd.status) showWarningAlert(s"Статуст задачи ${problem.title} изменисля")
           problem.answers.updated(replAnsw, avd)
         } else {
           showWarningAlert(s"Статуст задачи ${problem.title} изменисля")

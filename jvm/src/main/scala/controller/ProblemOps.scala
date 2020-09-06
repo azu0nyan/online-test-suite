@@ -13,7 +13,7 @@ object ProblemOps {
         p match {
           case Some(pr) =>
           if(pr.course.userId == user._id){
-            GetProblemDataSuccess(pr.toView)
+            GetProblemDataSuccess(pr.toViewData)
           } else {
             UnknownGetProblemDataFailure()
           }

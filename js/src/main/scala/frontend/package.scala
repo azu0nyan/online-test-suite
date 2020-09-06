@@ -1,3 +1,7 @@
+import java.time.{ZoneId, ZoneOffset}
+import java.time.format.{DateTimeFormatter, FormatStyle}
+import java.util.Locale
+
 import clientRequests.Route
 import io.udash._
 import org.scalajs.dom.document
@@ -5,10 +9,15 @@ import org.scalajs.dom.ext.Ajax
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.scalajs.js.Date
 import scala.util.matching.Regex
 
 
 package object frontend extends Bindings with Alerts {
+
+  val dateFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/mm/yy").withZone(ZoneOffset.ofHours(3))//todo new Date().getTimezoneOffset().toInt
+
+
 
   type Token = String
 
