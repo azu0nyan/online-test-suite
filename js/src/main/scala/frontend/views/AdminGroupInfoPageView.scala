@@ -76,14 +76,16 @@ case class AdminGroupInfoPagePresenter(
     frontend.sendRequest(clientRequests.admin.RemoveUserFromGroup,
       RemoveUserFromGroupRequest(currentToken.get, loginToAdd.get, groupInfo.get.groupId, forceCourseRemoval.get)) onComplete {
       case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
-      case _ => println(s"error")
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
     }
   }
 
   def addUser() = {
     frontend.sendRequest(clientRequests.admin.AddUserToGroup, AddUserToGroupRequest(currentToken.get, loginToAdd.get, groupInfo.get.groupId)) onComplete {
       case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
-      case _ => println(s"error")
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
     }
   }
 
@@ -91,7 +93,8 @@ case class AdminGroupInfoPagePresenter(
   def requestGroupInfoUpdate(groupId: String): Unit = {
     frontend.sendRequest(clientRequests.admin.GroupInfo, GroupInfoRequest(currentToken.get, groupId)) onComplete {
       case Success(GroupInfoResponseSuccess(info)) => groupInfo.set(info, true)
-      case _ => println(s"error")
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
     }
 
   }

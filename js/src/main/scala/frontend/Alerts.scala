@@ -33,5 +33,17 @@ trait Alerts {
 
   }
 
+  def showSuccessAlert(messageHtml:String = "OK", timeMs:Option[Long] = Some(2000), dismissible:Boolean = true) :Unit  = {
+    showAlert(messageHtml, timeMs, dismissible, styles.SuccessEv)
+  }
+
+  def showWarningAlert(messageHtml:String , timeMs:Option[Long] = Some(2000), dismissible:Boolean = true) :Unit  = {
+    showAlert(messageHtml, timeMs, dismissible, styles.PartialSucessEv)
+  }
+
+  def showErrorAlert(messageHtml:String = "", timeMs:Option[Long] = None, dismissible:Boolean = true) :Unit  = {
+    showAlert( messageHtml, timeMs, dismissible, styles.FailureEv)
+  }
+
 
 }

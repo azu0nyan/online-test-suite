@@ -2,7 +2,7 @@ package frontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import clientRequests.{LoginFailure, LoginFailureFrontendException, LoginRequest, LoginSuccessResponse, RegistrationFailure, RegistrationFailureFrontendException, RegistrationFailureLoginToShortResponse, RegistrationFailureUnknownErrorResponse, RegistrationFailureUserAlreadyExistsResponse, RegistrationRequest, RegistrationSuccess}
-import frontend.{LandingPageState, LoginPageState, RegistrationPageState, RoutingState, UserCredentialsData, UserRegistrationData}
+import frontend.{LandingPageState, LoginPageState, RegistrationPageState, RoutingState, UserCredentialsData, UserRegistrationData, showErrorAlert, showSuccessAlert}
 import io.udash._
 import io.udash.core.ContainerView
 import org.scalajs.dom._
@@ -60,7 +60,15 @@ case class RegistrationPagePresenter(
     val login = model.subProp(_.login).get
     val pass = model.subProp(_.password).get
     println("registring in ...")
-    if (model.subProp(_.password).get != "" && model.subProp(_.password).get == model.subProp(_.password).get) {
+    if (login.isEmpty) {
+      showErrorAlert("Введите логин")
+    } else if (!login.matches("[a-zA-Z0-9]*")) {
+      showErrorAlert("Логин должен состоять из латинских букв и цифр")
+    } else if (pass.length < 4) {
+      showErrorAlert("Пароль слишком короткий")
+    } else if (model.subProp(_.passwordAgain).get != model.subProp(_.password).get) {
+      showErrorAlert("Пароли не совпадают")
+    } else {
       val login = model.subProp(_.login).get
       val pass = model.subProp(_.password).get
       val firstName = Option.when(model.subProp(_.firstName).get != "")(model.subProp(_.firstName).get)
@@ -71,9 +79,6 @@ case class RegistrationPagePresenter(
         case Success(r: RegistrationFailure) => onRegistrationFailure(r)
         case Failure(exception) => onRegistrationFailure(RegistrationFailureFrontendException(exception))
       }
-    } else {
-      println("passwords empty or not match")
-
     }
     //    frontend.sendRequest(clientRequests.Registration, RegistrationRequest(login, pass)) onComplete {
     //      case Success(RegistrationSuccessResponse(data)) => onRegistrationSuccess(data)
@@ -84,6 +89,7 @@ case class RegistrationPagePresenter(
 
   def onRegistrationSuccess(): Unit = {
     println("Registration success")
+    showSuccessAlert("Регистрация завершена. Войдите используя свой логин и пароль.", Some(10000))
     toLoginPage()
   }
 
@@ -91,9 +97,14 @@ case class RegistrationPagePresenter(
     println(error)
     error match {
       case RegistrationFailureUserAlreadyExistsResponse() =>
+        showErrorAlert("Пользователь с таким логином уже существует")
       case RegistrationFailureLoginToShortResponse(minLength) =>
+        showErrorAlert(s"Логин должен состоять хотябы из $minLength символов")
       case RegistrationFailureUnknownErrorResponse() =>
-      case RegistrationFailureFrontendException(t) => t.printStackTrace()
+        showErrorAlert()
+      case RegistrationFailureFrontendException(t) =>
+        t.printStackTrace()
+        showErrorAlert()
     }
 
 

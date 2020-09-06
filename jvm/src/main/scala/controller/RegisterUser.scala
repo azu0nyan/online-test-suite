@@ -2,7 +2,7 @@ package controller
 
 import java.time.Clock
 
-import clientRequests.{RegistrationFailureLoginToShortResponse, RegistrationFailureUserAlreadyExistsResponse, RegistrationRequest, RegistrationResponse, RegistrationSuccess}
+import clientRequests.{RegistrationFailureLoginToShortResponse, RegistrationFailureUnknownErrorResponse, RegistrationFailureUserAlreadyExistsResponse, RegistrationRequest, RegistrationResponse, RegistrationSuccess}
 import controller.UserRole.Student
 import controller.db.{User, users}
 import controller.db.User.exists
@@ -22,11 +22,13 @@ object RegisterUser {
       RegistrationFailureUserAlreadyExistsResponse()
     } else if (req.login.length < minLoginLength)
       RegistrationFailureLoginToShortResponse(minLoginLength)
-    else {
+    else if (!req.login.matches("[a-zA-Z0-9]*") || req.password.length < 4) {
+      RegistrationFailureUnknownErrorResponse()
+    } else {
       log.info(s"Registering new user login ${req.login}")
-      val hashPasswords = PasswordHashingSalting.hashPasswords (req.password)
-      val res = User(req.login, hashPasswords.hash, hashPasswords.salt, req.firstName, req.lastName, req.email, Some (Clock.systemUTC.instant), lastLogin = None, Student())
-      Await.result (users.insertOne (res).toFuture (), Duration.Inf)
+      val hashPasswords = PasswordHashingSalting.hashPasswords(req.password)
+      val res = User(req.login, hashPasswords.hash, hashPasswords.salt, req.firstName, req.lastName, req.email, Some(Clock.systemUTC.instant), lastLogin = None, Student())
+      Await.result(users.insertOne(res).toFuture(), Duration.Inf)
       RegistrationSuccess()
     }
 

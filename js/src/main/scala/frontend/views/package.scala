@@ -13,6 +13,8 @@ import scalatags.generic.Modifier
 
 package object views extends Bindings {
 
+  val debugAlerts:Boolean = true
+
   implicit def styleToMod(c: StyleA) :JsDom.Modifier = `class` := c.htmlClass
 
   implicit class CssStyleToMod(c: StyleA) {

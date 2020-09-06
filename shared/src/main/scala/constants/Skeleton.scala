@@ -10,6 +10,6 @@ object Skeleton {
       link(href := cssPath, rel := "stylesheet"),
       script(`type`:= "text/javascript", src := jsPath)
     ),
-    body()
+    body(margin := "0px")
   )
 }

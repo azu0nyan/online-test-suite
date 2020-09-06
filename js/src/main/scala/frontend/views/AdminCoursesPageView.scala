@@ -64,8 +64,11 @@ case class AdminCoursesPagePresenter(
 
   def updateList() = {
     frontend.sendRequest(clientRequests.admin.CourseList, CourseListRequest(currentToken.get)) onComplete {
-      case Success(CourseListSuccess(customCourses)) => courses.set(customCourses)
-      case _ =>
+      case Success(CourseListSuccess(customCourses)) =>
+      //  if(debugAlerts) showSuccessAlert("Список курсов обновлен")
+        courses.set(customCourses)
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"Немогу обновить список курсов $resp")
     }
   }
 

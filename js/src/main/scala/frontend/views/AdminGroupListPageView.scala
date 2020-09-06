@@ -80,7 +80,8 @@ case class AdminGroupListPagePresenter(
     frontend.sendRequest(clientRequests.admin.GroupList, GroupListRequest(currentToken.get)) onComplete {
       case Success(GroupListResponseSuccess(list)) => groupList.set(list)
         println("updated group list")
-      case _ => println(s"error")
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
     }
 
   }

@@ -153,7 +153,8 @@ object Custom extends StyleSheet.Inline {
     width(100 vw),
     position.fixed,
     bottom(20 %%),
-    height(100 px)
+    height(100 px),
+    pointerEvents.none
   )
 
   val closeButton = style(
@@ -185,6 +186,8 @@ object Custom extends StyleSheet.Inline {
       flexFlow := "row",
       justifyContent.spaceBetween,
       alignItems.center,
+
+      pointerEvents := "all",
 
       //      position.relative,
       //      height(40 px),

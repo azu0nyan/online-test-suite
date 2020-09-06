@@ -26,8 +26,11 @@ case class AdminCourseTemplateInfoPagePresenter(
 
   override def handleState(state: AdminCourseTemplateInfoPageState): Unit = {
     frontend.sendRequest(clientRequests.admin.CustomCourseInfo, CustomCourseInfoRequest(currentToken.get, state.courseTemplateAlias)) onComplete {
-      case Success(CustomCourseInfoSuccess(courseInfo)) => currentCourse.set(courseInfo)
-      case _ =>
+      case Success(CustomCourseInfoSuccess(courseInfo)) =>
+        currentCourse.set(courseInfo)
+        //if(debugAlerts) showSuccessAlert()
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
     }
   }
 }

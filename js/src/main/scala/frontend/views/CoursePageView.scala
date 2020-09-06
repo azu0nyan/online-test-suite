@@ -1,7 +1,7 @@
 package frontend.views
 
 import DbViewsShared.CourseShared
-import clientRequests.{CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, SubmitAnswerRequest}
+import clientRequests.{AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
 import constants.Text
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -327,7 +327,17 @@ case class CoursePagePresenter(
   def problemByAlias(alias: String): Option[viewData.ProblemViewData] = course.subProp(_.problems).get.find(_.templateAlias == alias)
 
   def submitAnswer(problemId: String, answerRaw: String): Unit =
-    frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw))
+    frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw)) onComplete{
+      case Success(value) => value match {
+        case AnswerSubmitted() =>
+          showWarningAlert("Отправлено на проверку") //todo
+        case MaximumAttemptsLimitExceeded(attempts) =>
+          showErrorAlert(s"Превышено максимальное колличество попыток")
+        case _ => showErrorAlert()
+      }
+    case Failure(exception) =>
+      showErrorAlert()
+    }
 
 
   def requestCoursesListUpdate(courseHexId: String): Unit = {
@@ -337,10 +347,14 @@ case class CoursePagePresenter(
         courseId.set(cs.courseId)
         course.set(cs)
       case Success(failure@_) =>
+        showErrorAlert(s"Немогу загрузить информацию о курсах")
         println(s"course request failure $failure")
       case Failure(ex) =>
+        showErrorAlert(s"Немогу загрузить информацию о курсах")
         ex.printStackTrace()
-      case _ => println("Unknown error")
+      case _ =>
+        showErrorAlert(s"Немогу загрузить информацию о курсах")
+        println("Unknown error")
     }
   }
 

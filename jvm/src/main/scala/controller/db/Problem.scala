@@ -1,6 +1,6 @@
 package controller.db
 
-import controller.{TemplatesRegistry, db}
+import controller.{TemplatesRegistry, db, log}
 import otsbridge._
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Updates._
@@ -45,7 +45,17 @@ case class Problem(
 
   def answers:Seq[Answer] = db.answers.byFieldMany("problemId", _id)
 
-  def template:ProblemTemplate = TemplatesRegistry.getProblemTemplate(templateAlias).get
+  final case class ProblemTemplateNotFoundException(alias:String, _id:ObjectId, courseId: ObjectId) extends Exception
+
+  def template:ProblemTemplate = {
+    val res = TemplatesRegistry.getProblemTemplate(templateAlias)
+    res match {
+      case Some(pt) => pt
+      case None =>
+        log.error(s"Empty problem template in registry for alias: $templateAlias")
+        throw ProblemTemplateNotFoundException(templateAlias, _id, courseId)
+    }
+  }
 
   def idAlias = s"[${_id.toHexString} $templateAlias]"
 

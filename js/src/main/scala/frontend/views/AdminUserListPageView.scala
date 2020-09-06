@@ -49,7 +49,8 @@ case class AdminUserListPagePresenter(
   override def handleState(state: AdminUserListPageState.type): Unit = {
     frontend.sendRequest(clientRequests.admin.UserList, UserListRequest(currentToken.get, Seq())) onComplete {
       case Success(UserListResponseSuccess(list)) => users.set(list)
-      case _ => println(s"error")
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
     }
   }
 }

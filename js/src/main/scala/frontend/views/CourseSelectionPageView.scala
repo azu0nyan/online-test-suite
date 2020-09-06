@@ -78,10 +78,14 @@ case class CourseSelectionPagePresenter(
       case Success(RequestStartCourseSuccess(courseHexId)) =>
         app.goTo(CoursePageState(courseHexId, ""))
       case Success(failure@_) =>
+        showErrorAlert(s"Немогу начать новый курс")
         println(failure)
       case Failure(ex) =>
+        showErrorAlert(s"Немогу начать новый курс")
         ex.printStackTrace()
-      case _ => println("Unknown error")
+      case _ =>
+        showErrorAlert(s"Немогу начать новый курс")
+        println("Unknown error")
     }
   }
 

@@ -7,7 +7,7 @@ import org.scalajs.dom._
 import scalatags.JsDom.all._
 import io.udash.core.ContainerView
 import scalatags.generic.Modifier
-import clientRequests.{LoginFailure, LoginFailureFrontendException, LoginRequest, LoginSuccessResponse}
+import clientRequests.{LoginFailure, LoginFailureFrontendException, LoginFailureUnknownErrorResponse, LoginFailureUserNotFoundResponse, LoginFailureWrongPasswordResponse, LoginRequest, LoginSuccessResponse}
 import viewData.UserViewData
 
 import scala.util.{Failure, Success}
@@ -53,8 +53,14 @@ case class LoginPagePresenter(
 
     frontend.sendRequest(clientRequests.Login, LoginRequest(login, pass)) onComplete {
       case Success(LoginSuccessResponse(token, userViewData)) => onLoginSuccess(token, userViewData)
-      case Success(r: LoginFailure) => onLoginFailure(r)
-      case Failure(exception) => onLoginFailure(LoginFailureFrontendException(exception))
+      case Success(r: LoginFailure) => r match {
+        case LoginFailureUserNotFoundResponse() | LoginFailureWrongPasswordResponse() =>
+           showErrorAlert("Неверный логин или пароль")
+        case LoginFailureUnknownErrorResponse() =>
+          showErrorAlert()
+      }
+      case Failure(exception) =>
+        showErrorAlert()
     }
   }
 
@@ -65,9 +71,6 @@ case class LoginPagePresenter(
     app.goTo(CourseSelectionPageState)
   }
 
-  def onLoginFailure(error: LoginFailure): Unit = {
-    println(error)
-  }
 
 
   override def handleState(state: LoginPageState.type): Unit = {

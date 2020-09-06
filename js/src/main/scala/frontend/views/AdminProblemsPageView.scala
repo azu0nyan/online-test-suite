@@ -1,7 +1,7 @@
 package frontend.views
 
 import clientRequests.admin.{ProblemTemplateListRequest, ProblemTemplateListSuccess}
-import frontend.{AdminProblemsPageState, _}
+import frontend.{AdminProblemsPageState, showErrorAlert, _}
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.Element
@@ -47,7 +47,8 @@ case class AdminProblemsPagePresenter( problems:SeqProperty[viewData.ProblemTemp
   def requestProblemListUpdate(): Unit = {
     frontend.sendRequest(clientRequests.admin.ProblemTemplateList, ProblemTemplateListRequest(currentToken.get)) onComplete{
       case Success(ProblemTemplateListSuccess(templates)) => problems.set(templates)
-      case _ =>
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
     }
   }
 
