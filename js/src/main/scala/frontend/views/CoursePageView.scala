@@ -301,12 +301,17 @@ class CoursePageView(
       presenter.logOut()
       true // prevent default
     }))("Выйти"),
-    produceWithNested(presenter.currentPath) { (p, nested) =>
-      presenter.course.get.courseData.pieceByPath.get(p) match {
-        case Some(piece) => div(renderPiece(piece, stringToPath(p).dropRight(1), nested)).render
-        case None => div("Не могу найти указанную часть курса, воспользуйтесь содержанием, расположеным слева").render
-      }
+    produceWithNested(presenter.course) { (c, oNested) =>
+      div(
+        oNested(produceWithNested(presenter.currentPath) { (p, nested) =>
+          presenter.course.get.courseData.pieceByPath.get(p) match {
+            case Some(piece) => div(renderPiece(piece, stringToPath(p).dropRight(1), nested)).render
+            case None => div("Не могу найти указанную часть курса, воспользуйтесь содержанием, расположеным слева").render
+          }
+        })
+      ).render
     }
+
 
   ))
 
@@ -326,11 +331,17 @@ case class CoursePagePresenter(
                               ) extends GenericPresenter[CoursePageState] {
 
   def problemByAlias(alias: String): Option[viewData.ProblemViewData] = course.subProp(_.problems).get.find(_.templateAlias == alias)
+  def problemById(id: String): Option[viewData.ProblemViewData] = course.subProp(_.problems).get.find(_.problemId == id)
+
 
   def submitAnswer(problemId: String, answerRaw: String): Unit =
     frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw)) onComplete {
       case Success(value) => value match {
-        case AnswerSubmitted() =>
+        case AnswerSubmitted(awd) =>
+          problemById(problemId).foreach { p =>
+            //            p.
+
+          }
           showWarningAlert("Отправлено на проверку") //todo
         case MaximumAttemptsLimitExceeded(attempts) =>
           showErrorAlert(s"Превышено максимальное колличество попыток")
@@ -341,12 +352,13 @@ case class CoursePagePresenter(
     }
 
 
-  def requestCoursesListUpdate(courseHexId: String): Unit = {
+  def requestCourseUpdate(courseHexId: String): Unit = {
     frontend.sendRequest(clientRequests.GetCourseData, CourseDataRequest(currentToken.get, courseHexId)) onComplete {
       case Success(GetCourseDataSuccess(cs)) =>
         println(s"course request success : ${cs.courseId} ${cs.title}")
         courseId.set(cs.courseId)
         course.set(cs)
+        currentPath.set(currentPath.get)
       case Success(failure@_) =>
         showErrorAlert(s"Немогу загрузить информацию о курсах")
         println(s"course request failure $failure")
@@ -365,7 +377,7 @@ case class CoursePagePresenter(
   override def handleState(state: CoursePageState): Unit = {
     println(s"Course page presenter,  handling state : $state")
     if (courseId.get != state.courseId) {
-      requestCoursesListUpdate(state.courseId)
+      requestCourseUpdate(state.courseId)
     }
     courseId.set(state.courseId)
     currentPath.set(state.lookAt)

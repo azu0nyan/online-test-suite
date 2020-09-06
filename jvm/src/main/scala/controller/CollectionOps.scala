@@ -1,6 +1,6 @@
 package controller
 
-import controller.db.MongoObject
+import controller.db.{CollectionOps, MongoObject}
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model.Updates.set

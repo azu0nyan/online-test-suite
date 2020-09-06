@@ -1,12 +1,17 @@
 package controller
 
 import java.time.Clock
+import java.util.concurrent.TimeUnit
 
 import DbViewsShared.CourseShared._
 import clientRequests.teacher.{AnswersForConfirmationRequest, AnswersForConfirmationResponse, AnswersForConfirmationSuccess, TeacherConfirmAnswerRequest, TeacherConfirmAnswerResponse, TeacherConfirmAnswerSuccess, UnknownAnswersForConfirmationFailure, UnknownTeacherConfirmAnswerFailure}
-import controller.db.{Answer, Problem, User}
+import controller.db._
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.{AnswerVerificationResult, ProblemTemplate}
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import scala.reflect.ClassTag
 //import otsbridge.{AnswerVerificationResult, CantVerify, VerificationDelayed, Verified}
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
@@ -21,11 +26,12 @@ import scala.concurrent.Future
 object AnswerOps {
 
 
-
   import com.typesafe.scalalogging.Logger
   import org.slf4j.LoggerFactory
 
   val log: Logger = Logger(LoggerFactory.getLogger("controller.SubmitAnswer"))
+
+  val awaitVerification = Duration.create(6, TimeUnit.SECONDS)
 
   def submitAnswer(req: SubmitAnswerRequest): SubmitAnswerResponse = {
     LoginUserOps.decodeAndValidateToken(req.token) match {
@@ -50,10 +56,15 @@ object AnswerOps {
                   val answer = db.answers.insert(Answer(problem._id, req.answerRaw, BeingVerified(), Clock.systemUTC().instant())).pure[Option]
                   log.info(s"User ${user.idAndLoginStr} submitted answer ${answer.map(_._id.toHexString).getOrElse("NONE")} for problem ${problem.idAlias} from course ${course.get.idAlias}")
                   val template = TemplatesRegistry.getProblemTemplate(problem.templateAlias).get
-                  Future {
-                    template.verifyAnswer(problem.seed, req.answerRaw)
-                  }.map(processSubmissionResult(_, answer.get, user, template))
-                  AnswerSubmitted()
+                  try {
+                    Await.result(Future {
+                      template.verifyAnswer(problem.seed, req.answerRaw)
+                    }.map(processSubmissionResult(_, answer.get, user, template)), awaitVerification)
+                  } catch {
+                    case _: Throwable =>
+                  }
+//                  AnswerSubmitted(answers.byId(answer.get._id).get.toViewData)
+                  AnswerSubmitted(answer.get.updatedFromDb(answers, implicitly[ClassTag[Answer]]).toViewData)
                 }
               }
             case None =>
@@ -87,31 +98,31 @@ object AnswerOps {
      }
    }
  */
-  def answersForConfirmation(req:AnswersForConfirmationRequest):AnswersForConfirmationResponse =
+  def answersForConfirmation(req: AnswersForConfirmationRequest): AnswersForConfirmationResponse =
   try {
     AnswersForConfirmationSuccess(Answer.answersForConfirmation(req.groupId, req.problemId).map(ToViewData.toAnswerForConfirmation))
   } catch {
-    case t:Throwable =>
+    case t: Throwable =>
       log.error(t.getMessage)
       UnknownAnswersForConfirmationFailure()
   }
   def teacherConfirmAnswer(req: TeacherConfirmAnswerRequest): TeacherConfirmAnswerResponse =
-  try {
-    val answer = db.answers.byId(new ObjectId(req.answerId))
-    val sm = answer.get.status match {
-      case VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) => systemMessage
-      case Verified(score, review, systemMessage, verifiedAt, confirmedAt) => systemMessage
-      case Rejected(systemMessage, rejectedAt) => systemMessage
-      case BeingVerified() => None
-      case VerificationDelayed(systemMessage) => systemMessage
+    try {
+      val answer = db.answers.byId(new ObjectId(req.answerId))
+      val sm = answer.get.status match {
+        case VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) => systemMessage
+        case Verified(score, review, systemMessage, verifiedAt, confirmedAt) => systemMessage
+        case Rejected(systemMessage, rejectedAt) => systemMessage
+        case BeingVerified() => None
+        case VerificationDelayed(systemMessage) => systemMessage
+      }
+      onAnswerVerified(answer.get, req.score, sm, req.review)
+      TeacherConfirmAnswerSuccess()
+    } catch {
+      case t: Throwable =>
+        log.error(t.getMessage)
+        UnknownTeacherConfirmAnswerFailure()
     }
-    onAnswerVerified(answer.get, req.score, sm, req.review)
-    TeacherConfirmAnswerSuccess()
-  } catch {
-    case t: Throwable =>
-      log.error(t.getMessage)
-      UnknownTeacherConfirmAnswerFailure()
-  }
 
   def onAnswerVerified(answer: Answer, score: ProblemScore, systemMessage: Option[String], review: Option[String]): Unit = {
     log.info(s"Answer : ${answer._id} verified changing status ")
