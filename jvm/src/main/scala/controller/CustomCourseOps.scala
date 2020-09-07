@@ -39,7 +39,7 @@ object CustomCourseOps {
         TemplatesRegistry.registerOrUpdateCourseTemplate(updated)
         log.info(s"Adding problem instances to existing course participants")
         updated.activeInstances.foreach { c =>
-          val newProblem = Problem.formGenerated(course._id, problem.generate(new Random().nextInt()))
+          val newProblem = Problem.formGenerated(course._id, Generator.generateProblem(problem, c.seed))
           problems.insert(newProblem)
           log.info(s"Added problem ${newProblem._id}")
         }
@@ -87,7 +87,7 @@ object CustomCourseOps {
       val toInsert = CustomCourseTemplate(req.uniqueAlias,
         "enter title",
         Some("enter description"),
-        false, None, Some(1), defaultCourseStructure, Seq())
+          defaultCourseStructure, Seq())
       customCourseTemplates.insert(toInsert)
       NewCustomCourseSuccess(toInsert._id.toHexString)
     } else {
@@ -98,7 +98,6 @@ object CustomCourseOps {
   def updateCustomCourse(req: UpdateCustomCourseRequest): UpdateCustomCourseResponse = {
     CustomCourseTemplate.byAlias(req.courseAlias) match {
       case Some(cct) =>
-        if (req.allowedForAll != cct.allowedForAll) customCourseTemplates.updateField(cct, "allowedForAll", req.allowedForAll)
         if (req.courseData != cct.courseData) customCourseTemplates.updateField(cct, "courseData", req.courseData)
         if (req.description != cct.description) customCourseTemplates.updateField(cct, "description", req.description)
         if (req.title != cct.courseTitle) customCourseTemplates.updateField(cct, "courseTitle", req.title)

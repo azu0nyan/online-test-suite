@@ -15,7 +15,7 @@ package object viewData {
   case class ProblemTemplateExampleViewData(title:String, initialScore:ProblemScore, alias:String, allowedAttempts:Option[Int], exampleHtml:String, answerField:AnswerField)
 
   /**admin*/
-  case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: Option[String], allowedForAll: Boolean, timeLimitSeconds: Option[Int],
+  case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: Option[String],
                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable:Boolean)
 
   /**teacher*/

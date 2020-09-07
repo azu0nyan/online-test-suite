@@ -2,16 +2,18 @@ package controller
 
 import DbViewsShared.CourseShared.Passing
 import controller.db.{Course, CourseTemplateAvailableForUser, Problem, Transaction}
-import otsbridge.CourseTemplate
+import otsbridge.{CourseTemplate, ProblemTemplate}
 import org.bson.types.ObjectId
+import otsbridge.ProblemScore.ProblemScore
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
+import scala.util.Random
 
 object Generator {
 
   def generateCourseForUserFromAvailableTemplate(pltafu: CourseTemplateAvailableForUser): (Course, Seq[Problem]) = {
-    val res = generateCourseForUser(pltafu.userId, TemplatesRegistry.getCourseTemplate(pltafu.templateAlias).get)
+    val res = generateCourseForUser(pltafu.userId, TemplatesRegistry.getCourseTemplate(pltafu.templateAlias).get, new Random().nextInt())
     if (pltafu.attempts <= 1) db.coursesAvailableForUser.delete(pltafu)
     else pltafu.updateAttempts(pltafu.attempts - 1)
     res
@@ -37,11 +39,25 @@ object Generator {
      }
    }*/
 
-  def generateCourseForUser(userId: ObjectId, template: CourseTemplate, seed: Int = 0): (Course, Seq[Problem]) = {
+  /*
+
+//problemsToGenerate.zipWithIndex.map { case (pt, i) => GeneratedProblem(pt, seed + i, pt.allowedAttempts, pt.initialScore) }.toSeq
+  def generate(seed: Int): GeneratedProblem = GeneratedProblem(this, seed, allowedAttempts, initialScore)
+
+
+
+def generate(seed: Int): CourseGeneratorOutput =
+problemsToGenerate.zipWithIndex.map { case (pt, i) => pt.generate(seed + i)}.toSeq
+ */
+  case class GeneratedProblem(template: ProblemTemplate, seed: Int, attempts: Option[Int], initialScore: ProblemScore)
+
+  def generateProblem(pt:ProblemTemplate, seed:Int): GeneratedProblem = GeneratedProblem(pt, seed, pt.allowedAttempts, pt.initialScore)
+
+  def generateCourseForUser(userId: ObjectId, template: CourseTemplate, seed: Int): (Course, Seq[Problem]) = {
     val courseId = new ObjectId()
-    val generated = template.generate(seed)
+    val generated = template.problemAliasesToGenerate.flatMap(TemplatesRegistry.getProblemTemplate).map(pt => generateProblem(pt, seed))
     val problems = generated.map(gp => Problem.formGenerated(courseId, gp))
-    val course = Course(courseId, userId, template.uniqueAlias, Passing(None), problems.map(_._id))
+    val course = Course(courseId, userId, template.uniqueAlias, seed, Passing(None), problems.map(_._id))
 //    Transaction { s =>
 //      val session = Some(s)
       db.courses.insert(course)//, session)

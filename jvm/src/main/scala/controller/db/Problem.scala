@@ -1,5 +1,6 @@
 package controller.db
 
+import controller.Generator.GeneratedProblem
 import controller.{TemplatesRegistry, db, log}
 import otsbridge._
 import org.bson.types.ObjectId
@@ -66,7 +67,7 @@ case class Problem(
     ProblemViewData(_id.toHexString,
       templateAlias,
       template.title(seed),
-      template.generateProblemHtml(seed),
+      template.problemHtml(seed),
       template.answerField(seed),
       score,
       lastAnswer.map(_.answer).getOrElse(""), answers.map(_.toViewData) )

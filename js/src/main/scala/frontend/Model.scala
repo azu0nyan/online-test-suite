@@ -26,7 +26,7 @@ trait Bindings {
   implicit val blank1: Blank[viewData.UserCoursesInfoViewData] = Blank.Simple(viewData.UserCoursesInfoViewData(Seq(), Seq()))
   implicit val blank5: Blank[ProblemScore] = Blank.Simple(BinaryScore(false))
   implicit val blank2: Blank[viewData.CourseViewData] = Blank.Simple(viewData.CourseViewData("Loading course..", "NO TITLE", Passing(None), CoursePiece.emptyCourse, Seq(), None))
-  implicit val blank4: Blank[viewData.AdminCourseViewData] = Blank.Simple(viewData.AdminCourseViewData("Loading course..", "NO TITLE", None, false, None, CoursePiece.emptyCourse , Seq(), false))
+  implicit val blank4: Blank[viewData.AdminCourseViewData] = Blank.Simple(viewData.AdminCourseViewData("Loading course..", "NO TITLE", None,  CoursePiece.emptyCourse , Seq(), false))
   implicit val blank3: Blank[viewData.GroupDetailedInfoViewData] =
     Blank.Simple(viewData.GroupDetailedInfoViewData("Loading..", "Loading..", "Loading..", Seq(), Seq() ))
 }

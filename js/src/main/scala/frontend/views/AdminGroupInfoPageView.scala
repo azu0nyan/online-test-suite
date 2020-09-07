@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.admin.{AddUserToGroupRequest, GroupInfoRequest, GroupInfoResponseSuccess, RemoveUserFromGroup, RemoveUserFromGroupRequest, UserListRequest, UserListResponseSuccess}
+import clientRequests.admin.{AddCourseToGroupRequest, AddUserToGroupRequest, GroupInfoRequest, GroupInfoResponseSuccess, RemoveUserFromGroup, RemoveUserFromGroupRequest, UserListRequest, UserListResponseSuccess}
 import frontend._
 import io.udash.core.ContainerView
 import io.udash._
@@ -46,6 +46,14 @@ class AdminGroupInfoPageView(
         true // prevent default
       }))("Удалить"),
     ),
+    div(styles.Custom.inputContainer ~)(
+      label(`for` := "addCourseId")("Добавить курс:"),
+      TextInput(presenter.courseToAdd)(id := "addCourseId", placeholder := "Алиас"),
+      button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
+        presenter.addCourse()
+        true // prevent default
+      }))("Добавить"),
+    ),
     userTable(groupInfo.users)
   ).render
   )
@@ -68,10 +76,21 @@ class AdminGroupInfoPageView(
 
 case class AdminGroupInfoPagePresenter(
                                         groupInfo: ModelProperty[viewData.GroupDetailedInfoViewData],
-                                        loginToAdd: Property[String],
-                                        loginToRemove: Property[String],
-                                        forceCourseRemoval: Property[Boolean],
+
                                         app: Application[RoutingState]) extends GenericPresenter[AdminGroupInfoPageState] {
+  val loginToAdd: Property[String] = Property.blank[String]
+  val loginToRemove: Property[String] = Property.blank[String]
+  val courseToAdd: Property[String] = Property.blank[String]
+  val forceCourseRemoval: Property[Boolean] = Property.blank[Boolean]
+
+  def addCourse() = {
+    frontend.sendRequest(clientRequests.admin.AddCourseToGroup, AddCourseToGroupRequest(currentToken.get, courseToAdd.get, groupInfo.get.groupId, true)) onComplete{
+      case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
+      case resp@_ =>
+        if(debugAlerts) showErrorAlert(s"$resp")
+    }
+  }
+
   def removeUser() = {
     frontend.sendRequest(clientRequests.admin.RemoveUserFromGroup,
       RemoveUserFromGroupRequest(currentToken.get, loginToAdd.get, groupInfo.get.groupId, forceCourseRemoval.get)) onComplete {
@@ -111,9 +130,6 @@ case object AdminGroupInfoPageViewFactory extends ViewFactory[AdminGroupInfoPage
     println(s"Admin group info page view factory creating..")
     val model = ModelProperty.blank[viewData.GroupDetailedInfoViewData]
     val presenter = AdminGroupInfoPagePresenter(model,
-      Property.blank[String],
-      Property.blank[String],
-      Property.blank[Boolean],
       frontend.applicationInstance)
     val view = new AdminGroupInfoPageView(presenter, model)
     (view, presenter)

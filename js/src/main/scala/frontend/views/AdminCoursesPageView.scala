@@ -38,7 +38,6 @@ class AdminCoursesPageView(
           td(pr.get.courseAlias),
           td(pr.get.courseTitle),
           td(pr.get.description.getOrElse("").toString),
-          td(pr.get.timeLimitSeconds.toString),
           td(pr.get.problemAliasesToGenerate.mkString(", ")),
           td(button(onclick :+= ((_: Event) => {
             presenter.app.goTo(AdminCourseTemplateInfoPageState(pr.get.courseAlias))

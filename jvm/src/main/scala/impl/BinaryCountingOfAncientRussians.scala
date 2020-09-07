@@ -15,11 +15,8 @@ object BinaryCountingOfAncientRussians {
         """Тест на знание основныых понятий двоичного счета древних русов,
           |вам предстоит ответить на такие вопросы как "что такое `полушка`, `медячок` и т.д.
           |Сдача теста на -1 баллов обязательно для вступления в ШУЕ.""".stripMargin)
-    override val allowedForAll: Boolean = false
 
-    override val allowedInstances: Option[Int] = Some(2)
-
-    override val problemsToGenerate: Seq[ProblemTemplate] = Seq(
+    val problemsToGenerate: Seq[ProblemTemplate] = Seq(
       BCORProblem("целковый", 1),
       BCORProblem("полушка", 1 / 2d),
       BCORProblem("четвертушка", 1 / 4d),
@@ -30,6 +27,7 @@ object BinaryCountingOfAncientRussians {
       BCORProblem("золотничок", 1 / 128d),
       BCORProblem("сто двадцать восемь пар", 256),
     )
+
     override val courseTitle: String = "Двоичный счет древних русов. Базовые понятия"
     override val uniqueAlias: String = "BinaryCountingOfAncientRussians"
     override def courseData: CoursePiece.CourseRoot = CourseRoot("Успей решить задания", "",
@@ -53,7 +51,7 @@ object BinaryCountingOfAncientRussians {
 
     override val uniqueAlias: String = s"BCIORProblem $name"
 
-    override def generateProblemHtml(seed: Int): String = s"<h4>Напишите точное значение следующей единицы измерения дрених русов: <i> ${name} </i> </h4>"
+    override def problemHtml(seed: Int): String = s"<h4>Напишите точное значение следующей единицы измерения дрених русов: <i> ${name} </i> </h4>"
 
 
 //    override def answerFieldType(seed: Int): DoubleNumberField = DoubleNumberField("")

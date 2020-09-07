@@ -12,14 +12,14 @@ object Course {
   def byTemplateAlias(templateAlias: String): Seq[Course] = courses.byFieldMany("templateAlias", templateAlias)
 
 
-  def apply(userID: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId]): Course =
-    Course(new ObjectId(), userID, templateAlias, status, problemIds)
+  def apply(userID: ObjectId, templateAlias: String,seed:Int, status: CourseStatus, problemIds: Seq[ObjectId]): Course =
+    Course(new ObjectId(), userID, templateAlias,seed, status, problemIds)
 
   def forUser(user: User): Seq[Course] = courses.byFieldMany("userId", user._id)
 
 }
 
-case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
+case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed:Int, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
   def user: User = users.byId(userId).get
 
   def idAlias = s"[${_id.toHexString} $templateAlias]"

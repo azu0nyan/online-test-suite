@@ -10,8 +10,8 @@ import viewData.AdminCourseViewData
 object CustomCourseTemplate {
   def byAlias(courseAlias: String) : Option[CustomCourseTemplate] = customCourseTemplates.byField("uniqueAlias", courseAlias)
 
-  def apply(uniqueAlias: String, courseTitle: String, description: Option[String], allowedForAll: Boolean, timeLimitSeconds: Option[Int], allowedInstances: Option[Int], courseData: CourseRoot, problemAliasesToGenerate: Seq[String]): CustomCourseTemplate =
-    new CustomCourseTemplate(new ObjectId(), uniqueAlias, courseTitle, description, allowedForAll, timeLimitSeconds, allowedInstances, courseData, problemAliasesToGenerate)
+  def apply(uniqueAlias: String, courseTitle: String, description: Option[String], courseData: CourseRoot, problemAliasesToGenerate: Seq[String]): CustomCourseTemplate =
+    new CustomCourseTemplate(new ObjectId(), uniqueAlias, courseTitle, description, courseData, problemAliasesToGenerate)
 }
 
 case class CustomCourseTemplate(
@@ -19,11 +19,8 @@ case class CustomCourseTemplate(
                                  override val uniqueAlias: String,
                                  override val courseTitle: String,
                                  override val description: Option[String],
-                                 override val allowedForAll: Boolean,
-                                 override val timeLimitSeconds: Option[Int],
-                                 override val allowedInstances: Option[Int],
                                  override val courseData: CourseRoot,
-                                 problemAliasesToGenerate: Seq[String],
+                                 override val problemAliasesToGenerate: Seq[String],
                                ) extends MongoObject with CourseTemplate {
   def activeInstances:Seq[Course] = Course.byTemplateAlias(uniqueAlias)
 
@@ -33,14 +30,11 @@ case class CustomCourseTemplate(
   }
 
 
-  override val problemsToGenerate: Seq[ProblemTemplate] = problemAliasesToGenerate.flatMap(TemplatesRegistry.getProblemTemplate)
 
   def toViewData: AdminCourseViewData = AdminCourseViewData(
     uniqueAlias,
     courseTitle,
     description,
-    allowedForAll,
-    timeLimitSeconds,
     courseData,
     problemAliasesToGenerate,
     true

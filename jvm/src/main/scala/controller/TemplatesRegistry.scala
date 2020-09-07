@@ -13,7 +13,7 @@ object TemplatesRegistry {
 
   def problemTemplates: Seq[ProblemTemplate] = aliasToPT.values.toSeq
 
-  def templatesForAllUsers: Seq[CourseTemplate] = aliasToCourseTemplate.values.filter(_.allowedForAll).toSeq
+  def templatesForAllUsers: Seq[CourseTemplate] = Seq()//todo//aliasToCourseTemplate.values.filter(_.allowedForAll).toSeq
 
   val aliasToCourseTemplate: mutable.Map[String, CourseTemplate] = new ConcurrentHashMap[String, CourseTemplate]().asScala
 

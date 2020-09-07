@@ -35,18 +35,6 @@ object CoursesOps {
       case Some(user) =>
         TemplatesRegistry.getCourseTemplate(req.courseTemplateAlias) match {
           case Some(courseTemplate) =>
-            //  val userCourses = user.courses
-            if (courseTemplate.allowedForAll) {
-              if (courseTemplate.allowedInstances.isEmpty ||
-                courseTemplate.allowedInstances.get > user.courses.count(_.templateAlias == courseTemplate.uniqueAlias)) {
-                val (c, _) = Generator.generateCourseForUser(user._id, courseTemplate, new Random().nextInt())
-                log.info(s"user ${user.idAndLoginStr} started allowed for all course ${c._id.toHexString} [${courseTemplate.courseTitle}]")
-                RequestStartCourseSuccess(c._id.toHexString)
-              } else {
-                log.error(s"user ${user.idAndLoginStr} cant start new course [${courseTemplate.courseTitle}], maximum attempts limit (${courseTemplate.allowedInstances.get}) exceeded")
-                MaximumCourseAttemptsLimitExceeded(courseTemplate.allowedInstances.get)
-              }
-            } else {
               user.courseTemplates.find(_.templateAlias == req.courseTemplateAlias) match {
                 case Some(courseTemplateForUser) =>
                   val (c, _) = Generator.generateCourseForUserFromAvailableTemplate(courseTemplateForUser)
@@ -56,7 +44,7 @@ object CoursesOps {
                   log.error(s"user ${user.idAndLoginStr} cant start new course [${courseTemplate.courseTitle}], course not owned by him")
                   CourseTemplateNotAvailableForYou()
               }
-            }
+
           case None =>
             log.error(s"user ${user.idAndLoginStr} cant start new course [${req.courseTemplateAlias}], course template not found")
             CourseTemplateNotFound()
