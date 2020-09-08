@@ -14,9 +14,10 @@ class LandingPageView(
 
 
   override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
-//    h3("Добро пожаловать в ТЕСТЕР"),
+    h3("Добро пожаловать"),
 //    h3("Some landing  page html"),
-//    p("Some text about courses and gow good courses are, theay are really good you know? .. pss wanna some courses, if u can afford it."),
+    p("Обращаю ваше внимание что это альфа-версия соответветенно рассчитывать на нее как на что-то кроме места куда " +
+      "вы сдаете задания ненужно. Хоть я и буду делать бекапы. Система может быть недоступна в какое-то случайное время"),
     button(onclick :+= ((_: Event) => {
       presenter.toLoginPage()
       true // prevent default

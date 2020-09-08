@@ -1,7 +1,7 @@
 package frontend.views
 
 import DbViewsShared.CourseShared
-import DbViewsShared.CourseShared.AnswerStatus
+import DbViewsShared.CourseShared.{AnswerStatus, VerifiedAwaitingConfirmation}
 import clientRequests.{AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, GetProblemDataRequest, GetProblemDataSuccess, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
 import constants.Text
 
@@ -125,6 +125,7 @@ class CoursePageView(
       div(p("Ожидает проверки преподавателем"),
         pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString))
 
+
   }
 
 
@@ -148,8 +149,10 @@ class CoursePageView(
             case Some(value) => elements.Score(value, false)
             case None => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
           }),
-          td(answerStatus(ans.status), ans.score match {
-            case Some(MultipleRunsResultScore(runs)) => runResultsTable(runs)
+          //todo check
+          td(answerStatus(ans.status), (ans.score, ans.status) match {
+            case (Some(MultipleRunsResultScore(runs)), _) => runResultsTable(runs)
+            case (_, VerifiedAwaitingConfirmation(MultipleRunsResultScore(runs),_,_)) => runResultsTable(runs)
             case _ => p()
           }),
           td(ans.status match {
