@@ -266,7 +266,7 @@ class CoursePageView(
       presenter.logOut()
       true // prevent default
     }))("Выйти"),
-    produceWithNested(presenter.course) { (c, oNested) =>
+    produceWithNested(presenter.course.subProp(_.courseData)) { (c, oNested) =>
       div(
         oNested(produceWithNested(presenter.currentPath) { (p, nested) =>
           if (p.startsWith("problem")) {
