@@ -25,9 +25,39 @@
 <!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
         </encoder>
     </appender>
+    <appender name="FILE_INFO" class="ch.qos.logback.core.FileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- path to your log file, where you want to store logs -->
+        <file>log_info.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} | %-20.20thread | %5p | %-25.25logger{25} | %m%n</pattern>
+            <!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+        </encoder>
+    </appender>
+    <appender name="FILE_WARN" class="ch.qos.logback.core.FileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- path to your log file, where you want to store logs -->
+        <file>log_warn.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} | %-20.20thread | %5p | %-25.25logger{25} | %m%n</pattern>
+            <!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+        </encoder>
+    </appender>
     <logger name="org.eclipse.jetty" level="WARN"/>
     <root level="debug">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
+        <appender-ref ref="FILE_WARN" />
+        <appender-ref ref="FILE_INFO" />
     </root>
 </configuration>

@@ -5,6 +5,7 @@ import frontend._
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.{Element, Event}
+import otsbridge.ProblemScore
 import otsbridge.ProblemScore.{BinaryScore, ProblemScore}
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
@@ -33,7 +34,10 @@ class TeacherConfirmAnswersPageView(
           td(answ.get.answerId + " " + answ.get.problemViewData.templateAlias + " " + answ.get.problemViewData.title),
           td(answ.get.user.id + " " + answ.get.user.login + " " + answ.get.user.lastName + " " + answ.get.user.firstName),
           td(pre(code(answ.get.answer))),
-          td(elements.Score(answ.get.score, false)),
+          td(elements.Score(answ.get.score, false), answ.get.score match {
+            case ProblemScore.MultipleRunsResultScore(runResults) => elements.RunResultsTable(runResults)
+            case _ => ""
+          }),
           td(TextArea(presenter.reviews(answ.get.answerId))(id := "rev" + answ.get.answerId, placeholder := "Отзыв")),
           td(
             button(onclick :+= ((_: Event) => {

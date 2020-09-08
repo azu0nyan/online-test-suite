@@ -8,6 +8,7 @@ import constants.Text
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
 import frontend._
+import frontend.views.elements.{Expandable, RunResultsTable}
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom.{Element, Event}
@@ -72,38 +73,9 @@ class CoursePageView(
 
 
 
-  def expandable(sumary: JsDom.TypedTag[_], det: JsDom.TypedTag[_]) = details(
-    summary(sumary),
-    det
-  )
 
-  val maxRunsWithoutFold: Int = 3
 
-  def runResultsTable(runs: Seq[ProgramRunResult]) =
-    if (runs.size > maxRunsWithoutFold) expandable(div(Text.pShowRuns.toString), runResultsTableRaw(runs))
-    else runResultsTableRaw(runs)
 
-  def runResultsTableRaw(runs: Seq[ProgramRunResult]): JsDom.TypedTag[Table] =
-    table(styles.Custom.defaultTable ~)(
-      tr(
-        th(width := "20px")(Text.pAnswerNumber),
-        th(width := "50px")(Text.pRunResult),
-        th(Text.pRunMessage),
-      ),
-      for ((run, i) <- runs.zipWithIndex) yield tr(
-        td((i + 1).toString),
-        td(run match {
-          case ProgramRunResult.ProgramRunResultSuccess(timeMS, message) => div(styles.Custom.problemStatusSuccessFontColor)(Text.pRunTimeMs(timeMS))
-          case ProgramRunResult.ProgramRunResultWrongAnswer(message) => div(styles.Custom.problemStatusPartialSucessFontColor)(Text.pRunWrongAnswer)
-          case ProgramRunResult.ProgramRunResultFailure(message) => div(styles.Custom.problemStatusFailureFontColor)(Text.pRunRuntimeException)
-        }),
-        td(run match {
-          case ProgramRunResult.ProgramRunResultSuccess(timeMS, message) => pre(overflowX.auto)(message.getOrElse("").toString)
-          case ProgramRunResult.ProgramRunResultWrongAnswer(message) => pre(overflowX.auto)(message.getOrElse("").toString)
-          case ProgramRunResult.ProgramRunResultFailure(message) => pre(overflowX.auto)(message.getOrElse("").toString)
-        })
-      )
-    )
   //div(seq.flatMap(pr => Seq(p(pr.toString), br)))
 
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
@@ -151,15 +123,15 @@ class CoursePageView(
           }),
           //todo check
           td(answerStatus(ans.status), (ans.score, ans.status) match {
-            case (Some(MultipleRunsResultScore(runs)), _) => runResultsTable(runs)
-            case (_, VerifiedAwaitingConfirmation(MultipleRunsResultScore(runs),_,_)) => runResultsTable(runs)
+            case (Some(MultipleRunsResultScore(runs)), _) => RunResultsTable(runs)
+            case (_, VerifiedAwaitingConfirmation(MultipleRunsResultScore(runs),_,_)) =>RunResultsTable(runs)
             case _ => p()
           }),
           td(ans.status match {
             case CourseShared.Verified(_, review, _, _, _) => pre(overflowX.auto)(review.getOrElse("").toString)
             case _ => ""
           }),
-          td(expandable(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
+          td(Expandable(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
         )
       )
     )
