@@ -1,6 +1,7 @@
 package controller
 
 import java.time.Clock
+import java.util.concurrent.TimeUnit
 
 import clientRequests.{RegistrationFailureLoginToShortResponse, RegistrationFailureUnknownErrorResponse, RegistrationFailureUserAlreadyExistsResponse, RegistrationRequest, RegistrationResponse, RegistrationSuccess}
 import controller.UserRole.Student
@@ -16,7 +17,7 @@ object RegisterUser {
 
 
   /** blocking */
-  def registerUser(req: RegistrationRequest): RegistrationResponse =
+  def registerUser(req: RegistrationRequest): RegistrationResponse = this.synchronized {
     if (User.exists(req.login)) {
       log.info(s"Cant register new user ${req.login} login already claimed")
       RegistrationFailureUserAlreadyExistsResponse()
@@ -28,9 +29,9 @@ object RegisterUser {
       log.info(s"Registering new user login ${req.login}")
       val hashPasswords = PasswordHashingSalting.hashPasswords(req.password)
       val res = User(req.login, hashPasswords.hash, hashPasswords.salt, req.firstName, req.lastName, req.email, Some(Clock.systemUTC.instant), lastLogin = None, Student())
-      Await.result(users.insertOne(res).toFuture(), Duration.Inf)
+      Await.result(users.insertOne(res).toFuture(), Duration(10,TimeUnit.SECONDS))//prevent deadlock
       RegistrationSuccess()
     }
 
-
+  }
 }

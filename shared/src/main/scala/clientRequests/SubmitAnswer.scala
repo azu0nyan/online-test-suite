@@ -15,6 +15,7 @@ sealed trait SubmitAnswerResponse
 case class AnswerSubmitted(avd:AnswerViewData) extends SubmitAnswerResponse
 
 case class ProblemNotFound() extends SubmitAnswerResponse
+case class AlreadyVerifyingAnswer() extends SubmitAnswerResponse
 case class MaximumAttemptsLimitExceeded(attempts:Int) extends SubmitAnswerResponse
 case class RequestSubmitAnswerFailure(failure: GenericRequestFailure) extends SubmitAnswerResponse
 case class UserCourseWithProblemNotFound() extends SubmitAnswerResponse

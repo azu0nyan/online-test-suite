@@ -2,7 +2,7 @@ package frontend.views
 
 import DbViewsShared.CourseShared
 import DbViewsShared.CourseShared.{AnswerStatus, VerifiedAwaitingConfirmation}
-import clientRequests.{AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, GetProblemDataRequest, GetProblemDataSuccess, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
+import clientRequests.{AlreadyVerifyingAnswer, AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, GetProblemDataRequest, GetProblemDataSuccess, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
 import constants.Text
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,7 +11,7 @@ import frontend._
 import frontend.views.elements.{Expandable, RunResultsTable}
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
-import org.scalajs.dom.{Element, Event}
+import org.scalajs.dom.{Element, Event, window}
 import otsbridge.CoursePiece.stringToPath
 import viewData.ProblemViewData
 //import org.scalajs.dom._
@@ -329,15 +329,20 @@ case class CoursePagePresenter(
     }
   }
 
-  def requestProblemUpdate(problemId: String): Unit = {
+  def requestProblemUpdate(problemId: String): Option[ProblemViewData] = {
     frontend.sendRequest(clientRequests.GetProblemData, GetProblemDataRequest(currentToken.get, problemId)) onComplete {
       case Success(GetProblemDataSuccess(pd)) =>
         val p: SeqProperty[ProblemViewData] = course.subSeq(_.problems)
         val problemWithId = p.zipWithIndex.filter { case (p, _) => p.problemId == problemId }.get.headOption
         problemWithId.foreach { case (_, id) => p.replace(id, 1, pd) }
-      case _ =>
+        Some(pd)
+      case _ => None
     }
+    None //TODO
   }
+
+//  def checkProblemAfterSomeTime()
+
 
   def submitAnswer(problemId: String, answerRaw: String): Unit =
     frontend.sendRequest(clientRequests.SubmitAnswer, SubmitAnswerRequest(currentToken.get, problemId, answerRaw)) onComplete {
@@ -345,6 +350,14 @@ case class CoursePagePresenter(
         case AnswerSubmitted(avd) =>
           updateAnswerData(avd)
           requestProblemUpdate(problemId)
+//          avd.status match {
+//            case VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
+//            case CourseShared.BeingVerified() =>
+//            case CourseShared.VerificationDelayed(systemMessage) =>
+//          }
+        case AlreadyVerifyingAnswer() =>
+          println("Already verifying")
+          showWarningAlert("Ответ на это задание уже проверяется, наберитесь терпения")
         case MaximumAttemptsLimitExceeded(attempts) =>
           showErrorAlert(s"Превышено максимальное колличество попыток")
         case _ => showErrorAlert()
