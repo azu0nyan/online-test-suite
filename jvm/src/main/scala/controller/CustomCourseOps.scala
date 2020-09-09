@@ -27,6 +27,7 @@ object CustomCourseOps {
     }
   }
 
+  @Deprecated
   def addProblemToCourse(req: AddProblemToCourseRequest): AddProblemToCourseResponse = {
     val courseOpt = CustomCourseTemplate.byAlias(req.courseAlias)
     val problemOpt = TemplatesRegistry.getProblemTemplate(req.problemAlias)

@@ -1,12 +1,17 @@
 package app
 
-import controller.TemplatesRegistry
+import controller.{Maintenance, TemplatesRegistry}
 import impl.BinaryCountingOfAncientRussians
 
 object App {
 
   def main(args: Array[String]): Unit = {
+
     initAliases()
+    if(args.length > 0 && (args(0) == "--check" || args(0) == "-c")){
+      Maintenance.findAndFixNonStartedProblem()
+      Maintenance.findAndRecheckInterruptedProblems()
+    }
     HttpServer.initRoutesAndStart()
   }
 

@@ -1,7 +1,7 @@
 package controller
 
 import DbViewsShared.CourseShared.Passing
-import controller.db.{Course, CourseTemplateAvailableForUser, Problem, Transaction}
+import controller.db.{Course, CourseTemplateAvailableForUser, Problem, Transaction, problems}
 import otsbridge.{CourseTemplate, ProblemTemplate}
 import org.bson.types.ObjectId
 import otsbridge.ProblemScore.ProblemScore
@@ -49,9 +49,19 @@ object Generator {
 def generate(seed: Int): CourseGeneratorOutput =
 problemsToGenerate.zipWithIndex.map { case (pt, i) => pt.generate(seed + i)}.toSeq
  */
+
+
+  def addProblemToCourse(template:ProblemTemplate, course: Course): Problem = {
+    val p = Problem.formGenerated(course._id,generateProblem(template, course.seed))
+    db.problems.insert(p)
+    course.addProblem(p)
+    log.info(s"new problem ${p.idAlias} generated for course ${course.templateAlias} for user ${course.user.idAndLoginStr}")
+    p
+  }
+
   case class GeneratedProblem(template: ProblemTemplate, seed: Int, attempts: Option[Int], initialScore: ProblemScore)
 
-  def generateProblem(pt:ProblemTemplate, seed:Int): GeneratedProblem = GeneratedProblem(pt, seed, pt.allowedAttempts, pt.initialScore)
+  def generateProblem(pt:ProblemTemplate,  seed:Int): GeneratedProblem = GeneratedProblem(pt, seed, pt.allowedAttempts, pt.initialScore)
 
   def generateCourseForUser(userId: ObjectId, template: CourseTemplate, seed: Int): (Course, Seq[Problem]) = {
     val courseId = new ObjectId()
