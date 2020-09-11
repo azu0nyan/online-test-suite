@@ -1,5 +1,11 @@
 #!/bin/bash
 
+
+#remoteExecutor / universal:packageBin
+#remoteExecutor docker image build -t remoteexecutor:0.1
+#push docker image to vm
+
+
 #fooJS / fastOptJS
 #fooJVM / universal:packageBin
 #deployUniversalToVPS.sh
