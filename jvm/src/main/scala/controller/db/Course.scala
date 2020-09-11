@@ -21,12 +21,13 @@ object Course {
 
 case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed:Int, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
   def addProblem(p: Problem): Course = {
-    if(!problemIds.contains(p._id)) {
-      courses.updateField(this, "problemIds", problemIds :+ p._id)
-      this.copy(problemIds = problemIds :+ p._id)
+    val updated = courses.byId(_id).get
+    if(!updated.problemIds.contains(p._id)) {
+      courses.updateField(updated, "problemIds", updated.problemIds :+ p._id)
+      updated.copy(problemIds = problemIds :+ p._id)
     } else {
       log.error("Adding existing problem to course")
-      this
+      updated
     }
 
   }
