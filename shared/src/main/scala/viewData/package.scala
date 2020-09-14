@@ -39,6 +39,7 @@ package object viewData {
                            ) {
     def score: Option[ProblemScore] = status match {
       case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => Some(score)
+      case CourseShared.VerifiedAwaitingConfirmation(score, _, _) => Some(score)
       case _ => None
     }
   }

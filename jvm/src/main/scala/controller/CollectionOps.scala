@@ -1,7 +1,7 @@
 package controller
 
 import com.mongodb.client.model.{Collation, CollationStrength}
-import controller.db.{CollectionOps, MongoObject}
+import controller.db.MongoObject
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model.Updates.set
@@ -15,8 +15,6 @@ import scala.reflect.ClassTag
 trait CollectionOps {
 
   implicit class CollectionOps[T](col: MongoCollection[T])(implicit c: ClassTag[T]) {
-
-
 
     def all(session: Option[ClientSession]= None): Seq[T] = {
       Await.result({

@@ -1,6 +1,7 @@
 package constants
 
 object Text {
+  val fixErrorsToTest: String = "Программа должна пройти все предыдущие тесты"
 
 
   val appTitle: String = "Test suite"
@@ -24,11 +25,12 @@ object Text {
   val courseStatusNoEnd: String = "Активен"
 
   //tasks
+  val pNotTested: String  = "Непротестированно"
   val pStatusAccepted: String = "Зачтено"
   val pStatusFailure: String = "Незачтено"
   val pStatusNoAnswer: String = "Нет ответа"
   val pAnswerNoScore: String = "Нет оценки"
-  val pAnswerWaitingForVerify: String = "Ожидает проверки"
+  val pAnswerWaitingForVerify: String = "Ожидает подтверждения преподавателем"
   val pAnswerNumber: String = "№"
   val pAnswerAnsweredAt: String = "Время"
   val pAnswerScore: String = "Баллы"
@@ -49,4 +51,5 @@ object Text {
 
 
   val pYourAnswers: String = "Ваши ответы"
+  val timeLimitExceeded:String = "Превышено время выполнения"
 }

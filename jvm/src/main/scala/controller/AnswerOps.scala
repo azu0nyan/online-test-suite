@@ -128,7 +128,7 @@ object AnswerOps {
         log.info(s"Answer : ${
           answer._id
         } verified by testing engine ")
-        if (pt.requireTeacherVerification) {
+        if (pt.requireTeacherVerificationIfScoreGEQThan.nonEmpty && score.toInt >= pt.requireTeacherVerificationIfScoreGEQThan.get) {
           answer.changeStatus(VerifiedAwaitingConfirmation(score, systemMessage, Clock.systemUTC().instant()))
         } else {
           onAnswerVerified(answer, score, systemMessage, None)

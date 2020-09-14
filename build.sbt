@@ -32,7 +32,7 @@ lazy val extensionsBridgeJs = ProjectRef(file("../otsExtensionsBridge"), "fooJS"
 lazy val contentProject = RootProject(file("../problemsAndTests"))
 
 //Tasks
-val cssDir = settingKey[File]("Target for 'compileCss' task")
+val cssDir = settingKey[File]("Target for 'compileCss'  task")
 val compileCss = taskKey[Unit]("Compile CSS files")
 
 

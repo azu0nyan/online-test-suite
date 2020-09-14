@@ -52,8 +52,24 @@ class CoursePageView(
             true // prevent default
           }))("ответить")
         )
-      case IntNumberField(questionText) => div("")
-      case TextField(questionText) => div("")
+      case IntNumberField(questionText) => div(
+        label(`for` := inputId)(questionText),
+        //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
+        TextInput(problemData.subProp(_.currentAnswerRaw))(id := inputId, placeholder := "Ваш ответ(целое число)..."),
+        button(onclick :+= ((_: Event) => {
+          presenter.submitAnswer(problemData.subProp(_.problemId).get, problemData.subProp(_.currentAnswerRaw).get)
+          true // prevent default
+        }))("ответить")
+      )
+      case TextField(questionText) => div(
+        label(`for` := inputId)(questionText),
+        //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
+        TextInput(problemData.subProp(_.currentAnswerRaw))(id := inputId, placeholder := "Ваш ответ(текст)..."),
+        button(onclick :+= ((_: Event) => {
+          presenter.submitAnswer(problemData.subProp(_.problemId).get, problemData.subProp(_.currentAnswerRaw).get)
+          true // prevent default
+        }))("ответить")
+      )
       case ProgramInTextField(questionText, programmingLanguage, initialProgram) =>
         if (problemData.subProp(_.currentAnswerRaw).get == "" && initialProgram.nonEmpty)
           problemData.subProp(_.currentAnswerRaw).set(initialProgram.get, true)
@@ -72,16 +88,15 @@ class CoursePageView(
   }
 
 
-
-
-
-
   //div(seq.flatMap(pr => Seq(p(pr.toString), br)))
 
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
     div(styles.Custom.problemContainer ~)(
       //data.get.title.map(t => h4(t)).getOrElse(""),
-      div(styles.Custom.problemStatusContainer ~)(elements.Score(problemData.subProp(_.score).get, dontHaveAnswers = problemData.subProp(_.answers).get.isEmpty)), //floats right
+      div(styles.Custom.problemStatusContainer ~)(
+        elements.Score(problemData.subProp(_.score).get,
+          dontHaveAnswers = problemData.subProp(_.answers).get.isEmpty,
+          waitingForConfirm = if(problemData.get.score.toInt == 0) problemData.get.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation])else false)), //floats right
       h3(styles.Custom.problemHeader)(problemData.get.title),
       scalatags.JsDom.all.raw(problemData.subProp(_.problemHtml).get),
       answerField(problemData, nested),
@@ -89,17 +104,20 @@ class CoursePageView(
     ).render
 
   def answerStatus(status: AnswerStatus) = status match {
-    case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверено").toString)
-    case CourseShared.Rejected(systemMessage, rejectedAt) => pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("Нельзя проверить").toString)
-    case CourseShared.BeingVerified() => pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)("Проходит проверку")
-    case CourseShared.VerificationDelayed(systemMessage) => pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверка отложена").toString)
+    case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) =>
+      pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверено").toString)
+    case CourseShared.Rejected(systemMessage, rejectedAt) =>
+      pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("Невозможно проверить").toString)
+    case CourseShared.BeingVerified() =>
+      pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)("Проходит проверку")
+    case CourseShared.VerificationDelayed(systemMessage) =>
+      pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверка отложена").toString)
     case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
       div(p("Ожидает проверки преподавателем"),
         pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString))
 
 
   }
-
 
 
   def answersList(answers: Seq[AnswerViewData]) = if (answers.isEmpty) div() else
@@ -117,14 +135,15 @@ class CoursePageView(
         for ((ans, i) <- answers.sortBy(_.answeredAt).zipWithIndex.reverse) yield tr(
           td((i + 1).toString),
           td(dateFormatter.format(ans.answeredAt)),
-          td(ans.score match {
-            case Some(value) => elements.Score(value, false)
-            case None => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
+          td((ans.score, ans.status) match {
+            case (Some(value), _: CourseShared.Verified) => elements.Score(value, dontHaveAnswers = false, waitingForConfirm = false)
+            case (Some(value), _: CourseShared.VerifiedAwaitingConfirmation) => elements.Score(value, dontHaveAnswers = false, waitingForConfirm = true)
+            case (None, _) => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
           }),
           //todo check
           td(answerStatus(ans.status), (ans.score, ans.status) match {
             case (Some(MultipleRunsResultScore(runs)), _) => RunResultsTable(runs)
-            case (_, VerifiedAwaitingConfirmation(MultipleRunsResultScore(runs),_,_)) =>RunResultsTable(runs)
+            case (_, VerifiedAwaitingConfirmation(MultipleRunsResultScore(runs), _, _)) => RunResultsTable(runs)
             case _ => p()
           }),
           td(ans.status match {
@@ -199,10 +218,11 @@ class CoursePageView(
     h3("Задачи"),
 
     repeat(presenter.course.subSeq(_.problems)) { pr =>
-      div(styles.Custom.taskItem,onclick :+= ((_: Event) => {
+      div(styles.Custom.taskItem, onclick :+= ((_: Event) => {
         presenter.app.goTo(CoursePageState(presenter.courseId.get, problempPath(pr.get.templateAlias)))
         true // prevent default
-      }))(pr.get.title, elements.Score(pr.get.score, pr.get.answers.isEmpty)).render
+      }))(pr.get.title, elements.Score(pr.get.score, pr.get.answers.isEmpty,
+        waitingForConfirm = if(pr.get.score.toInt == 0) pr.get.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation])else false)).render
     }
 
   ))
@@ -341,7 +361,7 @@ case class CoursePagePresenter(
     None //TODO
   }
 
-//  def checkProblemAfterSomeTime()
+  //  def checkProblemAfterSomeTime()
 
 
   def submitAnswer(problemId: String, answerRaw: String): Unit =
@@ -350,11 +370,11 @@ case class CoursePagePresenter(
         case AnswerSubmitted(avd) =>
           updateAnswerData(avd)
           requestProblemUpdate(problemId)
-//          avd.status match {
-//            case VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
-//            case CourseShared.BeingVerified() =>
-//            case CourseShared.VerificationDelayed(systemMessage) =>
-//          }
+        //          avd.status match {
+        //            case VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
+        //            case CourseShared.BeingVerified() =>
+        //            case CourseShared.VerificationDelayed(systemMessage) =>
+        //          }
         case AlreadyVerifyingAnswer() =>
           println("Already verifying")
           showWarningAlert("Ответ на это задание уже проверяется, наберитесь терпения")

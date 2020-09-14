@@ -28,11 +28,15 @@ object RunResultsTable {
           case ProgramRunResult.ProgramRunResultSuccess(timeMS, message) => div(styles.Custom.problemStatusSuccessFontColor)(Text.pRunTimeMs(timeMS))
           case ProgramRunResult.ProgramRunResultWrongAnswer(message) => div(styles.Custom.problemStatusPartialSucessFontColor)(Text.pRunWrongAnswer)
           case ProgramRunResult.ProgramRunResultFailure(message) => div(styles.Custom.problemStatusFailureFontColor)(Text.pRunRuntimeException)
+          case ProgramRunResult.ProgramRunResultNotTested() => div(styles.Custom.problemStatusPartialSucessFontColor)(Text.pNotTested)
+          case ProgramRunResult.ProgramRunResultTimeLimitExceeded(timeMs) => div(styles.Custom.problemStatusFailureFontColor)(Text.timeLimitExceeded)
         }),
         td(run match {
           case ProgramRunResult.ProgramRunResultSuccess(timeMS, message) => pre(overflowX.auto)(message.getOrElse("").toString)
           case ProgramRunResult.ProgramRunResultWrongAnswer(message) => pre(overflowX.auto)(message.getOrElse("").toString)
           case ProgramRunResult.ProgramRunResultFailure(message) => pre(overflowX.auto)(message.getOrElse("").toString)
+          case ProgramRunResult.ProgramRunResultNotTested() => div(Text.fixErrorsToTest)
+          case ProgramRunResult.ProgramRunResultTimeLimitExceeded(timeMs) => div(s"$timeMs ms")
         })
       )
     )
