@@ -20,8 +20,11 @@ object HttpServer {
 //    staticFileLocation("")
 
 //    println(Spark.staticFiles.)
+    ipAddress("127.0.0.1")
     port(8080)
-    get("/", (request: Request, response: Response) => {Skeleton()})
+
+    get("/", (request: Request, response: Response) => {  Skeleton()})
+
 
     addRoute(clientRequests.Login, LoginUserOps.loginUser, all)
     addRoute(clientRequests.Registration, RegisterUser.registerUser, all)
