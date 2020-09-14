@@ -84,13 +84,13 @@ object AnswerOps {
 
 
   def answersForConfirmation(req: AnswersForConfirmationRequest): AnswersForConfirmationResponse =
-  try {
-    AnswersForConfirmationSuccess(Answer.answersForConfirmation(req.groupId, req.problemId).map(ToViewData.toAnswerForConfirmation))
-  } catch {
-    case t: Throwable =>
-      log.error(t.getMessage)
-      UnknownAnswersForConfirmationFailure()
-  }
+    try {
+      AnswersForConfirmationSuccess(Answer.answersForConfirmation(req.groupId, req.problemId).map(ToViewData.toAnswerForConfirmation))
+    } catch {
+      case t: Throwable =>
+        log.error(t.getMessage)
+        UnknownAnswersForConfirmationFailure()
+    }
 
   def teacherConfirmAnswer(req: TeacherConfirmAnswerRequest): TeacherConfirmAnswerResponse =
     try {
@@ -111,9 +111,7 @@ object AnswerOps {
     }
 
   def onAnswerVerified(answer: Answer, score: ProblemScore, systemMessage: Option[String], review: Option[String]): Unit = {
-    log.info(s"Answer : ${
-      answer._id
-    } verified changing status ")
+    log.info(s"Answer : ${answer._id} verified changing status, score ${score.toPrettyString} ")
     answer.changeStatus(Verified(score, review, systemMessage, Clock.systemUTC().instant(), None))
     db.problems.byId(answer.problemId).foreach {
       p =>
@@ -125,25 +123,17 @@ object AnswerOps {
   def processSubmissionResult(sr: AnswerVerificationResult, answer: Answer, user: User, pt: ProblemTemplate): Unit = UsersRegistry.doSynchronized(user._id) {
     sr match {
       case otsbridge.Verified(score, systemMessage) =>
-        log.info(s"Answer : ${
-          answer._id
-        } verified by testing engine ")
+        log.info(s"Answer : ${answer._id} verified by testing engine, score ${score.toPrettyString} ")
         if (pt.requireTeacherVerificationIfScoreGEQThan.nonEmpty && score.toInt >= pt.requireTeacherVerificationIfScoreGEQThan.get) {
           answer.changeStatus(VerifiedAwaitingConfirmation(score, systemMessage, Clock.systemUTC().instant()))
         } else {
           onAnswerVerified(answer, score, systemMessage, None)
         }
       case otsbridge.CantVerify(systemMessage) =>
-        log.info(s"Answer : ${
-          answer._id
-        } cant verify cause : ${
-          systemMessage.getOrElse("No message, unknown")
-        }")
+        log.info(s"Answer : ${answer._id} cant verify cause : ${systemMessage.getOrElse("No message, unknown")}")
         answer.changeStatus(Rejected(systemMessage, Clock.systemUTC().instant()))
       case otsbridge.VerificationDelayed(systemMessage) =>
-        log.info(s"Answer : ${
-          answer._id
-        } verification delayed")
+        log.info(s"Answer : ${answer._id} verification delayed")
 
     }
   }

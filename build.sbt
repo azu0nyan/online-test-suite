@@ -7,7 +7,7 @@ cancelable in Global := true
 
 val scalacOpts = Seq(
   "-encoding", "utf8", // Option and arguments on same  line
-//  "-Xfatal-warnings", // New lines for each options
+  //  "-Xfatal-warnings", // New lines for each options
   "-deprecation",
   "-unchecked",
   "-language:implicitConversions",
@@ -32,7 +32,7 @@ lazy val extensionsBridgeJs = ProjectRef(file("../otsExtensionsBridge"), "fooJS"
 lazy val contentProject = RootProject(file("../problemsAndTests"))
 
 //Tasks
-val cssDir = settingKey[File]("Target for 'compileCss'  task")
+val cssDir = settingKey[File]("Target for 'compileCss'  Dtask")
 val compileCss = taskKey[Unit]("Compile CSS files")
 
 
@@ -55,7 +55,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
     libraryDependencies += "com.lihaoyi" %%% "scalatags" % scalatagsVersion,
     libraryDependencies += "com.github.japgolly.scalacss" %%% "core" % "0.6.1",
-//    libraryDependencies += "io.udash" %%% "udash-css" % udashVersion,
+    //    libraryDependencies += "io.udash" %%% "udash-css" % udashVersion,
     //    libraryDependencies += "com.lihaoyi" %%% "upickle" % "1.0.0",
     libraryDependencies ++= Seq(
       "io.circe" %%% "circe-core",
@@ -73,10 +73,16 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     libraryDependencies += "com.sparkjava" % "spark-core" % "2.9.1",
     libraryDependencies += "com.pauldijou" %% "jwt-core" % "4.2.0",
 
-    mainClass in  reStart := Some("app.App"),
-    mainClass in  Compile := Some("app.App"),
-    mainClass in  (Compile, run) := Some("app.App"),
-    mainClass in  (Compile, packageBin) := Some("app.App"),
+//    publishArtifact in(Compile, packageDoc) := false,
+//
+//    publishArtifact in packageDoc := false,
+//
+//    sources in(Compile, doc) := Seq.empty,
+
+    mainClass in reStart := Some("app.App"),
+    mainClass in Compile := Some("app.App"),
+    mainClass in(Compile, run) := Some("app.App"),
+    mainClass in(Compile, packageBin) := Some("app.App"),
     baseDirectory in reStart := file(workdir),
 
     Compile / unmanagedResourceDirectories += file(workdir),
@@ -87,14 +93,14 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
       "-J-Xms64m",
 
       // others will be added as app parameters
-//      "-Dproperty=true",
-//      "-port=8080",
+      //      "-Dproperty=true",
+      //      "-port=8080",
 
       // you can access any build setting/task here
-//      s"-version=${version.value}"
+      //      s"-version=${version.value}"
     ),
 
-//    publishTo := Some(Resolver.file("testPublish", file("/tmp/")))
+    //    publishTo := Some(Resolver.file("testPublish", file("/tmp/")))
     //    fork in run := true,
     //    baseDirectory in run := file("workdir")
   ).
@@ -113,7 +119,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     //    artifactPath in fullOptJS in Compile := file(workdir),
     //    artifactPath in fastOptJS in Compile := file(workdir)
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "1.0.0",
-    (compile in Compile) :=  ((compile in Compile) dependsOn compileCss).value,
+    (compile in Compile) := ((compile in Compile) dependsOn compileCss).value,
     Compile / fastOptJS / artifactPath := file(workdir) / "main.js", //baseDirectory.value / "workdir" / "main.js"
     Compile / fullOptJS / artifactPath := file(workdir) / "main.js" //baseDirectory.value / "workdir" / "main.js"
   )
@@ -121,9 +127,10 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
 
 
 lazy val fooJS = foo.js.settings(
-  cssDir := { file(workdir) / "styles"
-//    (Compile / fastOptJS / target).value /
-//      "UdashStatics" / "WebContent" / "styles"
+  cssDir := {
+    file(workdir) / "styles"
+    //    (Compile / fastOptJS / target).value /
+    //      "UdashStatics" / "WebContent" / "styles"
   },
   compileCss := Def.taskDyn {
     val dir = (Compile / cssDir).value
@@ -132,14 +139,12 @@ lazy val fooJS = foo.js.settings(
     dir.mkdirs()
     // make sure you have configured the valid `CssRenderer` path
     // we assume that `CssRenderer` exists in the `backend` module
-    (foo.jvm  / Compile / runMain)
+    (foo.jvm / Compile / runMain)
       .toTask(s" cssRender.CssRenderer $path true")
   }.value,
 )
 //lazy val fooJS = foo.js.dependsOn(extensionsBridge)
 //lazy val fooJVM = foo.jvm.dependsOn(extensionsBridge, contentProject)
-
-
 
 
 //addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
