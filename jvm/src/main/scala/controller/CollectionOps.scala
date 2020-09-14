@@ -1,5 +1,6 @@
 package controller
 
+import com.mongodb.client.model.{Collation, CollationStrength}
 import controller.db.{CollectionOps, MongoObject}
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Filters.{and, equal}
@@ -75,6 +76,17 @@ trait CollectionOps {
           col.find(equal(fieldName, fieldValue))
         else
           col.find(session.get, equal(fieldName, fieldValue))
+      }.first().headOption(), Duration.Inf)
+
+    /** blocking */
+    def byFieldCaseInsensitive(fieldName: String, fieldValue: String, locale:String ="en", session: Option[ClientSession] = None): Option[T] =
+      Await.result({
+        if (session.isEmpty)
+          col.find(equal(fieldName, fieldValue))
+            .collation(Collation.builder().locale(locale).collationStrength(CollationStrength.PRIMARY).build())
+        else
+          col.find(session.get, equal(fieldName, fieldValue))
+            .collation(Collation.builder().locale(locale).collationStrength(CollationStrength.PRIMARY).build())
       }.first().headOption(), Duration.Inf)
 
     /** blocking */

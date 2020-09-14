@@ -22,7 +22,7 @@ object User {
   def exists(login: String): Boolean = byLogin(login).nonEmpty
 
   /** blocking */
-  def byLogin(login: String): Option[User] = users.byField("login", login) //Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
+  def byLogin(login: String): Option[User] = users.byFieldCaseInsensitive("login", login) //Await.result(users.find(equal("login", login)).first().headOption(), Duration.Inf)
 
   def byIdOrLogin(idOrLogin:String): Option[User] =
   try {
