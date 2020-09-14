@@ -20,6 +20,7 @@ object Course {
 }
 
 case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed:Int, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
+
   def addProblem(p: Problem): Course = {
     val updated = courses.byId(_id).get
     if(!updated.problemIds.contains(p._id)) {

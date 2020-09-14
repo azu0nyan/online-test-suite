@@ -12,16 +12,17 @@ import spark.Spark._
 import viewData.UserViewData
 object HttpServer {
 
-  def initRoutesAndStart(): Unit ={
+  def initRoutesAndStart(host:String = "127.0.0.1", port_ :Int = 8080): Unit ={
     log.info(s"set external static files location to ${Paths.get("").toAbsolutePath.toString}")
+    threadPool(200, 2, 60 * 60 * 1000)
     staticFileLocation("/")//todo
 //    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
 //    externalStaticFileLocation(Paths.get("").toAbsolutePath.toString)
 //    staticFileLocation("")
 
 //    println(Spark.staticFiles.)
-    ipAddress("127.0.0.1")
-    port(8080)
+    ipAddress(host)
+    port(port_)
 
     get("/", (request: Request, response: Response) => {  Skeleton()})
 

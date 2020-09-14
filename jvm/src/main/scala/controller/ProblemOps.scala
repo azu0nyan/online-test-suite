@@ -2,9 +2,18 @@ package controller
 
 import clientRequests.{GetProblemDataRequest, GetProblemDataResponse, GetProblemDataSuccess, SubmitAnswerResponse, UnknownGetProblemDataFailure}
 import clientRequests.admin.{ProblemTemplateListRequest, ProblemTemplateListResponse, ProblemTemplateListSuccess}
+import controller.db.Problem
 import org.mongodb.scala.bson.ObjectId
 
 object ProblemOps {
+  def removeProblem(p: Problem) :Unit = {
+    log.info(s"Deleting problem ${p.idAlias}")
+    for(a <- p.answers){
+      AnswerOps.deleteAnswer(a)
+    }
+    db.problems.delete(p)
+  }
+
 
   def getProblemForUser(req:GetProblemDataRequest):GetProblemDataResponse = LoginUserOps.decodeAndValidateToken(req.token) match {
     case Some(user) =>

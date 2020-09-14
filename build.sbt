@@ -114,7 +114,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     //    artifactPath in fastOptJS in Compile := file(workdir)
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "1.0.0",
     (compile in Compile) :=  ((compile in Compile) dependsOn compileCss).value,
-    Compile / fastOptJS / artifactPath := file(workdir) / "main.js" //baseDirectory.value / "workdir" / "main.js"
+    Compile / fastOptJS / artifactPath := file(workdir) / "main.js", //baseDirectory.value / "workdir" / "main.js"
+    Compile / fullOptJS / artifactPath := file(workdir) / "main.js" //baseDirectory.value / "workdir" / "main.js"
   )
 
 

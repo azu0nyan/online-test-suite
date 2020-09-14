@@ -8,6 +8,14 @@ import otsbridge.CourseTemplate
 import scala.util.Random
 
 object CoursesOps {
+  def removeCourse(c: Course): Unit = {
+    log.info(s"Removing course $c")
+    for (p <- c.ownProblems) {
+      ProblemOps.removeProblem(p)
+    }
+    db.courses.delete(c)
+  }
+
   def removeCourseFromUserByAlias(user: User, alias: String): Unit = {
     user.courses.filter(_.templateAlias == alias).foreach {
       c => deleteCourseProblemsAndAnswers(c)
@@ -35,15 +43,15 @@ object CoursesOps {
       case Some(user) =>
         TemplatesRegistry.getCourseTemplate(req.courseTemplateAlias) match {
           case Some(courseTemplate) =>
-              user.courseTemplates.find(_.templateAlias == req.courseTemplateAlias) match {
-                case Some(courseTemplateForUser) =>
-                  val (c, _) = Generator.generateCourseForUserFromAvailableTemplate(courseTemplateForUser)
-                  log.info(s"user ${user.idAndLoginStr} started personal course ${c._id.toHexString} ${courseTemplate.courseTitle}")
-                  RequestStartCourseSuccess(c._id.toHexString)
-                case None =>
-                  log.error(s"user ${user.idAndLoginStr} cant start new course [${courseTemplate.courseTitle}], course not owned by him")
-                  CourseTemplateNotAvailableForYou()
-              }
+            user.courseTemplates.find(_.templateAlias == req.courseTemplateAlias) match {
+              case Some(courseTemplateForUser) =>
+                val (c, _) = Generator.generateCourseForUserFromAvailableTemplate(courseTemplateForUser)
+                log.info(s"user ${user.idAndLoginStr} started personal course ${c._id.toHexString} ${courseTemplate.courseTitle}")
+                RequestStartCourseSuccess(c._id.toHexString)
+              case None =>
+                log.error(s"user ${user.idAndLoginStr} cant start new course [${courseTemplate.courseTitle}], course not owned by him")
+                CourseTemplateNotAvailableForYou()
+            }
 
           case None =>
             log.error(s"user ${user.idAndLoginStr} cant start new course [${req.courseTemplateAlias}], course template not found")

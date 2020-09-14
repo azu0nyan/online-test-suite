@@ -8,10 +8,23 @@ object App {
   def main(args: Array[String]): Unit = {
 
     initAliases()
-    if(args.length > 0 && (args(0) == "--check" || args(0) == "-c")){
-      Maintenance.findAndFixNonStartedProblem()
-      Maintenance.findAndRecheckInterruptedProblems()
+
+    if(args.length == 1 && (args(0) == "-h" || args(0) == "-help")) {
+      println("-snp start new problems for course")
+      println("-ruwg removeUsersWithoutGroups")
+      println("-rawp removeAnswersWithoutProblems")
+      println("-rpwc removeProblemsWithoutCourse")
     }
+
+    for(a <- args) a match {
+      case "-snp" | "--startNewProblem" => Maintenance.findAndFixNonStartedProblem()
+      case "-ruwg" | "--removeUsersWithoutGroups" => Maintenance.removeUsersWOGroups()
+      case "-rawp" | "--removeAnswersWithoutProblems" => Maintenance.removeAnswersWoProblems()
+      case "-rpwc" | "--removeProblemsWithoutCourse" => Maintenance.removeProblemsWOCourse()
+      case _ => println(s"Unknown parameter $a")
+    }
+
+
     HttpServer.initRoutesAndStart()
   }
 

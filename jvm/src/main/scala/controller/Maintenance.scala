@@ -4,7 +4,9 @@ import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
 object Maintenance {
+
   val log: Logger = Logger(LoggerFactory.getLogger("controller.Maintenance"))
+
   def findAndFixNonStartedProblem() : Unit= {
     log.info(s"Checking courses")
       for(c <- db.courses.all()){
@@ -30,6 +32,31 @@ object Maintenance {
         }
 
       }
+  }
+
+
+  def removeUsersWOGroups() :Unit = {
+    val toRemove = db.users.all().filter(_.groups.isEmpty)
+    log.info(s"Found ${toRemove.size} without groups. Removing...")
+    toRemove.foreach(UserOps.deleteUser)
+  }
+
+  def removeUsersWOCourses():Unit = {
+    val toRemove = db.users.all().filter(_.courses.isEmpty)
+    log.info(s"Found ${toRemove.size} users without courses. Removing...")
+    toRemove.foreach(UserOps.deleteUser)
+  }
+
+  def removeAnswersWoProblems():Unit = {
+    val toRemove = db.answers.all().filter(a => db.problems.byId(a.problemId).isEmpty)
+    log.info(s"Found ${toRemove.size} answers without problems. Removing...")
+    toRemove.foreach(AnswerOps.deleteAnswer)
+  }
+
+  def removeProblemsWOCourse():Unit = {
+    val toRemove = db.problems.all().filter(p => db.courses.byId(p.courseId).isEmpty)
+    log.info(s"Found ${toRemove.size} problems wothout course. Removing...")
+    toRemove.foreach(ProblemOps.removeProblem)
   }
 
   def findAndRecheckInterruptedProblems() : Unit = {
