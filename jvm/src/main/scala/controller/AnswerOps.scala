@@ -133,6 +133,7 @@ object AnswerOps {
         log.info(s"Answer : ${answer._id} cant verify cause : ${systemMessage.getOrElse("No message, unknown")}")
         answer.changeStatus(Rejected(systemMessage, Clock.systemUTC().instant()))
       case otsbridge.VerificationDelayed(systemMessage) =>
+        answer.changeStatus(VerificationDelayed(systemMessage))
         log.info(s"Answer : ${answer._id} verification delayed")
 
     }

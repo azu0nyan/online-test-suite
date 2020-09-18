@@ -1,7 +1,11 @@
 package controller
 
+import java.time.Clock
+
+import DbViewsShared.CourseShared.{BeingVerified, Rejected}
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
+import otsbridge.CantVerify
 
 object Maintenance {
 
@@ -57,6 +61,12 @@ object Maintenance {
     val toRemove = db.problems.all().filter(p => db.courses.byId(p.courseId).isEmpty)
     log.info(s"Found ${toRemove.size} problems wothout course. Removing...")
     toRemove.foreach(ProblemOps.removeProblem)
+  }
+
+  def changeStatusBeingVerifiedAnswers():Unit = {
+    val toChange = db.answers.all().filter(a => a.status.isInstanceOf[BeingVerified])
+    log.info(s"Found ${toChange.size} being verified answers invalidating")
+    toChange.foreach(a => db.answers.updateField(a, "status", Rejected(Some("Неизвестная ошибка, возможно стоит отправить заново"), Clock.systemUTC().instant())))
   }
 
   def findAndRecheckInterruptedProblems() : Unit = {

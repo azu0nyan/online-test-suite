@@ -21,6 +21,7 @@ object App {
       case "-ruwg" | "--removeUsersWithoutGroups" => Maintenance.removeUsersWOGroups()
       case "-rawp" | "--removeAnswersWithoutProblems" => Maintenance.removeAnswersWoProblems()
       case "-rpwc" | "--removeProblemsWithoutCourse" => Maintenance.removeProblemsWOCourse()
+      case "-cbwa" | "--changeBeingVerifiedAnswers" => Maintenance.changeStatusBeingVerifiedAnswers()
       case _ => println(s"Unknown parameter $a")
     }
 
