@@ -35,6 +35,8 @@ object HttpServer {
     addRoute(clientRequests.SubmitAnswer, AnswerOps.submitAnswer, user)
     addRoute(clientRequests.GetProblemData, ProblemOps.getProblemForUser, user)
 
+    addRoute(clientRequests.watcher.GroupScores, GroupOps.requestGroupScores, gradesWatcher)
+
     addRoute(TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
     addRoute(AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
 

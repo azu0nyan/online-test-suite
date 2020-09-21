@@ -54,10 +54,16 @@ class AdminGroupListPageView(
         true // prevent default
       }))(c.title)),
     td(data.get.users.size.toString),
-    td(button(onclick :+= ((_: Event) => {
-      presenter.app.goTo(AdminGroupInfoPageState(data.get.groupId))
-      true // prevent default
-    }))("Подробнее"))
+    td(
+      button(onclick :+= ((_: Event) => {
+        presenter.app.goTo(AdminGroupInfoPageState(data.get.groupId))
+        true // prevent default
+      }))("Подробнее"),
+      button(onclick :+= ((_: Event) => {
+        presenter.app.goTo(GroupScoresPageState(data.get.groupId))
+        true // prevent default
+      }))("Результаты"),
+    )
   ).render
 
 
@@ -81,7 +87,7 @@ case class AdminGroupListPagePresenter(
       case Success(GroupListResponseSuccess(list)) => groupList.set(list)
         println("updated group list")
       case resp@_ =>
-        if(debugAlerts) showErrorAlert(s"$resp")
+        if (debugAlerts) showErrorAlert(s"$resp")
     }
 
   }
