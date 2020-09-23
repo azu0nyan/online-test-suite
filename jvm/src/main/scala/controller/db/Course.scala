@@ -46,7 +46,8 @@ case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed:I
 
   def toInfoViewData: CourseInfoViewData = CourseInfoViewData(_id.toHexString, template.courseTitle, status, template.description)
 
-  def toViewData: CourseViewData = CourseViewData(_id.toHexString, template.courseTitle, status, template.courseData, problemIds.flatMap(problems.byId(_)).map(_.toViewData), template.description)
+  def toViewData: CourseViewData =
+    CourseViewData(_id.toHexString, template.courseTitle, status, template.courseData, problemIds.flatMap(problems.byId(_)).map(_.toViewData), template.description)
 
   def ownProblems:Seq[Problem] = problemIds.flatMap(problems.byId(_))
 }
