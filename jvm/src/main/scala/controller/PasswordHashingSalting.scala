@@ -36,7 +36,7 @@ object PasswordHashingSalting {
 
   case class HashAndSalt(hash:String, salt:String)
 
-  def hashPasswords(password: String ):HashAndSalt = {
+  def hashPassword(password: String ):HashAndSalt = {
     val r = new SecureRandom()
     val salt = new Array[Byte](16)
     r.nextBytes(salt)

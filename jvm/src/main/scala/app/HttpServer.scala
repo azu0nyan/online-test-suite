@@ -5,7 +5,7 @@ import clientRequests.teacher.{AnswersForConfirmation, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
 import controller.UserRole.{Admin, Teacher, Watcher}
-import controller.{AnswerOps, CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
+import controller.{AdminOps, AnswerOps, CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
 import spark.Spark._
@@ -40,6 +40,7 @@ object HttpServer {
     addRoute(TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
     addRoute(AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
 
+    addRoute(clientRequests.admin.AdminAction, AdminOps.processAdminAction, adminOnly)
     addRoute(clientRequests.admin.AddCourseToGroup, CustomCourseOps.addCourseToGroup, adminOnly)
     addRoute(clientRequests.admin.AddProblemToCourse, CustomCourseOps.addProblemToCourse, adminOnly)
     addRoute(clientRequests.admin.AddUserToGroup, GroupOps.addUserToGroup, adminOnly)

@@ -1,11 +1,12 @@
 package frontend
 
-import frontend.views.{AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
+import frontend.views.{AdminActionsPageViewFactory, AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
 import io.udash.core.{ViewFactory, ViewFactoryRegistry}
 
 class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
   override def matchStateToResolver(state: RoutingState): ViewFactory[_ <: RoutingState] = {
     val res = state match {
+      case AdminActionsPageState => AdminActionsPageViewFactory
       case AdminCoursesPageState => AdminCoursesPageViewFactory
       case AdminCourseTemplateInfoPageState(_) =>AdminCourseTemplateInfoPageViewFactory
       case AdminGroupInfoPageState(_) => AdminGroupInfoPageViewFactory

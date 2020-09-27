@@ -21,7 +21,7 @@ package object frontend extends Bindings with Alerts {
 
   type Token = String
 
-  //todo redo
+  //todo remove, use relative request
   def extractHost(str:String):String = {
     val doubleSlash = str.indexOf("//")
     if(doubleSlash < 0 || doubleSlash + 1 >= str.length){
@@ -35,6 +35,7 @@ package object frontend extends Bindings with Alerts {
       }
     }
   }
+
 
   def host:String = extractHost(document.documentURI) //"http://localhost:8080/"
 

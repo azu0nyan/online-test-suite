@@ -40,6 +40,7 @@ case class AdminGroupInfoPageState(groupId:String) extends FinalRoutingState(Som
 case object AdminProblemsPageState extends FinalRoutingState(Some(AdminPageState))
 case object AdminCoursesPageState extends FinalRoutingState(Some(AdminPageState))
 case class AdminCourseTemplateInfoPageState(courseTemplateAlias: String) extends FinalRoutingState(Some(AdminPageState))
+case object AdminActionsPageState extends FinalRoutingState(Some(AdminPageState))
 
 
 //case object AdminGroupsPageState extends FinalRoutingState(Some(RootState))

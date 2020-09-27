@@ -42,11 +42,9 @@ class AdminPageView(
       true // prevent default
     }))("Проверка работ"),
     button( onclick :+= ((_: Event) => {
-      showAlert("TIMEOUT", Some(3000), false, SuccessEv )
-      showAlert("DISM", None, true, PartialSucessEv )
-      showAlert("COMBO", Some(3000), true, FailureEv )
+      presenter.app.goTo(AdminActionsPageState)
       true // prevent default
-    }))("TEST"),
+    }))("Администрировние"),
 
 
     childViewContainer

@@ -7,9 +7,6 @@ import viewData.{ProblemViewData, UserViewData}
 
 object GroupScores extends Route[GroupScoresRequest, GroupScoresResponse] {
   override val route: String = "requestGroupScores"
-
-
-
 }
 
 case class GroupProblemInfo(alias:String, title:String)

@@ -2,6 +2,7 @@ package controller.db
 
 import java.time.{Clock, Instant, ZonedDateTime}
 
+import clientRequests.admin.AdminActionResponse
 import controller.{PasswordHashingSalting, TemplatesRegistry, ToViewData, UserRole}
 import org.mongodb.scala._
 import org.bson.types.ObjectId
@@ -49,6 +50,13 @@ case class User(_id: ObjectId,
                 registeredAt: Option[Instant],
                 lastLogin: Option[Instant],
                 role: UserRole) extends MongoObject {
+  def changePassword(newPassword: String): Unit = {
+    val hs = PasswordHashingSalting.hashPassword(newPassword)
+    //todo transaction?
+    users.updateField(this, "passwordHash", hs.hash)
+    users.updateField(this, "passwordSalt", hs.salt)
+  }
+
   def idAndLoginStr = s"[${_id} - $login]"
 
   def updateLastLogin(): User = {

@@ -27,7 +27,7 @@ object RegisterUser {
       RegistrationFailureUnknownErrorResponse()
     } else {
       log.info(s"Registering new user login ${req.login}")
-      val hashPasswords = PasswordHashingSalting.hashPasswords(req.password)
+      val hashPasswords = PasswordHashingSalting.hashPassword(req.password)
       val res = User(req.login, hashPasswords.hash, hashPasswords.salt, req.firstName, req.lastName, req.email, Some(Clock.systemUTC.instant), lastLogin = None, Student())
       Await.result(users.insertOne(res).toFuture(), Duration(10,TimeUnit.SECONDS))//timeout to prevent deadlock
       RegistrationSuccess()
