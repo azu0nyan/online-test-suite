@@ -1,0 +1,19 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #3fa9f5;
+        stroke-miterlimit: 10;
+        stroke-width: 10px;
+      }
+
+      .cls-2 {
+        fill: #fbb03b;
+      }
+    </style>
+  </defs>
+  <title>nodes</title>
+  <line class="cls-1" x1="45" y1="78" x2="70" y2="110"/>
+  <path class="cls-2" d="M250,38v63h-63V38h63m5-10h-73a5,5,0,0,0-5,5v73a5,5,0,0,0,5,5h73a5,5,0,0,0,5-5V33a5,5,0,0,0-5-5Z" transform="translate(-173 -28)"/>
+</svg>

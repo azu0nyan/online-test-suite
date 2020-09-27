@@ -7,7 +7,7 @@ object Text {
   val appTitle: String = "Test suite"
 
   val headerText: String = "Logo here"
-  val footerText: String = "Test footer text 2049-present"
+  val footerText: String = "2049-present"
 
   val loading: String = "Loading..."
 

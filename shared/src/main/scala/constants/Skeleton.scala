@@ -8,6 +8,8 @@ object Skeleton {
       meta(charset:= "UTF-8"),
       scalatags.Text.tags2.title(Text.appTitle),
       link(href := cssPath, rel := "stylesheet"),
+      link(href := "favicon.svg", rel := "icon"),
+
       script(`type`:= "text/javascript", src := jsPath)
     ),
     body(margin := "0px")
