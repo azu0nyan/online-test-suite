@@ -14,7 +14,7 @@ case class GroupGradesRequest(token: String, groupIdOrTitle: String) extends Wit
 
 //RES
 sealed trait GroupGradesResponse
-case class GroupGradesSuccess(grades: Seq[(UserViewData, Seq[UserGradeViewData])) extends GroupGradesResponse
+case class GroupGradesSuccess(grades: Seq[(UserViewData, Seq[UserGradeViewData])]) extends GroupGradesResponse
 sealed trait GroupGradesFailure extends GroupGradesResponse
 case class UnknownGroupGradesFailure() extends GroupGradesFailure
 

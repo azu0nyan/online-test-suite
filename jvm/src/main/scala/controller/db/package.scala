@@ -54,11 +54,11 @@ package object db extends CollectionOps {
     classOf[CourseTemplateAvailableForUser],
 
 
-    classOf[GradeRound],
-    classOf[GradedProblem],
-    classOf[GradeRule],
-    classOf[Grade],
-    classOf[GroupGrade],
+//    classOf[GradeRound],
+//    classOf[GradedProblem],
+//    classOf[GradeRule],
+//    classOf[Grade],
+//    classOf[GroupGrade],
 
     DisplayMeCodecProvider,
 

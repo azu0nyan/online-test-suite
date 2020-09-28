@@ -1,6 +1,6 @@
 package DbViewsShared
 
-
+import io.circe.generic.auto._
 sealed trait GradeRule
 
 case class FixedGrade(value:Int) extends GradeRule

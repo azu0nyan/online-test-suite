@@ -5,13 +5,14 @@ import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddG
 import clientRequests.watcher.{GroupGradesRequest, GroupGradesResponse, GroupGradesSuccess, UnknownGroupGradesFailure}
 import clientRequests.{GetGradesRequest, GetGradesResponse, GetGradesSuccess, UnknownGetGradesFailure}
 import controller.db.{Grade, Group, GroupGrade, Problem, User, grades, groupGrades, groups, users}
+import org.bson.types.ObjectId
 import viewData.UserGradeViewData
 
 object GradeOps {
 
 
   def overrideGrade(req: OverrideGradeRequest): OverrideGradeResponse =
-    grades.byId(req.gradeId) match {
+    grades.byId(new ObjectId(req.gradeId)) match {
       case Some(grade) =>
         grade.setOverride(req.gradeOverride)
         OverrideGradeSuccess()
@@ -31,7 +32,7 @@ object GradeOps {
 
   def removePersonalGrade(req: RemovePersonalGradeRequest): RemovePersonalGradeResponse =
     try {
-      val g = grades.byId(req.gradeId).get
+      val g = grades.byId(new ObjectId(req.gradeId)).get
       grades.delete(g)
       RemovePersonalGradeSuccess()
     } catch {
@@ -49,7 +50,7 @@ object GradeOps {
   /** добавить оценку для всей группы */
   def addGroupGrade(req: AddGroupGradeRequest): AddGroupGradeResponse =
     try {
-      val g = groups.byId(req.groupId).get
+      val g = groups.byId(new ObjectId(req.groupId)).get
       val gg = GroupGrade(g._id, req.description, req.rule, req.date, req.hiddenUntil)
       groupGrades.insert(gg)
 
@@ -65,7 +66,7 @@ object GradeOps {
   /** При удалении групповой оценки удалить её у всех юзеров */
   def removeGroupGrade(req: RemoveGroupGradeRequest): RemoveGroupGradeResponse =
     try {
-      val gg = groupGrades.byId(req.groupGradeId).get
+      val gg = groupGrades.byId(new ObjectId(req.groupGradeId)).get
       val group = groups.byId(gg.groupId).get
       val users = group.users
       users.map(_.grades).flatMap(_.filter(_.groupGradeId.nonEmpty).filter(_.groupGradeId.get == gg._id)).foreach(grades.delete(_))

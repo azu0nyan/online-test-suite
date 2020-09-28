@@ -1,7 +1,7 @@
 package frontend.views.elements
 
 import constants.Text
-import otsbridge.ProblemScore.{BinaryScore, DoubleScore, IntScore, MultipleRunsResultScore, ProblemScore, XOutOfYScore}
+import otsbridge.ProblemScore.{BinaryScore, DoubleScore,  MultipleRunsResultScore, ProblemScore, XOutOfYScore}
 import scalatags.JsDom.all.{div, _}
 import frontend.views._
 import org.scalajs.dom.html.Paragraph

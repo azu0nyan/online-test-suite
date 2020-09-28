@@ -1,5 +1,5 @@
 package DbViewsShared
-
+import io.circe.generic.auto._
 sealed trait GradeOverride
 
 case class NoGrade() extends GradeOverride

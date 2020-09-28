@@ -4,7 +4,7 @@ object Text {
   val fixErrorsToTest: String = "Программа должна пройти все предыдущие тесты"
 
 
-  val appTitle: String = "Test suite"
+  val appTitle: String = "Tester"
 
   val headerText: String = "Logo here"
   val footerText: String = "2049-present"
