@@ -1,6 +1,7 @@
 package controller
 
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
+import DbViewsShared.{GradeRound, GradeRule, GradedProblem}
 import com.typesafe.scalalogging.Logger
 import controller.db.CustomCourseTemplate
 import controller.db.codecs.DisplayMeCodecProvider
@@ -42,7 +43,6 @@ package object db extends CollectionOps {
     classOf[Answer],
     classOf[Course],
     classOf[CourseStatus],
-    //    classOf[ProgramRunResult2],
     classOf[ProgramRunResult],
     classOf[ProblemScore],
     classOf[UserToGroup],
@@ -53,8 +53,14 @@ package object db extends CollectionOps {
     classOf[CourseTemplateForGroup],
     classOf[CourseTemplateAvailableForUser],
 
+
+    classOf[GradeRound],
+    classOf[GradedProblem],
+    classOf[GradeRule],
+    classOf[Grade],
+    classOf[GroupGrade],
+
     DisplayMeCodecProvider,
-//    classOf[DisplayMe],
 
 
 
@@ -68,7 +74,7 @@ package object db extends CollectionOps {
   val database: MongoDatabase = mongoClient.getDatabase(dbName).withCodecRegistry(codecRegistry)
 
   implicit val users: MongoCollection[User] = database.getCollection("users")
-  implicit   val groups: MongoCollection[Group] = database.getCollection("groups")
+  implicit val groups: MongoCollection[Group] = database.getCollection("groups")
   implicit val userToGroup: MongoCollection[UserToGroup] = database.getCollection("userToGroup")
   implicit val answers: MongoCollection[Answer] = database.getCollection("answers")
   implicit val problems: MongoCollection[Problem] = database.getCollection("problems")
@@ -76,5 +82,7 @@ package object db extends CollectionOps {
   implicit val coursesAvailableForUser: MongoCollection[CourseTemplateAvailableForUser] = database.getCollection("coursesAvailableForUser")
   implicit val courseTemplateForGroup: MongoCollection[CourseTemplateForGroup] = database.getCollection("CourseTemplateForGroup")
   implicit val customCourseTemplates: MongoCollection[CustomCourseTemplate] = database.getCollection("CustomCourseTemplate")
+  implicit val grades: MongoCollection[Grade] = database.getCollection("grades")
+  implicit val groupGrades: MongoCollection[GroupGrade] = database.getCollection("groupGrades")
 
 }

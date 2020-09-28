@@ -55,6 +55,9 @@ trait CollectionOps {
     }
 
     /** blocking */
+    def byId(id: String, session: Option[ClientSession] = None): Option[T] = byField("_id", new ObjectId(id), session)
+
+    /** blocking */
     def byId(id: ObjectId, session: Option[ClientSession] = None): Option[T] = byField("_id", id, session)
 
 

@@ -16,11 +16,6 @@ object Score {
       else if (passed) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusAccepted)
       else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
       else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusFailure)
-    case IntScore(score) =>
-      if (waitingForConfirm) div(styles.Custom.problemStatusPartialSucessFontColor)(Text.pAnswerWaitingForVerify)
-      else if (score > 0) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScore(score))
-      else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
-      else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScore(score))
     case DoubleScore(score, max) =>
       if (waitingForConfirm) div(styles.Custom.problemStatusPartialSucessFontColor)(Text.pAnswerWaitingForVerify)
       else if (score == max) div(styles.Custom.problemStatusSuccessFontColor)(Text.pStatusYourScoreOutOf(score, max))

@@ -32,4 +32,6 @@ case class Group(_id: ObjectId, title: String, description: String) extends Mong
 
   def users: Seq[User] = UserToGroup.userInGroup(this)
 
+  def groupGrades: Seq[GroupGrade] = GroupGrade.forGroup(this)
+
 }

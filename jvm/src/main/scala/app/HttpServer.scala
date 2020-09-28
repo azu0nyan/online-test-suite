@@ -1,11 +1,11 @@
 package app
 import java.nio.file.Paths
 
-import clientRequests.teacher.{AnswersForConfirmation, TeacherConfirmAnswer}
+import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersForConfirmation, OverrideGrade, RemoveGroupGrade, RemovePersonalGrade, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
 import controller.UserRole.{Admin, Teacher, Watcher}
-import controller.{AdminOps, AnswerOps, CoursesOps, CustomCourseOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
+import controller.{AdminOps, AnswerOps, CoursesOps, CustomCourseOps, GradeOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
 import spark.Spark._
@@ -34,11 +34,19 @@ object HttpServer {
     addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse, user)
     addRoute(clientRequests.SubmitAnswer, AnswerOps.submitAnswer, user)
     addRoute(clientRequests.GetProblemData, ProblemOps.getProblemForUser, user)
+    addRoute(clientRequests.GetGrades, GradeOps.getGrades, user)
 
     addRoute(clientRequests.watcher.GroupScores, GroupOps.requestGroupScores, gradesWatcher)
+    addRoute(clientRequests.watcher.GroupGrades, GradeOps.requestGroupGrades, gradesWatcher)
 
     addRoute(TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
     addRoute(AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
+
+    addRoute(AddGroupGrade, GradeOps.addGroupGrade, teacher)
+    addRoute(RemoveGroupGrade, GradeOps.removeGroupGrade, teacher)
+    addRoute(AddPersonalGrade, GradeOps.addPersonalGrade, teacher)
+    addRoute(RemovePersonalGrade, GradeOps.removePersonalGrade, teacher)
+    addRoute(OverrideGrade, GradeOps.overrideGrade, teacher)
 
     addRoute(clientRequests.admin.AdminAction, AdminOps.processAdminAction, adminOnly)
     addRoute(clientRequests.admin.AddCourseToGroup, CustomCourseOps.addCourseToGroup, adminOnly)

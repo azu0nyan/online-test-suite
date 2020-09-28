@@ -36,6 +36,8 @@ object GroupOps {
     }
   }
 
+  //Process requests
+
   def addUserToGroup(req: AddUserToGroupRequest): AddUserToGroupResponse = {
     User.byIdOrLogin(req.userHexIdOrLogin).flatMap { u =>
       Group.byIdOrTitle(req.groupIdOrTitle).map { g =>
@@ -44,6 +46,16 @@ object GroupOps {
       }
     }.getOrElse(AddUserToGroupFailure())
   }
+
+  def removeUserFromGroup(req: RemoveUserFromGroupRequest): RemoveUserFromGroupResponse = {
+    User.byIdOrLogin(req.userHexIdOrLogin).flatMap { u =>
+      Group.byIdOrTitle(req.groupHexIdOrAlias).map { g =>
+        removeUserFromGroup(u, g, req.forceCourseDelete)
+        RemoveUserFromGroupSuccess()
+      }
+    }.getOrElse(RemoveUserFromGroupFailure())
+  }
+
 
   /** Стартуем все неначатые курсы прявязанные к данной группе */
   def ensureGroupCoursesStarted(user: User, group: Group): Unit = {
@@ -61,7 +73,19 @@ object GroupOps {
     log.info(s"Adding user ${u.idAndLoginStr} to group ${g.toIdTitleStr}")
     UserToGroup.addUserToGroup(u, g)
     ensureGroupCoursesStarted(u, g)
+    GradeOps.addGroupGradesForUser(u, g)
   }
+
+
+  def removeUserFromGroup(u: User, g: Group, forceCourseDeletion: Boolean): Unit = {
+    log.info(s"Removing user ${u.idAndLoginStr} from  group ${g.toIdTitleStr} ${if (forceCourseDeletion) "and forcing dependent courses deletion" else ""} ")
+    UserToGroup.removeUserFromGroup(u, g)
+    if (forceCourseDeletion) {
+      ensureGroupCoursesDeleted(u, g)
+    }
+    GradeOps.removeAllUserGroupGrades(u, g)
+  }
+
 
   def ensureGroupCoursesDeleted(user: User, group: Group): Unit = {
     log.info(s"Checking if new courses start needed for ${user.idAndLoginStr} group ${group.toIdTitleStr}")
@@ -74,22 +98,6 @@ object GroupOps {
 
   }
 
-  def removeUserFromGroup(req: RemoveUserFromGroupRequest): RemoveUserFromGroupResponse = {
-    User.byIdOrLogin(req.userHexIdOrLogin).flatMap { u =>
-      Group.byIdOrTitle(req.groupHexIdOrAlias).map { g =>
-        removeUserFromGroup(u, g, req.forceCourseDelete)
-        RemoveUserFromGroupSuccess()
-      }
-    }.getOrElse(RemoveUserFromGroupFailure())
-  }
-
-  def removeUserFromGroup(u: User, g: Group, forceCourseDeletion: Boolean): Unit = {
-    log.info(s"Removing user ${u.idAndLoginStr} from  group ${g.toIdTitleStr} ${if (forceCourseDeletion) "and forcing dependent courses deletion" else ""} ")
-    UserToGroup.removeUserFromGroup(u, g)
-    if (forceCourseDeletion) {
-      ensureGroupCoursesDeleted(u, g)
-    }
-  }
 
   def requestGroupScores(req: GroupScoresRequest): GroupScoresResponse = req match {
     case GroupScoresRequest(token, groupId, courseAliases) =>

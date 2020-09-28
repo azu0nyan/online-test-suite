@@ -1,6 +1,6 @@
 import java.time.Instant
 
-import DbViewsShared.CourseShared
+import DbViewsShared.{CourseShared, GradeOverride}
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import otsbridge.{AnswerField, ProblemScore}
 import io.circe.generic.auto._
@@ -20,6 +20,11 @@ package object viewData {
 
   /**teacher*/
   case class AnswerForConfirmationViewData(answerId:String,answer:String, score: ProblemScore, user:UserViewData, problemViewData: ProblemViewData,  review:Option[String])
+
+  /**информация об оценках доступная пользователю*/
+  case class UserGradeViewData(gradeId:String, description:String, value:Either[GradeOverride, Int], date:Instant)
+
+
 
   /** Информация о группе пользователе для отображения */
   case class GroupInfoViewData(groupId: String, groupTitle: String, description: String)
