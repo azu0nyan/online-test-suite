@@ -1,7 +1,8 @@
 package controller
 
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
-import DbViewsShared.{GradeRound, GradeRule, GradedProblem}
+import DbViewsShared.GradeRule.{GradeRound, GradedProblem}
+import DbViewsShared.{GradeOverride, GradeRule}
 import com.typesafe.scalalogging.Logger
 import controller.db.CustomCourseTemplate
 import controller.db.codecs.DisplayMeCodecProvider
@@ -54,11 +55,12 @@ package object db extends CollectionOps {
     classOf[CourseTemplateAvailableForUser],
 
 
-//    classOf[GradeRound],
-//    classOf[GradedProblem],
-//    classOf[GradeRule],
-//    classOf[Grade],
-//    classOf[GroupGrade],
+    classOf[GradeOverride],
+    classOf[GradeRound],
+    classOf[GradedProblem],
+    classOf[GradeRule],
+    classOf[Grade],
+    classOf[GroupGrade],
 
     DisplayMeCodecProvider,
 

@@ -63,6 +63,10 @@ class AdminGroupListPageView(
         presenter.app.goTo(GroupScoresPageState(data.get.groupId))
         true // prevent default
       }))("Результаты"),
+      button(onclick :+= ((_: Event) => {
+        presenter.app.goTo(GroupGradesPageState(data.get.groupId))
+        true // prevent default
+      }))("Оценки"),
     )
   ).render
 

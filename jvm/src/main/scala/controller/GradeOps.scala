@@ -1,6 +1,8 @@
 package controller
 
-import DbViewsShared.{Ceil, FixedGrade, Floor, GradeOverride, GradedProblem, Round, SumScoresGrade}
+import DbViewsShared.{GradeOverride}
+import DbViewsShared.GradeOverride._
+import DbViewsShared.GradeRule.{Ceil, FixedGrade, Floor, GradedProblem, Round, SumScoresGrade}
 import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure}
 import clientRequests.watcher.{GroupGradesRequest, GroupGradesResponse, GroupGradesSuccess, UnknownGroupGradesFailure}
 import clientRequests.{GetGradesRequest, GetGradesResponse, GetGradesSuccess, UnknownGetGradesFailure}
@@ -21,7 +23,7 @@ object GradeOps {
 
   def addPersonalGrade(req: AddPersonalGradeRequest): AddPersonalGradeResponse = try {
     val user = User.byIdOrLogin(req.userIdOrLogin).get
-    val newGrade = Grade(user._id, None, req.description, req.rule, None, req.date, req.hiddenUntil)
+    val newGrade = Grade(user._id, None, req.description, req.rule, NoOverride(), req.date, req.hiddenUntil)
     grades.insert(newGrade)
     AddPersonalGradeSuccess()
   } catch {
@@ -43,7 +45,7 @@ object GradeOps {
 
   /** добавить групповую оценку пользователю */
   def addGroupGradeForUser(u: User, gg: GroupGrade): Grade = {
-    val newGrade = Grade(u._id, Some(gg._id), gg.description, gg.rule, None, gg.date, gg.hiddenUntil)
+    val newGrade = Grade(u._id, Some(gg._id), gg.description, gg.rule, NoOverride(), gg.date, gg.hiddenUntil)
     grades.insert(newGrade)
   }
 
@@ -128,9 +130,7 @@ object GradeOps {
     preloadedUser: Option[User] = None,
     preloadedUserProblemsMap: Option[Map[String, Map[String, Problem]]] = None): Either[GradeOverride, Int] = {
     g.teacherOverride match {
-      case Some(gradeOverride) =>
-        Left(gradeOverride)
-      case None =>
+      case NoOverride() =>
         Right {
           g.rule match {
             case FixedGrade(value) => value
@@ -152,6 +152,8 @@ object GradeOps {
               clamped
           }
         }
+      case gradeOverride =>
+        Left(gradeOverride)
     }
   }
 

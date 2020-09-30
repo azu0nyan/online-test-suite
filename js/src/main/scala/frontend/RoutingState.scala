@@ -31,6 +31,8 @@ case class CoursePageState(courseId:String, lookAt:String) extends FinalRoutingS
 case object AppPageState extends FinalRoutingState(Some(RootState))
 
 case class GroupScoresPageState(groupId:String) extends FinalRoutingState(Some(AdminPageState))
+case class GroupGradesPageState(groupId:String) extends FinalRoutingState(Some(AdminPageState))
+
 case class TeacherConfirmAnswersPageState(problemId:Option[String], groupId:Option[String]) extends FinalRoutingState(Some(AdminPageState))
 
 case object AdminPageState extends ContainerRoutingState(Some(RootState))

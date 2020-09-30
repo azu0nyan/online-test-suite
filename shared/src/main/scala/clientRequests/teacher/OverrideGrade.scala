@@ -12,7 +12,7 @@ object OverrideGrade extends Route[OverrideGradeRequest, OverrideGradeResponse] 
 }
 
 //REQ
-case class OverrideGradeRequest(token:String, gradeId:String, gradeOverride: Option[GradeOverride]) extends WithToken
+case class OverrideGradeRequest(token:String, gradeId:String, gradeOverride: GradeOverride) extends WithToken
 
 //RES
 sealed trait OverrideGradeResponse

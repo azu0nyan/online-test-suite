@@ -6,7 +6,7 @@ import DbViewsShared.{GradeOverride, GradeRule}
 import org.mongodb.scala.bson.ObjectId
 
 object Grade {
-  def apply(userId: ObjectId, groupGradeId: Option[ObjectId], description: String, rule: GradeRule, teacherOverride: Option[GradeOverride], date: Instant, hiddenUntil: Option[Instant]): Grade =
+  def apply(userId: ObjectId, groupGradeId: Option[ObjectId], description: String, rule: GradeRule, teacherOverride: GradeOverride, date: Instant, hiddenUntil: Option[Instant]): Grade =
     new Grade(new ObjectId, userId, groupGradeId, description, rule, teacherOverride, date, hiddenUntil)
 
 
@@ -19,11 +19,11 @@ case class Grade(_id: ObjectId,
                  groupGradeId: Option[ObjectId],
                  description: String,
                  rule: GradeRule,
-                 teacherOverride: Option[GradeOverride],
+                 teacherOverride: GradeOverride,
                  date: Instant,
                  hiddenUntil: Option[Instant]) extends MongoObject {
-  def setOverride(newOverride: Option[GradeOverride]): Unit = {
-    grades.updateField(this, "teacherOverride", newOverride)
+  def setOverride(newOverride: GradeOverride): Unit = {
+    grades.updateField[GradeOverride](this, "teacherOverride", newOverride)
   }
 
 }

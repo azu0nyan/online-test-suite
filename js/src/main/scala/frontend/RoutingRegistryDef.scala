@@ -34,7 +34,8 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState] {
     case "/teacher" / "confirm" / "gId" / g => TeacherConfirmAnswersPageState(None,Some(g))
     case "/teacher" / "confirm" => TeacherConfirmAnswersPageState(None, None)
 
-    case "/watcher" / "groupScore" /  gId => GroupScoresPageState(gId)
+    case "/watcher" / "groupScores" /  gId => GroupScoresPageState(gId)
+    case "/watcher" / "groupGrades" /  gId => GroupGradesPageState(gId)
 
     case "/admin" => AdminPageState
     case "/admin" /"courses"  => AdminCoursesPageState
