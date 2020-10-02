@@ -1,6 +1,7 @@
 package frontend
 
 import DbViewsShared.CourseShared.Passing
+import DbViewsShared.GradeRule.GradedProblem
 import io.udash._
 import io.udash.properties.{Blank, ModelPropertyCreator}
 import otsbridge.CoursePiece
@@ -20,8 +21,11 @@ trait Bindings {
   implicit val f: ModelPropertyCreator[viewData.UserCoursesInfoViewData] = ModelPropertyCreator.materialize[viewData.UserCoursesInfoViewData]
   implicit val g: ModelPropertyCreator[viewData.GroupDetailedInfoViewData] = ModelPropertyCreator.materialize[viewData.GroupDetailedInfoViewData]
   implicit val h: ModelPropertyCreator[viewData.AdminCourseViewData] = ModelPropertyCreator.materialize[viewData.AdminCourseViewData]
-  implicit val i: ModelPropertyCreator[viewData.AnswerForConfirmationViewData] = ModelPropertyCreator.materialize[viewData.AnswerForConfirmationViewData]
+  implicit val j: ModelPropertyCreator[viewData.AnswerForConfirmationViewData] = ModelPropertyCreator.materialize[viewData.AnswerForConfirmationViewData]
   implicit val k: ModelPropertyCreator[CourseRoot] = ModelPropertyCreator.materialize[CourseRoot]
+  implicit val l: ModelPropertyCreator[viewData.GroupGradeViewData] = ModelPropertyCreator.materialize[viewData.GroupGradeViewData]
+
+  implicit val m: ModelPropertyCreator[GradedProblem] = ModelPropertyCreator.materialize[GradedProblem]
 
   implicit val blank1: Blank[viewData.UserCoursesInfoViewData] = Blank.Simple(viewData.UserCoursesInfoViewData(Seq(), Seq()))
   implicit val blank5: Blank[ProblemScore] = Blank.Simple(BinaryScore(false))

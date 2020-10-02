@@ -10,14 +10,16 @@ import clientRequests.teacher.{AddPersonalGradeRequest, OverrideGradeRequest}
 import clientRequests.watcher.{GroupGradesRequest, GroupGradesSuccess}
 import frontend._
 import frontend.views.GroupGradesPage._
+import frontend.views.elements.GradeRuleEditor
 import io.udash.core.ContainerView
 import io.udash._
+import io.udash.bootstrap.datepicker.UdashDatePicker
 import io.udash.bootstrap.form.UdashInputGroup
 import io.udash.bootstrap.utils.UdashIcons.FontAwesome.Solid.users
 import org.scalajs.dom.Element
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
-import viewData.{UserGradeViewData, UserViewData}
+import viewData.{GroupGradeViewData, UserGradeViewData, UserViewData}
 
 //import io.udash._
 //import io.udash.bootstrap.form.UdashInputGroup
@@ -62,6 +64,14 @@ object GroupGradesPage {
     case 5 => Five
   }
 
+
+  def gradeToColor(g: Grade): String = g match {
+    case One => "#EB0033"
+    case Two => "#EB3F39"
+    case Three => "#EB974B"
+    case Four => "#EBE050"
+    case Five => "#87D931"
+  }
 }
 
 
@@ -97,13 +107,23 @@ class GroupGradesPageView(
     })
 
     cellProp.listen(x =>
-      presenter.upadtePersonalGrade(g.gradeId, x)
+      presenter.upadatePersonalGrade(g.gradeId, x)
     )
 
 
-    Select[JournalCell](cellProp, cellVariants)((x: JournalCell) => p(x.toString))
+    Select[JournalCell](cellProp, cellVariants)((x: JournalCell) => cellHtml(x))
 
   }
+
+  def cellHtml(j: JournalCell) =
+    j match {
+      case JustGrade(g) => h4(color := gradeToColor(g))(gradeToInt(g).toString)
+      case OverriddenNoGrade => h4("∅")
+      case OverriddenWasAbsent => h4("Н")
+      case Overridden(g) => h4(gradeToInt(g) + "⟲")
+      case GroupGradesPage.EmptyCell => h4()
+    }
+
 
   def genEmptyCellFor(u: UserViewData, dmy: (Int, Int, Int)) = {
 
@@ -129,32 +149,43 @@ class GroupGradesPageView(
 
   }
 
-  override def getTemplate: Modifier[Element] = showIf(presenter.loaded) {
-    table(styles.Custom.defaultTable ~, width := "100vw")(
-      tr(
-        th("Имя"),
-        for (title <- presenter.dates.toList) yield th(f"${title._1}%02d ${title._2}%2d")
-      ),
-      for ((u, dateToGrade) <- presenter.users.toSeq) yield tr(
-        td(s"${u.login} ${u.firstName.getOrElse("")} ${u.lastName.getOrElse("")}"),
-        for (date <- presenter.dates.toSeq) yield td(
-          dateToGrade.get(date) match {
-            case Some(value) =>
-              for (c <- value) yield div(genCellFor(c))
-            case None => genEmptyCellFor(u, date)
-          }
-        ),
 
-      )
-    ).render
-  }
+  override def getTemplate: Modifier[Element] = div(
+    presenter.groupGradesEditor.groupGradesListHtml,
+    showIf(presenter.loaded) {
+      table(styles.Custom.defaultTable ~, width := "100vw")(
+        tr(
+          th("Имя"),
+          for (title <- presenter.dates.toList) yield th(f"${title._1}%02d ${title._2}%2d")
+        ),
+        for ((u, dateToGrade) <- presenter.users.toSeq) yield tr(
+          td(s"${u.login} ${u.firstName.getOrElse("")} ${u.lastName.getOrElse("")}"),
+          for (date <- presenter.dates.toSeq) yield td(
+            dateToGrade.get(date) match {
+              case Some(value) =>
+                for (c <- value) yield div(genCellFor(c))
+              case None => genEmptyCellFor(u, date)
+            }
+          ),
+
+        )
+      ).render
+    }
+  )
 }
+
 
 case class GroupGradesPagePresenter(
                                      app: Application[RoutingState]
                                    ) extends GenericPresenter[GroupGradesPageState] {
 
+  val groupGradesList: SeqProperty[GroupGradeViewData] = SeqProperty.blank
+
   val groupId: Property[String] = Property.blank
+
+  val groupGradesEditor = new GroupGradesEditor(groupId)
+
+//  gradeRuleEditor.listen(c => c.updateGradesList())
 
   val loaded: Property[Boolean] = Property.blank
 
@@ -178,8 +209,8 @@ case class GroupGradesPagePresenter(
     frontend.sendRequest(clientRequests.teacher.AddPersonalGrade, AddPersonalGradeRequest(currentToken.get, user.id, "", rule, date, None))
   }
 
-  def upadtePersonalGrade(gradeId: String, go: JournalCell) = {
-    val goo:GradeOverride = go match {
+  def upadatePersonalGrade(gradeId: String, go: JournalCell) = {
+    val goo: GradeOverride = go match {
       case JustGrade(g) => NoOverride()
       case GroupGradesPage.OverriddenNoGrade => NoGrade()
       case GroupGradesPage.OverriddenWasAbsent => WasAbsent()
@@ -213,6 +244,7 @@ case class GroupGradesPagePresenter(
 
   override def handleState(state: GroupGradesPageState): Unit = {
     groupId.set(state.groupId)
+    groupGradesEditor.updateGradesList()
     requestDataUpdate()
   }
 }

@@ -99,6 +99,15 @@ trait CollectionOps {
           col.find(session.get, equal(fieldName, fieldValue))
       }.toFuture(), Duration.Inf)
 
+    def updateOptionField[F](obj: MongoObject, fieldName:String, fieldValue:Option[F]):Unit = {
+      Await.result({fieldValue match {
+        case Some(value) =>
+          col.updateOne(equal("_id", obj._id), set(fieldName, value))
+        case None =>
+          col.updateOne(equal("_id", obj._id), set(fieldName, null))
+      }}.headOption(), Duration.Inf)
+    }
+
     /** blocking */
     def updateField[F](obj: MongoObject, fieldName: String, fieldValue: F, session: Option[ClientSession] = None): Option[UpdateResult] =
       updateFieldWhenMatches("_id", obj._id, fieldName, fieldValue, session)

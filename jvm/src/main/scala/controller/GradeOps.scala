@@ -1,9 +1,9 @@
 package controller
 
-import DbViewsShared.{GradeOverride}
+import DbViewsShared.GradeOverride
 import DbViewsShared.GradeOverride._
 import DbViewsShared.GradeRule.{Ceil, FixedGrade, Floor, GradedProblem, Round, SumScoresGrade}
-import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure}
+import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, GroupGradesListRequest, GroupGradesListResponse, GroupGradesListSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownGroupGradesListFailure, UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure, UnknownUpdateGroupGradeFailure, UpdateGroupGradeRequest, UpdateGroupGradeResponse, UpdateGroupGradeSuccess}
 import clientRequests.watcher.{GroupGradesRequest, GroupGradesResponse, GroupGradesSuccess, UnknownGroupGradesFailure}
 import clientRequests.{GetGradesRequest, GetGradesResponse, GetGradesSuccess, UnknownGetGradesFailure}
 import controller.db.{Grade, Group, GroupGrade, Problem, User, grades, groupGrades, groups, users}
@@ -11,17 +11,48 @@ import org.bson.types.ObjectId
 import viewData.UserGradeViewData
 
 object GradeOps {
+  def updateGroupGrade(req: UpdateGroupGradeRequest): UpdateGroupGradeResponse = try {
+    log.info(s"Updating group grade $req")
+    val g = groupGrades.byId(new ObjectId(req.groupGradeId)).get
+    val haveDiff = req.date != g.date || req.hiddenUntil != g.hiddenUntil || req.description != g.description || req.rule != g.rule
+    if (haveDiff) {
+      log.info("Found differences")
+      if (req.date != g.date) groupGrades.updateField(g, "date", req.date)
+      if (req.hiddenUntil != g.hiddenUntil) groupGrades.updateOptionField(g, "hiddenUntil", req.hiddenUntil)
+      if (req.description != g.description) groupGrades.updateField(g, "description", req.description)
+      if (req.rule != g.rule) groupGrades.updateField(g, "rule", req.rule)
+      val updated = groupGrades.byId(g._id).get
+      val affectedGrades = updated.userGrades
+      log.info(s"Affected grades ${affectedGrades.size}")
+      affectedGrades.foreach(_.updateFromTemplate(updated))
+    }
+    UpdateGroupGradeSuccess()
+  } catch {
+    case t: Throwable => log.error("Error updating grade", t)
+      UnknownUpdateGroupGradeFailure()
+  }
+
+  def groupGradesList(req: GroupGradesListRequest): GroupGradesListResponse = try {
+    val res = GroupGrade.forGroup(Group.byIdOrTitle(req.groupId).get).map(_.tiViewData)
+    GroupGradesListSuccess(res)
+  } catch {
+    case t: Throwable => log.error("", t)
+      UnknownGroupGradesListFailure()
+  }
 
 
-  def overrideGrade(req: OverrideGradeRequest): OverrideGradeResponse =
+  def overrideGrade(req: OverrideGradeRequest): OverrideGradeResponse = {
+    log.info(s"Overriding  grade $req")
     grades.byId(new ObjectId(req.gradeId)) match {
       case Some(grade) =>
         grade.setOverride(req.gradeOverride)
         OverrideGradeSuccess()
       case None => UnknownOverrideGradeFailure()
     }
+  }
 
   def addPersonalGrade(req: AddPersonalGradeRequest): AddPersonalGradeResponse = try {
+    log.info(s"Adding personal grade $req")
     val user = User.byIdOrLogin(req.userIdOrLogin).get
     val newGrade = Grade(user._id, None, req.description, req.rule, NoOverride(), req.date, req.hiddenUntil)
     grades.insert(newGrade)
@@ -34,6 +65,7 @@ object GradeOps {
 
   def removePersonalGrade(req: RemovePersonalGradeRequest): RemovePersonalGradeResponse =
     try {
+      log.info(s"Removing personal grade $req")
       val g = grades.byId(new ObjectId(req.gradeId)).get
       grades.delete(g)
       RemovePersonalGradeSuccess()
@@ -52,6 +84,7 @@ object GradeOps {
   /** добавить оценку для всей группы */
   def addGroupGrade(req: AddGroupGradeRequest): AddGroupGradeResponse =
     try {
+      log.info(s"Adding group grade $req")
       val g = groups.byId(new ObjectId(req.groupId)).get
       val gg = GroupGrade(g._id, req.description, req.rule, req.date, req.hiddenUntil)
       groupGrades.insert(gg)
@@ -68,7 +101,9 @@ object GradeOps {
   /** При удалении групповой оценки удалить её у всех юзеров */
   def removeGroupGrade(req: RemoveGroupGradeRequest): RemoveGroupGradeResponse =
     try {
+      log.info(s"Removing group grade $req")
       val gg = groupGrades.byId(new ObjectId(req.groupGradeId)).get
+      groupGrades.delete(gg)
       val group = groups.byId(gg.groupId).get
       val users = group.users
       users.map(_.grades).flatMap(_.filter(_.groupGradeId.nonEmpty).filter(_.groupGradeId.get == gg._id)).foreach(grades.delete(_))

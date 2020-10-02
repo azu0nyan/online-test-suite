@@ -1,7 +1,7 @@
 package app
 import java.nio.file.Paths
 
-import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersForConfirmation, OverrideGrade, RemoveGroupGrade, RemovePersonalGrade, TeacherConfirmAnswer}
+import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersForConfirmation, GroupGradesList, OverrideGrade, RemoveGroupGrade, RemovePersonalGrade, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
 import controller.UserRole.{Admin, Teacher, Watcher}
@@ -39,14 +39,16 @@ object HttpServer {
     addRoute(clientRequests.watcher.GroupScores, GroupOps.requestGroupScores, gradesWatcher)
     addRoute(clientRequests.watcher.GroupGrades, GradeOps.requestGroupGrades, gradesWatcher)
 
-    addRoute(TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
-    addRoute(AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
+    addRoute(clientRequests.teacher.TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
+    addRoute(clientRequests.teacher.AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
 
-    addRoute(AddGroupGrade, GradeOps.addGroupGrade, teacher)
-    addRoute(RemoveGroupGrade, GradeOps.removeGroupGrade, teacher)
-    addRoute(AddPersonalGrade, GradeOps.addPersonalGrade, teacher)
-    addRoute(RemovePersonalGrade, GradeOps.removePersonalGrade, teacher)
-    addRoute(OverrideGrade, GradeOps.overrideGrade, teacher)
+    addRoute(clientRequests.teacher.AddGroupGrade, GradeOps.addGroupGrade, teacher)
+    addRoute(clientRequests.teacher.RemoveGroupGrade, GradeOps.removeGroupGrade, teacher)
+    addRoute(clientRequests.teacher.AddPersonalGrade, GradeOps.addPersonalGrade, teacher)
+    addRoute(clientRequests.teacher.RemovePersonalGrade, GradeOps.removePersonalGrade, teacher)
+    addRoute(clientRequests.teacher.OverrideGrade, GradeOps.overrideGrade, teacher)
+    addRoute(clientRequests.teacher.GroupGradesList, GradeOps.groupGradesList, teacher)
+    addRoute(clientRequests.teacher.UpdateGroupGrade, GradeOps.updateGroupGrade, teacher)
 
     addRoute(clientRequests.admin.AdminAction, AdminOps.processAdminAction, adminOnly)
     addRoute(clientRequests.admin.AddCourseToGroup, CustomCourseOps.addCourseToGroup, adminOnly)

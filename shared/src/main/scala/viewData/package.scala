@@ -1,6 +1,6 @@
 import java.time.Instant
 
-import DbViewsShared.{CourseShared, GradeOverride}
+import DbViewsShared.{CourseShared, GradeOverride, GradeRule}
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import otsbridge.{AnswerField, ProblemScore}
 import io.circe.generic.auto._
@@ -11,19 +11,20 @@ import otsbridge.ProblemScore.ProblemScore
   * Данные которые может послать сервер клиенту
   */
 package object viewData {
-  /**admin*/
-  case class ProblemTemplateExampleViewData(title:String, initialScore:ProblemScore, alias:String, allowedAttempts:Option[Int], exampleHtml:String, answerField:AnswerField)
+  /** admin */
+  case class ProblemTemplateExampleViewData(title: String, initialScore: ProblemScore, alias: String, allowedAttempts: Option[Int], exampleHtml: String, answerField: AnswerField)
 
-  /**admin*/
+  /** admin */
   case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: Option[String],
-                                 courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable:Boolean)
+                                 courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable: Boolean)
 
-  /**teacher*/
-  case class AnswerForConfirmationViewData(answerId:String,answer:String, score: ProblemScore, user:UserViewData, problemViewData: ProblemViewData,  review:Option[String])
+  /** teacher */
+  case class AnswerForConfirmationViewData(answerId: String, answer: String, score: ProblemScore, user: UserViewData, problemViewData: ProblemViewData, review: Option[String])
 
-  /**информация об оценках доступная пользователю*/
-  case class UserGradeViewData(gradeId:String, description:String, value:Either[GradeOverride, Int], date:Instant)
+  /** информация об оценках доступная пользователю */
+  case class UserGradeViewData(gradeId: String, description: String, value: Either[GradeOverride, Int], date: Instant)
 
+  case class GroupGradeViewData(groupGradeId: String, groupId: String, description: String, rule: GradeRule, date: Instant, hiddenUntil: Option[Instant])
 
 
   /** Информация о группе пользователе для отображения */
@@ -33,10 +34,10 @@ package object viewData {
   case class GroupDetailedInfoViewData(groupId: String, groupTitle: String, description: String, courses: Seq[CourseTemplateViewData], users: Seq[UserViewData])
 
   /** Информация о пользователе для отображения */
-  case class UserViewData(id:String, login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String)
+  case class UserViewData(id: String, login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String)
 
   case class AnswerViewData(
-                             answerId:String,
+                             answerId: String,
                              problemId: String,
                              answerText: String,
                              answeredAt: Instant,
