@@ -164,14 +164,14 @@ class GroupGradesEditor(groupId: Property[String]) {
   }
 
 
-  def groupGradesListHtml = div("Оценки группы",
+  def groupGradesListHtml = div(padding := styles.horizontalPadding.value)("Оценки группы",
     table(styles.Custom.defaultTable ~, width := "100vw")(
       tr(
-        th("ИД"),
-        th("Описание"),
-        th("Правило"),
-        th("Дата"),
-        th("Скрыта до"),
+        th(width := "15%")("ИД"),
+        th(width := "15%")("Описание"),
+        th(width := "50%")("Правило"),
+        th(width := "10%")("Дата"),
+        th(width := "10%")("Скрыта до"),
       ),
       newGradeTr,
       repeat(groupGradesList)((e: Property[GroupGradeViewData]) => gradeTr(e.get).render)

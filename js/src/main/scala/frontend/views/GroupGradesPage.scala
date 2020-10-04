@@ -111,7 +111,7 @@ class GroupGradesPageView(
     )
 
 
-    Select[JournalCell](cellProp, cellVariants)((x: JournalCell) => cellHtml(x))
+    Select[JournalCell](cellProp, cellVariants)((x: JournalCell) => cellHtml(x), styles.Custom.gradeSelect)
 
   }
 
@@ -145,7 +145,7 @@ class GroupGradesPageView(
     }
 
 
-    Select[JournalCell](cellProp, cellVariants)((x: JournalCell) => p(x.toString))
+    Select[JournalCell](cellProp, cellVariants)((x: JournalCell) => cellHtml(x), styles.Custom.gradeSelect)
 
   }
 
@@ -153,7 +153,7 @@ class GroupGradesPageView(
   override def getTemplate: Modifier[Element] = div(
     presenter.groupGradesEditor.groupGradesListHtml,
     showIf(presenter.loaded) {
-      table(styles.Custom.defaultTable ~, width := "100vw")(
+      table(styles.Custom.defaultTable ~, width := "100vw", margin := styles.horizontalPadding.value)(
         tr(
           th("Имя"),
           for (title <- presenter.dates.toList) yield th(f"${title._1}%02d ${title._2}%2d")

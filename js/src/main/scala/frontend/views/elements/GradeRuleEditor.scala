@@ -68,19 +68,19 @@ class GradeRuleEditor(rule: GradeRule) {
           gradedProblems.append(ModelProperty(GradedProblem("", "", 1, 0.5)))
           true // prevent default
         }))("+"),
-        table(
+        table(width := "100%", borderCollapse.collapse)(
           tr(
-            th("Алиас курса"),
-            th("Алиас задания"),
-            th("Вес"),
-            th("Множитель неполных решений"),
+            th(width := "40%")("Алиас курса"),
+            th(width := "40%")("Алиас задания"),
+            th(width := "10%")("Вес"),
+            th(width := "10%")("Множитель неполных решений"),
           ),
           repeat(gradedProblems) { gp =>
             tr(
               td(TextInput(gp.get.subProp(_.courseAlias))()),
               td(TextInput(gp.get.subProp(_.problemAlias))()),
-              td(TextInput(gp.get.subProp(_.weight).bitransform(_.toString)(_.toDouble))()),
-              td(TextInput(gp.get.subProp(_.ifNotMaxMultiplier).bitransform(_.toString)(_.toDouble))())
+              td(TextInput(gp.get.subProp(_.weight).bitransform(_.toString)(_.toDouble))(width := "50px")),
+              td(TextInput(gp.get.subProp(_.ifNotMaxMultiplier).bitransform(_.toString)(_.toDouble))(width := "50px"))
             ).render
           }
 

@@ -2,6 +2,7 @@ package styles
 
 import constants.Paths
 import scalacss.DevDefaults._
+import scalacss.internal.Pseudo.Attr
 import styles.Base.&
 //import scalacss.internal.Dsl
 //import scalacss.internal.Dsl.style
@@ -57,6 +58,26 @@ object Custom extends StyleSheet.Inline {
     width(inputContainerWidthLimit),
 
     display.block
+  )
+
+  //  val webkitAppearance = Attrs.real("align-items", " ")
+
+  val gradeSelect = style(
+    paddingLeft(smallPadding),
+    border.none,
+    background := "transparent",
+    fontSize(biggerFontSize),
+    height(30 px),
+    width(40 px ),
+    scalacss.internal.Attr.real("-webkit-appearance") := "none"
+    //    appearance := "none"
+    //
+    //    "appearance".
+    //
+    //    appearance
+    //    Attr("webkit-appearance", "none").,
+    //    "webkit-appearance" := "none",
+
   )
 
   //course selection
