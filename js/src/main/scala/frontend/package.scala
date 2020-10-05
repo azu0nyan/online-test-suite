@@ -15,7 +15,8 @@ import scala.util.matching.Regex
 
 package object frontend extends Bindings with Alerts {
 
-  val dateFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/mm/yy").withZone(ZoneOffset.ofHours(3))//todo new Date().getTimezoneOffset().toInt
+  val dateFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yy").withZone(ZoneOffset.ofHours(3))//todo new Date().getTimezoneOffset().toInt
+  val dateFormatterDYM = DateTimeFormatter.ofPattern("dd MM yyyy").withZone(ZoneOffset.ofHours(3))//todo new Date().getTimezoneOffset().toInt
 
 
 

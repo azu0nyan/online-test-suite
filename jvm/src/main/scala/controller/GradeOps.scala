@@ -174,7 +174,7 @@ object GradeOps {
               val user = preloadedUser.getOrElse(users.byId(g.userId).get)
               val courseProblemMap = preloadedUserProblemsMap.getOrElse(user.courseAliasProblemAliasProblem)
 
-              val unRounded = gradedProblems.flatMap { case GradedProblem(courseAlias, problemAlias, weight, ifNotMaxMultiplier) =>
+              val unRounded = 2 + gradedProblems.flatMap { case GradedProblem(courseAlias, problemAlias, weight, ifNotMaxMultiplier) =>
                 courseProblemMap.get(courseAlias).flatMap(_.get(problemAlias)).map(_.score)
                   .map(s => if (s.isMax) weight else s.percentage * weight * ifNotMaxMultiplier)
               }.sum

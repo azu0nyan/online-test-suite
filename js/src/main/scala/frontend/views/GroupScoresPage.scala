@@ -23,7 +23,7 @@ class GroupScoresPageView(
     table(styles.Custom.defaultTable ~, width := "100vw")(
       tr(
         th("Имя"),
-        for (title <- presenter.problemsTitlesInOrder) yield th(title)
+        for ((title, alias) <- presenter.problemsTitlesInOrder.zip(presenter.problemsAliasesInOrder)) yield th(title + " " + alias)
       ),
       for (u <- presenter.users.toSeq) yield tr(
         td(s"${u.login} ${u.firstName.getOrElse("")} ${u.lastName.getOrElse("")}"),

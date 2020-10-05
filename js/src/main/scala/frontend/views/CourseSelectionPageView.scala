@@ -53,14 +53,22 @@ class CourseSelectionPageView(
 
 
   override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
-    h2(constants.Text.existingCourses),
-    div(repeat(courses.subSeq(_.existing))(p => courseHtml(p.get))),
-    h2(constants.Text.startNewCourse),
-    div(repeat(courses.subSeq(_.templates))(p => courseTemplateHtml(p.get))),
+
+    button(onclick :+= ((_: Event) => {
+      presenter.app.goTo(MyGradesPageState)
+      true // prevent default
+    }))("Оценки"),
     button(onclick :+= ((_: Event) => {
       presenter.logOut()
       true // prevent default
-    }))("Выйти")
+    }))("Выйти"),
+
+
+    h2(constants.Text.existingCourses),
+    div(repeat(courses.subSeq(_.existing))(p => courseHtml(p.get))),
+//    h2(constants.Text.startNewCourse),
+//    div(repeat(courses.subSeq(_.templates))(p => courseTemplateHtml(p.get))),
+
   )
 }
 

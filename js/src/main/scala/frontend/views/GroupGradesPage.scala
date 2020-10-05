@@ -155,8 +155,8 @@ class GroupGradesPageView(
     showIf(presenter.loaded) {
       table(styles.Custom.defaultTable ~, width := "100vw", margin := styles.horizontalPadding.value)(
         tr(
-          th("Имя"),
-          for (title <- presenter.dates.toList) yield th(f"${title._1}%02d ${title._2}%2d")
+          th("Имя", width := "200px"),
+          for (title <- presenter.dates.toList) yield th(f"${title._1}%02d ${title._2}%02d ${title._3}%2d")
         ),
         for ((u, dateToGrade) <- presenter.users.toSeq) yield tr(
           td(s"${u.login} ${u.firstName.getOrElse("")} ${u.lastName.getOrElse("")}"),
@@ -201,8 +201,8 @@ case class GroupGradesPagePresenter(
 
   val users: mutable.Map[UserViewData, Map[(Int, Int, Int), Seq[UserGradeViewData]]] = mutable.Map()
 
-  val addDates = for (i <- Seq(1, 8, 15, 22, 29);
-                      j <- Seq(9, 10, 11, 12)) yield (i, j, 20)
+  val addDates = for (i <- Seq(1, 15, 29);
+                      j <- Seq(9, 10, 11, 12)) yield (i, j, 2020)
 
   def addPersonalGrade(user: UserViewData, rule: GradeRule, dmy: (Int, Int, Int)) = {
     val date = LocalDate.of(dmy._3, dmy._2, dmy._1).atTime(0, 0).toInstant(ZoneOffset.UTC)
@@ -225,7 +225,7 @@ case class GroupGradesPagePresenter(
       .sendRequest(clientRequests.watcher.GroupGrades, GroupGradesRequest(currentToken.get, groupId.get)) onComplete {
       case Success(GroupGradesSuccess(g)) =>
         loaded.set(false, true)
-        val DMY = (g.flatMap(x => x._2).map(x => instantToDMY(x.date)).toSet.toList ++ addDates)
+        val DMY = (g.flatMap(x => x._2).map(x => instantToDMY(x.date)).toSet.toList ++ addDates).toSet.toSeq
           .sortBy((x: (Int, Int, Int)) => (x._3, x._2, x._1))
 
         dates.clear()
