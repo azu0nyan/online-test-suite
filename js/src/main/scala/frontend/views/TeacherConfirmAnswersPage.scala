@@ -34,10 +34,19 @@ class TeacherConfirmAnswersPageView(
           td(answ.get.answerId + " " + answ.get.problemViewData.templateAlias + " " + answ.get.problemViewData.title),
           td(answ.get.user.id + " " + answ.get.user.login + " " + answ.get.user.lastName + " " + answ.get.user.firstName),
           td(pre(code(answ.get.answer))),
-          td(elements.Score(answ.get.score, false), answ.get.score match {
-            case ProblemScore.MultipleRunsResultScore(runResults) => elements.RunResultsTable(runResults)
-            case _ => ""
-          }),
+          td {
+            val alias = answ.get.answerId
+            val prop = presenter.scores(alias)
+            val optsSet = Seq(answ.get.score, BinaryScore(true), BinaryScore(false)).distinct
+            val opts: SeqProperty[ProblemScore] = SeqProperty(optsSet)
+            Select(prop, opts)(s => div(
+              elements.Score(s, false),
+              s match {
+                case ProblemScore.MultipleRunsResultScore(runResults) => elements.RunResultsTable(runResults)
+                case _ => ""
+
+              }))
+          },
           td(TextArea(presenter.reviews(answ.get.answerId))(id := "rev" + answ.get.answerId, placeholder := "Отзыв")),
           td(
             button(onclick :+= ((_: Event) => {
