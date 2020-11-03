@@ -40,6 +40,7 @@ object App {
     TemplatesRegistry.registerDataPack(myCourses.g9_20_21.data)
     TemplatesRegistry.registerDataPack(myCourses.g9i_20_21.data)
     TemplatesRegistry.registerDataPack(myCourses.g11_20_21.data)
+    TemplatesRegistry.registerDataPack(Projects.data)
 
     //    TemplatesRegistry.registerOrUpdateCourseTemplate(tasks.javaCourse.JavaCourse)
   }
