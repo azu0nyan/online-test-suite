@@ -25,14 +25,17 @@ case class LtiProblem(_id: ObjectId,
                       resultSourcedid: String,
                       consumerKey: String,
                       randomSecret: Int) extends MongoObject {
+
+  def seed: Int = userId.toIntOption.getOrElse(userId.##)
+
   def toViewData: viewData.ProblemViewData = {
     val template = TemplatesRegistry.getProblemTemplate(problemAlias).get
     ProblemViewData(
       _id.toString,
       problemAlias,
-      template.title(randomSecret),
-      template.problemHtml(randomSecret),
-      template.answerField(randomSecret),
+      template.title(seed),
+      template.problemHtml(seed),
+      template.answerField(seed),
       answers.filter(_.status.isInstanceOf[Verified]).map(_.asInstanceOf[Verified].score).maxBy(_.percentage),
       "",
       answers.map(_.toViewData)

@@ -19,11 +19,11 @@ object LitController {
       case otsbridge.CantVerify(systemMessage) => Rejected(systemMessage, Clock.systemUTC().instant())
     })))
     val updated = ltiProblems.byId(problem._id).get
-    resendScore(ltiProblems.byId(problem._id).get)
+    submitScore(ltiProblems.byId(problem._id).get)
     LtiSubmitAnswerSuccess(updated.answers(answerId).toViewData)
   }
 
-  def resendScore(problem: LtiProblem) = {
+  def submitScore(problem: LtiProblem) = {
     log.info(s"reporting grade for $problem")
     val sharedSecret = LtiConsumerKeyToSharedSecret.getSecret(problem.consumerKey).get
     val consumerToken = Token(problem.consumerKey, sharedSecret)
@@ -77,9 +77,6 @@ object LitController {
          |""".stripMargin
 
   def submitAnswer(req: LtiSubmitAnswerRequest): LtiSubmitAnswerResponse = {
-
-    import otsbridge.{CantVerify, VerificationDelayed, Verified}
-
     LtiProblem.byUserAndProblemConsumerKey(req.userId, req.problemAlias, req.consumerKey) match {
       case Some(problem) if problem.randomSecret == req.randomSecret =>
         val answer = Answer(problem._id, req.answer, BeingVerified(), Clock.systemUTC().instant())
@@ -87,7 +84,7 @@ object LitController {
         ltiProblems.updateFieldById(problem._id, "answers", problem.answers :+ answer)
         val answerId = problem.answers.size
         val template = TemplatesRegistry.getProblemTemplate(req.problemAlias).get
-        val res = template.verifyAnswer(problem.randomSecret, req.answer)
+        val res = template.verifyAnswer(problem.seed, req.answer)
         processVerificationResult(db.ltiProblems.byId(problem._id).get, res, answerId)
       case None => UnknownLtiSubmitAnswerFailure()
     }
