@@ -1,3 +1,4 @@
+import sbt.Keys.libraryDependencies
 
 ThisBuild / scalaVersion := "2.13.3"
 
@@ -73,11 +74,14 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     libraryDependencies += "com.sparkjava" % "spark-core" % "2.9.1",
     libraryDependencies += "com.pauldijou" %% "jwt-core" % "4.2.0",
 
-//    publishArtifact in(Compile, packageDoc) := false,
-//
-//    publishArtifact in packageDoc := false,
-//
-//    sources in(Compile, doc) := Seq.empty,
+    libraryDependencies += "org.scalaj" %% "scalaj-http" % "2.4.2",
+    libraryDependencies += "com.outr" %% "hasher" % "1.2.2",
+
+    //    publishArtifact in(Compile, packageDoc) := false,
+    //
+    //    publishArtifact in packageDoc := false,
+    //
+    //    sources in(Compile, doc) := Seq.empty,
 
     mainClass in reStart := Some("app.App"),
     mainClass in Compile := Some("app.App"),
