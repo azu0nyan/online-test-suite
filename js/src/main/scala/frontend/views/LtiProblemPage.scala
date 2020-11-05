@@ -10,7 +10,7 @@ import otsbridge.ProblemScore.BinaryScore
 import otsbridge.TextField
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
-import viewData.ProblemViewData
+import viewData.{AnswerViewData, ProblemViewData}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Success
@@ -51,7 +51,11 @@ case class LtiProblemPagePresenter(
         currentState.get.consumerKey,
         currentState.get.randomSecret.toIntOption.getOrElse(0),
         answer)) onComplete {
-      case Success(LtiSubmitAnswerSuccess(status)) =>
+      case Success(LtiSubmitAnswerSuccess(data)) =>
+        showSuccessAlert("Статус задания изменился")
+        import java.time._
+        currentProblemData.subProp(_.answers)
+          .set(currentProblemData.subProp(_.answers).get :+ data)
         //currentProblemData.set(data)
       case _ => showErrorAlert(s"Ошибка при обработке ответа, возможно стоит попробовать позже.", None, true)
     }

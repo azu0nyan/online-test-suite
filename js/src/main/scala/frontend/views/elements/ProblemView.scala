@@ -14,6 +14,7 @@ import otsbridge.ProblemScore.MultipleRunsResultScore
 import otsbridge.{AnswerField, DoubleNumberField, IntNumberField, ProgramInTextField, SelectManyField, SelectOneField, TextField}
 import scalatags.JsDom.all._
 import viewData.AnswerViewData
+import scala.scalajs.js
 
 import scala.util.Random
 
@@ -34,7 +35,7 @@ object ProblemView {
     //          problemData.subProp(_.currentAnswerRaw).set(initialProgram.get, true)
 
 
-    div(//(styles.Custom.problemContainer ~)
+    div( //(styles.Custom.problemContainer ~)
       //data.get.title.map(t => h4(t)).getOrElse(""),
       div(styles.Custom.problemStatusContainer ~)(
         produce(problemData)(pd => elements.Score(pd.score,
@@ -43,7 +44,7 @@ object ProblemView {
       ),
       produce(problemData.subProp(_.title))(t => h3(styles.Custom.problemHeader)(t).render),
       produce(problemData.subProp(_.problemHtml))(html => div(scalatags.JsDom.all.raw(html)).render),
-      produce(problemData.subProp(_.answerFieldType))(af => answerField(af, currentAnswer, submitAnswer).render),
+      produce(problemData.subProp(_.answerFieldType))(af => answerField(af, currentAnswer, submitAnswer)),
       produce(problemData.subSeq(_.answers))(a => answersList(a).render)
     ).render
 
@@ -60,7 +61,7 @@ object ProblemView {
           submitAnswer(currentAnswer.get)
           true // prevent default
         }))("ответить")
-      )
+      ).render
       case IntNumberField(questionText) =>
         div(
           label(`for` := inputId)(questionText),
@@ -69,7 +70,7 @@ object ProblemView {
             submitAnswer(currentAnswer.get)
             true // prevent default
           }))("ответить")
-        )
+        ).render
       case TextField(questionText) =>
         div(
           label(`for` := inputId)(questionText),
@@ -78,19 +79,31 @@ object ProblemView {
             submitAnswer(currentAnswer.get)
             true // prevent default
           }))("ответить")
-        )
+        ).render
       case ProgramInTextField(questionText, programmingLanguage, initialProgram) =>
         if (initialProgram.nonEmpty && currentAnswer.get.isEmpty) currentAnswer.set(initialProgram.get)
-        div(
-          label(`for` := inputId)(questionText),
-          TextArea(currentAnswer)(styles.Custom.programInputTextArea ~, id := inputId, wrap := "off", rows := "20"),
+        val editorDiv = div(styles.Custom.problemCodeEditor ~)(
+
+        ).render
+        val ace = js.Dynamic.global.ace
+        val editor = ace.edit(editorDiv)
+        editor.setTheme("ace/theme/github")
+        editor.session.setMode("ace/mode/java")
+        currentAnswer.listen(ca => {
+          editor.setValue(ca)
+          editor.clearSelection()
+        }, true)
+        //        editor.on("change",() => println("change") )
+        val res = div(
+          editorDiv,
           button(onclick :+= ((_: Event) => {
-            submitAnswer(currentAnswer.get)
+            submitAnswer(editor.getValue().asInstanceOf[String])
             true // prevent default
           }))("ответить")
-        )
-      case SelectOneField(questionText, variants) => div("")
-      case SelectManyField(questionText, variants) => div("")
+        ).render
+        res
+      case SelectOneField(questionText, variants) => div("").render
+      case SelectManyField(questionText, variants) => div("").render
     }
   }
 
@@ -112,7 +125,7 @@ object ProblemView {
 
 
   def answersList(answers: Seq[AnswerViewData]) = if (answers.isEmpty) div() else
-    div(//(styles.Custom.problemAnswersList ~)
+    div( //(styles.Custom.problemAnswersList ~)
       h3(Text.pYourAnswers),
       table(styles.Custom.defaultTable ~)(
         tr(

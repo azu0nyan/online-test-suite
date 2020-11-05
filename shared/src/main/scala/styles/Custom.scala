@@ -2,6 +2,7 @@ package styles
 
 import constants.Paths
 import scalacss.DevDefaults._
+import scalacss.internal.CssEntry.FontFace
 import scalacss.internal.Pseudo.Attr
 import styles.Base.&
 //import scalacss.internal.Dsl
@@ -101,6 +102,20 @@ object Custom extends StyleSheet.Inline {
   val problemContainer = style(
     display.block,
     defaultBoxBordersPaddingsMargins
+  )
+
+  val problemCodeEditor = style(
+    borderWidth(tableBorderWidth),
+    borderColor(tableBordersColor),
+    borderStyle.solid,
+    fontSize( mediumFontSize),
+    fontFamily :=! "monospace",
+    width(100 %%),
+    height(50 vh),
+    unsafeChild("*")(
+      fontFamily :=! "monospace",
+    )
+
   )
 
   val problemAnswersList = style(
