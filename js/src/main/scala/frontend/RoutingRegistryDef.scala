@@ -46,6 +46,8 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState] {
     case "/admin" / "groups" / id => AdminGroupInfoPageState(id)
     case "/admin" / "users" => AdminUserListPageState
     case "/admin" / "actions" => AdminActionsPageState
+
+    case "/ltiProblem" / consumerKey / userId / problemAlias / randomSecret => LtiProblemPageState(consumerKey, userId, problemAlias, randomSecret)
   }
 
 }

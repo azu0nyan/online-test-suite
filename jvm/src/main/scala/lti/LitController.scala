@@ -23,7 +23,7 @@ object LitController {
     LtiSubmitAnswerSuccess(updated.answers(answerId).toViewData)
   }
 
-  def submitScore(problem: LtiProblem) = {
+  def submitScore(problem: LtiProblem):Boolean = try{
     log.info(s"reporting grade for $problem")
     val sharedSecret = LtiConsumerKeyToSharedSecret.getSecret(problem.consumerKey).get
     val consumerToken = Token(problem.consumerKey, sharedSecret)
@@ -41,12 +41,17 @@ object LitController {
     //      }
     val resp = OAuth.sign(respNoAuth, consumerToken, body)
     resp.asString
+    true
     //    println(resp.body)
     //    println(resp.headers)
 //    println(resp.asString.body.flatMap {
 //      case '>' => ">\n"
 //      case x => x.toString
 //    })
+  } catch {
+    case t:Throwable =>
+      log.error(s"Cant submit LTI grade", t)
+      false
   }
 
   def formXmlShit(resultSouredid: String, score: Double): String =

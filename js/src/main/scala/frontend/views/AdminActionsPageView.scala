@@ -1,5 +1,6 @@
 package frontend.views
 
+import clientRequests.admin.AdminActionLtiKeys
 import frontend._
 import io.udash.core.ContainerView
 import io.udash._
@@ -26,12 +27,45 @@ class AdminActionsPageView(
         true // prevent default
       }))("Изменить"),
     ),
+    div(styles.Custom.inputContainer ~)(
+      h3("Добавить пару LTI ключей"),
+      label(`for` := "ltiConsumerKeyId")("ConsumerKey:"),
+      TextInput(presenter.ltiConsumerKey)(id := "ltiConsumerKeyId", placeholder := "ConsumerKey"),
+      label(`for` := "ltiSharedSecretId")("SharedSecret:"),
+      TextInput(presenter.ltiSharedSecret)(id := "ltiSharedSecretId", placeholder := "SharedSecret"),
+      button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
+        presenter.addLtiKey()
+        true // prevent default
+      }))("Добавить или изменить"),
+    ),
+    div(styles.Custom.inputContainer. ~)(
+      button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
+        presenter.updateLtiListKeys()
+        true // prevent default
+      }))("Показать список ключей"),
+      produce(presenter.ltiListKeys)(list =>
+        table(styles.Custom.defaultTable ~)(
+          tr(
+            th("ConsumerKey"),
+            th("SharedSecret"),
+          ),
+          for ((ck, ss) <- list) yield tr(
+            td(ck),
+            td(ss)
+          )
+        ).render
+      )
+    ),
   )
 }
 
 case class AdminActionsPagePresenter(
                                       app: Application[RoutingState]
                                     ) extends GenericPresenter[AdminActionsPageState.type] {
+
+  val changePasswordUserIdOrLogin: Property[String] = Property.blank[String]
+  val changePasswordPassword: Property[String] = Property.blank[String]
+
   def changePassword(): Unit = {
     frontend.sendRequest(clientRequests.admin.AdminAction, clientRequests.admin.ChangePassword(currentToken.get, changePasswordUserIdOrLogin.get, changePasswordPassword.get))
       .onComplete {
@@ -40,8 +74,30 @@ case class AdminActionsPagePresenter(
       }
   }
 
-  val changePasswordUserIdOrLogin: Property[String] = Property.blank[String]
-  val changePasswordPassword: Property[String] = Property.blank[String]
+
+  val ltiConsumerKey: Property[String] = Property.blank[String]
+  val ltiSharedSecret: Property[String] = Property.blank[String]
+
+  def addLtiKey(): Unit = {
+    frontend.sendRequest(clientRequests.admin.AdminAction,
+      clientRequests.admin.AddLtiKeys(currentToken.get, ltiConsumerKey.get, ltiSharedSecret.get))
+      .onComplete {
+        case Success(_) => showSuccessAlert("Ключ добавлен")
+        case Failure(_) => showErrorAlert("Ошибка при добавлении ключа")
+      }
+  }
+
+  val ltiListKeys: Property[Seq[(String, String)]] = Property.blank[Seq[(String, String)]]
+  def updateLtiListKeys(): Unit = {
+    frontend.sendRequest(clientRequests.admin.AdminAction,
+      clientRequests.admin.ListLtiKeys(currentToken.get))
+      .onComplete {
+        case Success(AdminActionLtiKeys(keys)) =>
+          ltiListKeys.set(keys, true)
+        case _ => showErrorAlert("Ошибка при достуе к списку ключей")
+      }
+  }
+
 
   override def handleState(state: AdminActionsPageState.type): Unit = {
 

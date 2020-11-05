@@ -9,7 +9,7 @@ trait FinalState
 
 sealed abstract class RoutingState(
                                     val parentState: Option[ContainerRoutingState]
-                                  )  extends State {
+                                  ) extends State {
   override type HierarchyRoot = RoutingState
 }
 sealed abstract class ContainerRoutingState(
@@ -26,24 +26,28 @@ case object LoginPageState extends FinalRoutingState(Some(RootState))
 case object RegistrationPageState extends FinalRoutingState(Some(RootState))
 
 case object CourseSelectionPageState extends FinalRoutingState(Some(RootState))
-case class CoursePageState(courseId:String, lookAt:String) extends FinalRoutingState(Some(RootState))
+case class CoursePageState(courseId: String, lookAt: String) extends FinalRoutingState(Some(RootState))
 case object MyGradesPageState extends FinalRoutingState(Some(RootState))
 
 case object AppPageState extends FinalRoutingState(Some(RootState))
 
-case class GroupScoresPageState(groupId:String) extends FinalRoutingState(Some(AdminPageState))
-case class GroupGradesPageState(groupId:String) extends FinalRoutingState(Some(AdminPageState))
+case class GroupScoresPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
+case class GroupGradesPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
 
-case class TeacherConfirmAnswersPageState(problemId:Option[String], groupId:Option[String]) extends FinalRoutingState(Some(AdminPageState))
+case class TeacherConfirmAnswersPageState(problemId: Option[String], groupId: Option[String]) extends FinalRoutingState(Some(AdminPageState))
 
 case object AdminPageState extends ContainerRoutingState(Some(RootState))
 case object AdminGroupListPageState extends FinalRoutingState(Some(AdminPageState))
 case object AdminUserListPageState extends FinalRoutingState(Some(AdminPageState))
-case class AdminGroupInfoPageState(groupId:String) extends FinalRoutingState(Some(AdminPageState))
+case class AdminGroupInfoPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
 case object AdminProblemsPageState extends FinalRoutingState(Some(AdminPageState))
 case object AdminCoursesPageState extends FinalRoutingState(Some(AdminPageState))
 case class AdminCourseTemplateInfoPageState(courseTemplateAlias: String) extends FinalRoutingState(Some(AdminPageState))
 case object AdminActionsPageState extends FinalRoutingState(Some(AdminPageState))
+
+
+//case object LtiPageState extends ContainerRoutingState(Some(RootState))
+case class LtiProblemPageState(consumerKey: String, userId: String, problemAlias: String, randomSecret: String) extends FinalRoutingState(None)
 
 
 //case object AdminGroupsPageState extends FinalRoutingState(Some(RootState))

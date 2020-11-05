@@ -1,6 +1,6 @@
 package frontend
 
-import frontend.views.{AdminActionsPageViewFactory, AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, GroupGradesPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, MyGradesPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
+import frontend.views.{AdminActionsPageViewFactory, AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, GroupGradesPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, LtiProblemPageViewFactory, MyGradesPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
 import io.udash.core.{ViewFactory, ViewFactoryRegistry}
 
 class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
@@ -8,12 +8,12 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
     val res = state match {
       case AdminActionsPageState => AdminActionsPageViewFactory
       case AdminCoursesPageState => AdminCoursesPageViewFactory
-      case AdminCourseTemplateInfoPageState(_) =>AdminCourseTemplateInfoPageViewFactory
+      case AdminCourseTemplateInfoPageState(_) => AdminCourseTemplateInfoPageViewFactory
       case AdminGroupInfoPageState(_) => AdminGroupInfoPageViewFactory
       case AdminGroupListPageState => AdminGroupListPageViewFactory
       case AdminPageState => AdminPageViewFactory
       case AdminProblemsPageState => AdminProblemsPageViewFactory
-      case AdminUserListPageState=> AdminUserListPageViewFactory
+      case AdminUserListPageState => AdminUserListPageViewFactory
       case CoursePageState(courseId, taskId) => CoursePageViewFactory
       case CourseSelectionPageState => CourseSelectionPageViewFactory
       case LandingPageState => LandingPageViewFactory
@@ -23,6 +23,8 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
       case TeacherConfirmAnswersPageState(_, _) => TeacherConfirmAnswersPageViewFactory
       case GroupGradesPageState(_) => GroupGradesPageViewFactory
       case MyGradesPageState => MyGradesPageViewFactory
+
+      case LtiProblemPageState(_, _, _, _) => LtiProblemPageViewFactory
 
 
       case GroupScoresPageState(_) => GroupScoresPageViewFactory

@@ -9,6 +9,8 @@ import scala.util.Random
 
 object LtiLaunch {
 
+  //http://localhost:8080/lti?custom_problem=javaCourseStringsEquality&user_id=2&lis_outcome_service_url=a&lis_result_sourcedid=2&oauth_consumer_key=qwe
+
   def launchRequest(request: Request, response: Response): String = {
     //    response.redirect(LtiMain.ltiProblemPath)
     val protocolVersion = request.queryMap().get("lti_version").value() //lti_version=LTI-1p0
@@ -23,7 +25,7 @@ object LtiLaunch {
     //    val sharedSecret = "shared_secret"
     log.info(s"LTI launch userId: $userId userName: $userName problem: $problemAlias consumerKey: $oauthConsumerKey")
 
-    val secret = LtiConsumerKeyToSharedSecret.getSecret(oauthConsumerKey)
+    val secret = LtiConsumerKeyToSharedSecret.getSecret(if(oauthConsumerKey != null) oauthConsumerKey else "") //todo remove DEBUG
     //todo validate signature
     if (secret.isDefined) {
       if(TemplatesRegistry.getProblemTemplate(problemAlias).nonEmpty) {
@@ -41,7 +43,7 @@ object LtiLaunch {
             controller.db.ltiProblems.insert(newLtiProblem)
             newLtiProblem
         }
-        response.redirect(ltiProblemPath + "#" + oauthConsumerKey + "/" + userId + "/" + problemAlias + "/" + ltiProblem.randomSecret)
+        response.redirect("#" + "/" + ltiProblemPath + "/" + oauthConsumerKey + "/" + userId + "/" + problemAlias + "/" + ltiProblem.randomSecret)
         ""
       } else {
         "Cant find problem by alias."
