@@ -15,7 +15,7 @@ object ProblemOps {
   }
 
 
-  def getProblemForUser(req:GetProblemDataRequest):GetProblemDataResponse = LoginUserOps.decodeAndValidateToken(req.token) match {
+  def getProblemForUser(req:GetProblemDataRequest):GetProblemDataResponse = LoginUserOps.decodeAndValidateUserToken(req.token) match {
     case Some(user) =>
       UsersRegistry.doSynchronized[GetProblemDataResponse](user._id) {
         val p = db.problems.byId(new ObjectId(req.problemId))

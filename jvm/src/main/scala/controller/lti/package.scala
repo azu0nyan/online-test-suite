@@ -1,6 +1,4 @@
 import com.typesafe.scalalogging.Logger
-import lti.db.{LtiConsumerKeyToSharedSecret, LtiProblem}
-import org.mongodb.scala.MongoCollection
 import org.slf4j.LoggerFactory
 
 package object lti {

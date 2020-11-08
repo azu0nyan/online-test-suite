@@ -145,7 +145,7 @@ object GradeOps {
 
   /** получить оценки пользователя */
   def getGrades(req: GetGradesRequest): GetGradesResponse =
-    LoginUserOps.decodeAndValidateToken(req.token) match {
+    LoginUserOps.decodeAndValidateUserToken(req.token) match {
       case Some(user) =>
         val preloadedMap = user.courseAliasProblemAliasProblem
         GetGradesSuccess(user.grades.map(g => UserGradeViewData(g._id.toString, g.description, calculateGradeValue(g)(Some(user), Some(preloadedMap)), g.date)))

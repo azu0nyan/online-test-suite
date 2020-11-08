@@ -1,6 +1,6 @@
-package lti.clientRequests
+package clientRequests.lti
 
-import clientRequests.Route
+import clientRequests.{Route, WithToken}
 import io.circe.generic.auto._
 import viewData.ProblemViewData
 
@@ -10,7 +10,7 @@ object LtiProblemData extends Route[LtiProblemDataRequest, LtiProblemDataRespons
 }
 
 //REQ
-case class LtiProblemDataRequest(userId: String, problemAlias: String, consumerKey: String, randomSecret: Int) //todo secure
+case class LtiProblemDataRequest(token: String, problemAlias: String) extends WithToken
 
 //RES
 sealed trait LtiProblemDataResponse

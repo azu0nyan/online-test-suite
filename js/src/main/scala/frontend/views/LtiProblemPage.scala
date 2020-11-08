@@ -1,10 +1,11 @@
 package frontend.views
 
+import clientRequests.lti.{LtiProblemDataRequest, LtiProblemDataSuccess, LtiSubmitAnswerSuccess}
 import frontend._
 import frontend.views.elements.ProblemView
 import io.udash.core.ContainerView
 import io.udash._
-import lti.clientRequests.{LtiProblemDataRequest, LtiProblemDataSuccess, LtiSubmitAnswer, LtiSubmitAnswerRequest, LtiSubmitAnswerSuccess}
+import controller.lti.clientRequests.LtiSubmitAnswerSuccess
 import org.scalajs.dom.Element
 import otsbridge.ProblemScore.BinaryScore
 import otsbridge.TextField

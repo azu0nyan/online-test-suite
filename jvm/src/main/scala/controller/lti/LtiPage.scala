@@ -1,4 +1,4 @@
-package lti
+package controller.lti
 
 import constants.Skeleton
 import spark.{Request, Response}

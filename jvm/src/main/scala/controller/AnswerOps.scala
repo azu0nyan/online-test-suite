@@ -38,7 +38,7 @@ object AnswerOps {
   }
 
   def submitAnswer(req: SubmitAnswerRequest): SubmitAnswerResponse = {
-    LoginUserOps.decodeAndValidateToken(req.token) match {
+    LoginUserOps.decodeAndValidateUserToken(req.token) match {
       case Some(user) =>
 
         db.problems.byId(new ObjectId(req.problemIdHex)) match {

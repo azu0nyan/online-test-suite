@@ -1,6 +1,6 @@
-package lti.clientRequests
+package clientRequests.lti
 
-import clientRequests.{GenericRequestFailure, Route}
+import clientRequests.{Route, WithToken}
 import io.circe.generic.auto._
 import viewData.AnswerViewData
 
@@ -10,7 +10,7 @@ object LtiSubmitAnswer extends Route[LtiSubmitAnswerRequest, LtiSubmitAnswerResp
 }
 
 //REQ
-case class LtiSubmitAnswerRequest(userId: String, problemAlias: String, consumerKey: String, randomSecret: Int, answer:String )
+case class LtiSubmitAnswerRequest(token: String, problemAlias: String, answer:String ) extends WithToken
 
 //RES
 sealed trait LtiSubmitAnswerResponse

@@ -39,7 +39,7 @@ object CoursesOps {
 
 
   def requestStartCourse(req: StartCourseRequest): StartCourseResponse =
-    LoginUserOps.decodeAndValidateToken(req.token) match {
+    LoginUserOps.decodeAndValidateUserToken(req.token) match {
       case Some(user) =>
         TemplatesRegistry.getCourseTemplate(req.courseTemplateAlias) match {
           case Some(courseTemplate) =>
@@ -61,7 +61,7 @@ object CoursesOps {
     }
 
   def requestCourse(req: CourseDataRequest): CourseDataResponse = {
-    LoginUserOps.decodeAndValidateToken(req.token) match {
+    LoginUserOps.decodeAndValidateUserToken(req.token) match {
       case Some(user) =>
         db.courses.byId(new ObjectId(req.courseId)) match {
           case Some(course) =>
@@ -78,7 +78,7 @@ object CoursesOps {
 
 
   def requestCoursesList(req: RequestCoursesList): GetCoursesListResponse = {
-    LoginUserOps.decodeAndValidateToken(req.token) match {
+    LoginUserOps.decodeAndValidateUserToken(req.token) match {
       case Some(user) => GetCoursesListSuccess(user.userCoursesInfo)
       case None => GetCoursesListFailure(BadToken())
     }

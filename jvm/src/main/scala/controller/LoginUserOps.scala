@@ -15,9 +15,9 @@ import scala.util.{Failure, Success}
 object LoginUserOps {
   val log: Logger = Logger(LoggerFactory.getLogger("controller.userLogin"))
   implicit val c: Clock = java.time.Clock.systemUTC()
-  val secretKey = "secretKey"
+  val secretKey = "someHardcodedKeyTODOAddtoConfig"
   val algorithm = JwtAlgorithm.HS256
-  val tokenExpiresSeconds: Long = 24 * 60 * 60
+  val defaultTokenExpiresSeconds: Long = 48 * 60 * 60
   type Token = String
   type Login = String
 
@@ -48,9 +48,9 @@ object LoginUserOps {
           users.updateFieldWhenMatches("login", login, "lastLogin", Clock.systemUTC().instant())
 
 
-          val claim = JwtClaim(subject = Some(updatedUser._id.toHexString)).issuedNow.expiresIn(tokenExpiresSeconds)
-          val token = Jwt.encode(claim, secretKey, algorithm)
-
+          //          val claim = JwtClaim(subject = Some(updatedUser._id.toHexString)).issuedNow.expiresIn(tokenExpiresSeconds)
+          //          val token = Jwt.encode(claim, secretKey, algorithm)
+          val token = generateToken(user._id, defaultTokenExpiresSeconds)
           log.info(s"User logged in ${updatedUser.idAndLoginStr}")
           Left(updatedUser, token)
         } else {
@@ -64,8 +64,14 @@ object LoginUserOps {
     }
   }
 
+  def generateToken(userId: ObjectId, expiresInSeconds: Long): Token = {
+    val claim = JwtClaim(subject = Some(userId.toHexString)).issuedNow.expiresIn(expiresInSeconds)
+    val token = Jwt.encode(claim, secretKey, algorithm)
+    token
+  }
+
   /** Возвращает user если токен дествителен */
-  def decodeAndValidateToken(token: Token): Option[User] = {
+  def decodeAndValidateUserToken(token: Token): Option[User] = {
     Jwt.decode(token, secretKey, Seq(algorithm)) match {
       case Failure(exception) =>
         log.warn(s"Someone tried to use undecodable token \n token:$token \n$exception")

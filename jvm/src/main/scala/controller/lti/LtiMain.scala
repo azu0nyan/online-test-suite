@@ -1,4 +1,4 @@
-package lti
+package controller.lti
 
 import app.HttpServer
 import spark.Spark

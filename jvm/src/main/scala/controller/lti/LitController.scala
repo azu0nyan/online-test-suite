@@ -1,12 +1,13 @@
-package lti
+package controller.lti
 
 import java.time.Clock
 
 import DbViewsShared.CourseShared.{BeingVerified, Rejected, VerificationDelayed, Verified}
+import clientRequests.lti.{LtiProblemDataRequest, LtiProblemDataResponse, LtiProblemDataSuccess, LtiSubmitAnswerRequest, LtiSubmitAnswerResponse, LtiSubmitAnswerSuccess, UnknownLtiProblemDataFailure, UnknownLtiSubmitAnswerFailure}
 import controller.{TemplatesRegistry, db}
-import controller.db.{Answer, Problem, ltiProblems}
-import lti.clientRequests.{LtiProblemDataRequest, LtiProblemDataResponse, LtiProblemDataSuccess, LtiSubmitAnswerRequest, LtiSubmitAnswerResponse, LtiSubmitAnswerSuccess, UnknownLtiProblemDataFailure, UnknownLtiSubmitAnswerFailure}
-import lti.db.{LtiConsumerKeyToSharedSecret, LtiProblem}
+import controller.db.{Answer, LtiProblem, Problem, ltiProblems}
+import controller.lti.clientRequests.UnknownLtiSubmitAnswerFailure
+import controller.lti.db.LtiProblem
 import otsbridge.AnswerVerificationResult
 import scalaj.http.{Http, HttpOptions, Token}
 
@@ -25,7 +26,7 @@ object LitController {
 
   def submitScore(problem: LtiProblem):Boolean = try{
     log.info(s"reporting grade for $problem")
-    val sharedSecret = LtiConsumerKeyToSharedSecret.getSecret(problem.consumerKey).get
+    val sharedSecret = LtiConsumerKey.getSecret(problem.consumerKey).get
     val consumerToken = Token(problem.consumerKey, sharedSecret)
     val body = formXmlShit(problem.resultSourcedid, problem.score.getOrElse(0d))
     //        val respNoAuth = Http("http://localhost:1235")

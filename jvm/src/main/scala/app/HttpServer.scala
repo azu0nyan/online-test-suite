@@ -67,16 +67,16 @@ object HttpServer {
   }
 
   val all: Any => Boolean = _ => true
-  val user: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token).isDefined
-  val gradesWatcher: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token) match {
+  val user: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateUserToken(req.token).isDefined
+  val gradesWatcher: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateUserToken(req.token) match {
     case Some(u) =>u.role.isInstanceOf[Watcher] || u.role.isInstanceOf[Admin] || u.role.isInstanceOf[Teacher]
     case None => false
   }
-  val teacher: WithToken => Boolean = req  =>  LoginUserOps.decodeAndValidateToken(req.token) match {
+  val teacher: WithToken => Boolean = req  =>  LoginUserOps.decodeAndValidateUserToken(req.token) match {
     case Some(u) =>  u.role.isInstanceOf[Admin] || u.role.isInstanceOf[Teacher]
     case None => false
   }
-  val adminOnly: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateToken(req.token) match {
+  val adminOnly: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateUserToken(req.token) match {
     case Some(u) =>  u.role.isInstanceOf[Admin]
     case None => false
   }

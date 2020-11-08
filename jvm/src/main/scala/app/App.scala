@@ -2,7 +2,7 @@ package app
 
 import controller.{Maintenance, TemplatesRegistry}
 import impl.BinaryCountingOfAncientRussians
-import lti.LtiMain
+import controller.lti.LtiMain
 
 object App {
 

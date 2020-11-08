@@ -3,6 +3,7 @@ package controller.db
 import java.time.{Clock, Instant, ZonedDateTime}
 
 import clientRequests.admin.AdminActionResponse
+import controller.UserRole.LtiUser
 import controller.{PasswordHashingSalting, TemplatesRegistry, ToViewData, UserRole}
 import org.mongodb.scala._
 import org.bson.types.ObjectId
@@ -34,6 +35,8 @@ object User {
       case t: Throwable => None
     }
 
+  def getLtiUser(userId:String, consumerKey:String):Option[User] = users.byField("role", LtiUser(userId, consumerKey))
+
   /** blocking */
   def checkPassword(user: User, password: String): Boolean = PasswordHashingSalting.checkPassword(password, user.passwordHash, user.passwordSalt)
 
@@ -50,6 +53,8 @@ case class User(_id: ObjectId,
                 registeredAt: Option[Instant],
                 lastLogin: Option[Instant],
                 role: UserRole) extends MongoObject {
+  def loginNameStr: String = s"$login ${firstName.getOrElse("")} ${lastName.getOrElse("")}"
+
   def changePassword(newPassword: String): Unit = {
     val hs = PasswordHashingSalting.hashPassword(newPassword)
     //todo transaction?

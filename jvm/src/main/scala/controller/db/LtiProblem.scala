@@ -1,33 +1,30 @@
-package lti.db
+package controller.db
 
 import DbViewsShared.CourseShared.Verified
 import controller.TemplatesRegistry
-import controller.db.{Answer, MongoObject, ltiProblems}
 import org.bson.types.ObjectId
-import otsbridge.ProblemScore.{BinaryScore, ProblemScore}
+import otsbridge.ProblemScore.BinaryScore
 import viewData.ProblemViewData
 
 
 object LtiProblem {
-  def byUserAndProblemConsumerKey(userId: String, problemAlias: String, consumerKey: String): Option[LtiProblem] =
-    ltiProblems.byFieldMany("userId", userId).find(x => x.problemAlias == problemAlias && x.consumerKey == consumerKey) //todo optimize
+  def byUserAndAlias(userId: ObjectId, problemAlias: String): Option[LtiProblem] =
+    ltiProblems.byTwoFields("ltiUserId", userId, "problemAlias",  problemAlias)
 
 
-  def apply(userId: String, problemAlias: String, answers: Seq[Answer], outcomeUrl: String, resultSourcedid: String, consumerKey: String, randomSecret: Int): LtiProblem =
-    new LtiProblem(new ObjectId(), userId, problemAlias, answers, outcomeUrl, resultSourcedid, consumerKey, randomSecret)
+  def apply(ltiUserId: ObjectId, problemAlias: String, answers: Seq[Answer], outcomeUrl: String, resultSourcedid: String): LtiProblem =
+    new LtiProblem(new ObjectId(), ltiUserId, problemAlias, answers, outcomeUrl, resultSourcedid)
 
 }
 
 case class LtiProblem(_id: ObjectId,
-                      userId: String,
+                      ltiUserId: ObjectId,
                       problemAlias: String,
                       answers: Seq[Answer],
                       outcomeUrl: String,
-                      resultSourcedid: String,
-                      consumerKey: String,
-                      randomSecret: Int) extends MongoObject {
+                      resultSourcedid: String) extends MongoObject {
 
-  def seed: Int = userId.toIntOption.getOrElse(userId.##)
+  def seed: Int = ltiUserId.##
 
 
   def toViewData: viewData.ProblemViewData = {
