@@ -1,11 +1,10 @@
 package frontend.views
 
-import clientRequests.lti.{LtiProblemDataRequest, LtiProblemDataSuccess, LtiSubmitAnswerSuccess}
+import clientRequests.lti.{LtiProblemDataRequest, LtiProblemDataSuccess, LtiSubmitAnswerRequest, LtiSubmitAnswerSuccess}
 import frontend._
 import frontend.views.elements.ProblemView
 import io.udash.core.ContainerView
 import io.udash._
-import controller.lti.clientRequests.LtiSubmitAnswerSuccess
 import org.scalajs.dom.Element
 import otsbridge.ProblemScore.BinaryScore
 import otsbridge.TextField
@@ -30,7 +29,7 @@ class LtiProblemPageView(
 case class LtiProblemPagePresenter(
                                     app: Application[RoutingState]
                                   ) extends GenericPresenter[LtiProblemPageState] {
-  val currentState: Property[LtiProblemPageState] = Property(LtiProblemPageState("", "", "", ""))
+  val currentState: Property[LtiProblemPageState] = Property(LtiProblemPageState("", ""))
   currentState.listen(st => {
     requestProblemData(st)
   }, false)
@@ -38,26 +37,22 @@ case class LtiProblemPagePresenter(
   val currentProblemData: ModelProperty[ProblemViewData] = ModelProperty(ProblemViewData("", "", "", "", TextField(""), BinaryScore(false), "", Seq()))
 
   def requestProblemData(st: LtiProblemPageState): Unit = {
-    frontend.sendRequest(lti.clientRequests.LtiProblemData, LtiProblemDataRequest(st.userId, st.problemAlias, st.consumerKey, st.randomSecret.toIntOption.getOrElse(0))) onComplete {
+    frontend.sendRequest(clientRequests.lti.LtiProblemData, LtiProblemDataRequest(st.token, st.problemAlias)) onComplete {
       case Success(LtiProblemDataSuccess(data)) => currentProblemData.set(data)
       case _ => showErrorAlert(s"Немогу получить информацию о задании", None, true)
     }
   }
 
   def submitAnswer(answer: String): Unit = {
-    frontend.sendRequest(lti.clientRequests.LtiSubmitAnswer,
+    frontend.sendRequest(clientRequests.lti.LtiSubmitAnswer,
       LtiSubmitAnswerRequest(
-        currentState.get.userId,
+        currentState.get.token,
         currentState.get.problemAlias,
-        currentState.get.consumerKey,
-        currentState.get.randomSecret.toIntOption.getOrElse(0),
         answer)) onComplete {
-      case Success(LtiSubmitAnswerSuccess(data)) =>
+      case Success(LtiSubmitAnswerSuccess(answerData)) =>
         showSuccessAlert("Статус задания изменился")
-        import java.time._
         currentProblemData.subProp(_.answers)
-          .set(currentProblemData.subProp(_.answers).get :+ data)
-        //currentProblemData.set(data)
+          .set(currentProblemData.subProp(_.answers).get :+ answerData)
       case _ => showErrorAlert(s"Ошибка при обработке ответа, возможно стоит попробовать позже.", None, true)
     }
   }

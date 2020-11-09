@@ -46,10 +46,12 @@ class AdminActionsPageView(
       produce(presenter.ltiListKeys)(list =>
         table(styles.Custom.defaultTable ~)(
           tr(
-            th("ConsumerKey"),
-            th("SharedSecret"),
+            th("User name"),
+            th("Consumer key"),
+            th("Shared secret"),
           ),
-          for ((ck, ss) <- list) yield tr(
+          for ((name, ck, ss) <- list) yield tr(
+            td(name),
             td(ck),
             td(ss)
           )
@@ -87,7 +89,7 @@ case class AdminActionsPagePresenter(
       }
   }
 
-  val ltiListKeys: Property[Seq[(String, String)]] = Property.blank[Seq[(String, String)]]
+  val ltiListKeys: Property[Seq[(String,String, String)]] = Property.blank[Seq[(String,String, String)]]
   def updateLtiListKeys(): Unit = {
     frontend.sendRequest(clientRequests.admin.AdminAction,
       clientRequests.admin.ListLtiKeys(currentToken.get))

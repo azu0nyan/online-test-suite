@@ -24,7 +24,7 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
       case GroupGradesPageState(_) => GroupGradesPageViewFactory
       case MyGradesPageState => MyGradesPageViewFactory
 
-      case LtiProblemPageState(_, _, _, _) => LtiProblemPageViewFactory
+      case LtiProblemPageState(_, _) => LtiProblemPageViewFactory
 
 
       case GroupScoresPageState(_) => GroupScoresPageViewFactory

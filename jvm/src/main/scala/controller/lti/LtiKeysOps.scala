@@ -6,6 +6,8 @@ import controller.db.LtiConsumerKey
 import controller.{LoginUserOps, UserOps, db, log}
 
 object LtiKeysOps {
+
+
   def addLtiKeys(l: AddLtiKeys): AdminActionResponse = {
     LoginUserOps.decodeAndValidateUserToken(l.token) match {
       case Some(user) =>

@@ -6,7 +6,6 @@ import DbViewsShared.{GradeOverride, GradeRule}
 import com.typesafe.scalalogging.Logger
 import controller.db.CustomCourseTemplate
 import controller.db.codecs.{DisplayMeCodecProvider, OptionCodec, SomeCodec}
-import lti.db.LtiProblem
 import org.bson.codecs.Codec
 import org.bson.types.ObjectId
 import org.mongodb.scala.{ClientSession, Completed, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, ReadConcern, SingleObservable, TransactionOptions, WriteConcern}
@@ -77,7 +76,7 @@ package object db extends CollectionOps {
     classOf[LtiConsumerKey],
 
   ), fromCodecs(
-    new SomeCodec
+    new SomeCodec,
 //    new OptionCodec(),
 //    new OptionCodec().asInstanceOf[Codec[None.type]]
   ), DEFAULT_CODEC_REGISTRY)

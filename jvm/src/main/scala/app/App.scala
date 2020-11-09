@@ -2,7 +2,6 @@ package app
 
 import controller.{Maintenance, TemplatesRegistry}
 import impl.BinaryCountingOfAncientRussians
-import controller.lti.LtiMain
 
 object App {
 
@@ -28,7 +27,6 @@ object App {
 
 
     HttpServer.initRoutesAndStart()
-    LtiMain.init()
   }
 
   def initAliases(): Unit = {

@@ -4,7 +4,8 @@ import java.nio.file.Paths
 import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersForConfirmation, GroupGradesList, OverrideGrade, RemoveGroupGrade, RemovePersonalGrade, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
-import controller.UserRole.{Admin, Teacher, Watcher}
+import controller.UserRole.{Admin, LtiUser, Teacher, Watcher}
+import controller.lti.{LitController, LtiLaunch}
 import controller.{AdminOps, AnswerOps, CoursesOps, CustomCourseOps, GradeOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
@@ -64,6 +65,17 @@ object HttpServer {
     addRoute(clientRequests.admin.RemoveUserFromGroup, GroupOps.removeUserFromGroup, adminOnly)
     addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
     addRoute(clientRequests.admin.UserList, UserOps.userList , adminOnly)
+
+
+
+
+    //    Spark.get(ltiProblemPath, LtiPage.pageRequest)
+    //    Spark.post(ltiProblemPath, LtiPage.pageRequest)
+    addRoute(clientRequests.lti.LtiProblemData, LitController.requestProblemData, ltiUser)
+    addRoute(clientRequests.lti.LtiSubmitAnswer, LitController.submitAnswer, ltiUser)
+
+    Spark.get(controller.lti.ltiLaunchPath, LtiLaunch.launchRequest)
+    Spark.post(controller.lti.ltiLaunchPath, LtiLaunch.launchRequest)
   }
 
   val all: Any => Boolean = _ => true
@@ -78,6 +90,11 @@ object HttpServer {
   }
   val adminOnly: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateUserToken(req.token) match {
     case Some(u) =>  u.role.isInstanceOf[Admin]
+    case None => false
+  }
+
+  val ltiUser: WithToken => Boolean = req  => LoginUserOps.decodeAndValidateUserToken(req.token) match {
+    case Some(u) =>  u.role.isInstanceOf[LtiUser]
     case None => false
   }
 

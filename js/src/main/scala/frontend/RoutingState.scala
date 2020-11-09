@@ -47,7 +47,7 @@ case object AdminActionsPageState extends FinalRoutingState(Some(AdminPageState)
 
 
 //case object LtiPageState extends ContainerRoutingState(Some(RootState))
-case class LtiProblemPageState(consumerKey: String, userId: String, problemAlias: String, randomSecret: String) extends FinalRoutingState(None)
+case class LtiProblemPageState(token:String, problemAlias: String) extends FinalRoutingState(None)
 
 
 //case object AdminGroupsPageState extends FinalRoutingState(Some(RootState))

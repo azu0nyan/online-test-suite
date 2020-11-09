@@ -3,10 +3,9 @@ package controller.lti
 import java.time.Clock
 
 import constants.Skeleton
-import controller.TemplatesRegistry
+import controller.{LoginUserOps, TemplatesRegistry}
 import controller.UserRole.LtiUser
-import controller.db.{LtiProblem, User}
-import controller.lti.db.LtiProblem
+import controller.db.{LtiConsumerKey, LtiProblem, User}
 import spark.{Request, Response}
 import utils.system.SClock
 
@@ -32,13 +31,10 @@ object LtiLaunch {
     val oauthConsumerKey = Option(request.queryMap("oauth_consumer_key").value())
 
 
-
-
     log.info(s"LTI launch userId: $userId userName: $userName problem: $problemAlias consumerKey: $oauthConsumerKey")
 
 
-
-    if(protocolVersion.isEmpty || protocolVersion.get != "LTI-1p0") {
+    if (protocolVersion.isEmpty || protocolVersion.get != "LTI-1p0") {
       log.info(s"Unknown LTI protocol version $protocolVersion trying my best to proceed.")
     }
     //validating tool consumer credentials
@@ -53,8 +49,8 @@ object LtiLaunch {
     //todo validate signature
 
     //validating problem data
-    if(problemAlias.isEmpty) {
-       log.info(s"Someone trying to use LTI with empty problem alias")
+    if (problemAlias.isEmpty) {
+      log.info(s"Someone trying to use LTI with empty problem alias")
       return "Empty problem alias"
     }
     val problemTemplate = TemplatesRegistry.getProblemTemplate(problemAlias.get)
@@ -63,23 +59,24 @@ object LtiLaunch {
       return "Can't find problem by alias."
     }
     //get or create user
-    if(userId.isEmpty) {
+    if (userId.isEmpty) {
       log.info(s"Someone trying to use LTI with empty user id")
       return "Empty user id"
     }
-    if(outcomeServiceUrl.isEmpty) {
+    if (outcomeServiceUrl.isEmpty) {
       log.info(s"Someone trying to use LTI with empty outcome service url")
       return "Empty outcome service url"
     }
 
-    if(resultSourcedid.isEmpty) {
+    if (resultSourcedid.isEmpty) {
       log.info(s"Someone trying to use LTI with empty resultSourcedid")
       return "Empty resultSourcedid"
     }
 
-    val ltiUser = User.getLtiUser(userId.get, oauthConsumerKey.get ) match {
+    val ltiUser = User.getLtiUser(userId.get, oauthConsumerKey.get) match {
       case Some(u) =>
-        if(u.firstName != userNameFull)    controller.db.users.updateField(u, "firstName", userNameFull)
+        if (u.firstName != userNameFull && userNameFull.nonEmpty) controller.db.users.updateField(u, "firstName", userNameFull)
+        if (u.email != userEmail && userEmail.nonEmpty) controller.db.users.updateField(u, "email", userEmail)
         u.updateLastLogin()
         u
       case None =>
@@ -103,16 +100,15 @@ object LtiLaunch {
         controller.db.ltiProblems.insert(newLtiProblem)
         newLtiProblem
     }
-    response.redirect("#" + "/" + ltiProblemPath + "/" +  problemAlias )
+
+    val token = LoginUserOps.generateToken(ltiUser._id, 48 * 60 * 60)
+    response.redirect("#" + "/" + ltiProblemPath + "/" + token + "/" + problemAlias.get)
     ""
   }
 
 
-
   //outcomeServiceUrl,
   // resultSourcedid, 0.5, oauthConsumerKey, sharedSecret
-
-
 
 
 }
