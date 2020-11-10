@@ -61,7 +61,7 @@ class CoursePageView(
           true // prevent default
         }))("ответить")
       )
-      case TextField(questionText) => div(
+      case TextField(questionText, _) => div(
         label(`for` := inputId)(questionText),
         //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
         TextInput(problemData.subProp(_.currentAnswerRaw))(id := inputId, placeholder := "Ваш ответ(текст)..."),

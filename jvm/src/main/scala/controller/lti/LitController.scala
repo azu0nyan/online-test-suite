@@ -54,7 +54,7 @@ object LitController {
 
   def submitScore(user:User, problem: LtiProblem):Boolean = try{
     val role = user.role.asInstanceOf[LtiUser]
-    log.info(s"reporting grade for $problem")
+    log.info(s"reporting grade for ${problem._id}")
     val sharedSecret = LtiConsumerKey.getSecret(role.consumerKey).get
     val consumerToken = Token(role.consumerKey, sharedSecret)
     val body = formXmlShit(problem.resultSourcedid, problem.score.getOrElse(0d))

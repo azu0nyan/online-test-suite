@@ -4,6 +4,7 @@ import DbViewsShared.CourseShared
 import DbViewsShared.CourseShared.{AnswerStatus, VerifiedAwaitingConfirmation}
 import constants.Text
 import frontend.dateFormatter
+import frontend.views.GroupGradesPage.JournalCell
 import frontend.views.elements
 import frontend.views._
 import io.udash.{ModelProperty, TextArea, TextInput, toAttrOps}
@@ -11,11 +12,12 @@ import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash._
 import org.scalajs.dom.Event
 import otsbridge.ProblemScore.MultipleRunsResultScore
-import otsbridge.{AnswerField, DoubleNumberField, IntNumberField, ProgramInTextField, SelectManyField, SelectOneField, TextField}
+import otsbridge.ProgrammingLanguage.ProgrammingLanguage
+import otsbridge.{AnswerField, DoubleNumberField, IntNumberField, ProgramAnswer, ProgramInTextField, ProgrammingLanguage, SelectManyField, SelectOneField, TextField}
 import scalatags.JsDom.all._
 import viewData.AnswerViewData
-import scala.scalajs.js
 
+import scala.scalajs.js
 import scala.util.Random
 
 object ProblemView {
@@ -71,10 +73,14 @@ object ProblemView {
             true // prevent default
           }))("ответить")
         ).render
-      case TextField(questionText) =>
+      case TextField(questionText, lines) =>
         div(
           label(`for` := inputId)(questionText),
-          TextInput(currentAnswer)(id := inputId, placeholder := "Ваш ответ(текст)..."),
+          if (lines <= 1) {
+            TextInput(currentAnswer)(id := inputId, placeholder := "Ваш ответ(текст)...")
+          } else {
+            TextArea(currentAnswer)(id := inputId, rows := lines, placeholder := "Ваш ответ(текст)...")
+          },
           button(onclick :+= ((_: Event) => {
             submitAnswer(currentAnswer.get)
             true // prevent default
@@ -82,22 +88,48 @@ object ProblemView {
         ).render
       case ProgramInTextField(questionText, programmingLanguage, initialProgram) =>
         if (initialProgram.nonEmpty && currentAnswer.get.isEmpty) currentAnswer.set(initialProgram.get)
-        val editorDiv = div(styles.Custom.problemCodeEditor ~)(
+
+        val languages: ReadableSeqProperty[ProgrammingLanguage] = programmingLanguage.toSeqProperty
+        val currentLanguage: Property[ProgrammingLanguage] = Property(programmingLanguage.head)
+
+
+        val editorDiv = div(styles.Custom.problemCodeEditor ~, id := inputId)(
 
         ).render
         val ace = js.Dynamic.global.ace
         val editor = ace.edit(editorDiv)
-        editor.setTheme("ace/theme/github")
-        editor.session.setMode("ace/mode/java")
+//        editor.setTheme("ace/theme/github")
+        currentLanguage.listen( {
+          case ProgrammingLanguage.Java => editor.session.setMode("ace/mode/java")
+          case ProgrammingLanguage.Scala => editor.session.setMode("ace/mode/scala")
+          case ProgrammingLanguage.Cpp => editor.session.setMode("ace/mode/c_cpp")
+        },true)
+
+        import io.circe._
+        import io.circe.parser._
+        import io.circe.generic.auto._
+        import io.circe.syntax._
+
         currentAnswer.listen(ca => {
-          editor.setValue(ca)
+          val newValue = decode[ProgramAnswer](ca) match {
+            case Left(_) => ca
+            case Right(pa) => pa.program
+          }
+          editor.setValue(newValue)
           editor.clearSelection()
         }, true)
         //        editor.on("change",() => println("change") )
+
         val res = div(
+          Select[ProgrammingLanguage](currentLanguage, languages)((x: ProgrammingLanguage) => x match {
+            case ProgrammingLanguage.Java => div("Java")
+            case ProgrammingLanguage.Scala => div("Scala")
+            case ProgrammingLanguage.Cpp => div("C++")
+          }),
+          label(`for` := inputId)(questionText),
           editorDiv,
           button(onclick :+= ((_: Event) => {
-            submitAnswer(editor.getValue().asInstanceOf[String])
+            submitAnswer( ProgramAnswer(editor.getValue().asInstanceOf[String], currentLanguage.get).asJson.noSpaces)
             true // prevent default
           }))("ответить")
         ).render
