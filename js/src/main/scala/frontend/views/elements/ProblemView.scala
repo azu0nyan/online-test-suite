@@ -10,6 +10,7 @@ import frontend.views._
 import io.udash.{ModelProperty, TextArea, TextInput, toAttrOps}
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash._
+import io.udash.bindings.modifiers.Binding
 import org.scalajs.dom.Event
 import otsbridge.ProblemScore.MultipleRunsResultScore
 import otsbridge.ProgrammingLanguage.ProgrammingLanguage
@@ -22,10 +23,17 @@ import scala.util.Random
 
 object ProblemView {
 
+  def nestedOpt(n: Option[NestedInterceptor], b: Binding): Binding = n match {
+    case Some(nested) => nested(b)
+    case None => b
+  }
+
   def apply(
              problemData: ModelProperty[viewData.ProblemViewData],
-             submitAnswer: String => Unit
+             submitAnswer: String => Unit,
+             nestedOption: Option[NestedInterceptor] = None
            ) = {
+
     val currentAnswer: Property[String] = Property.blank
     problemData.subProp(_.currentAnswerRaw).listen(ca => {
       if (!ca.isEmpty) {
@@ -40,14 +48,14 @@ object ProblemView {
     div( //(styles.Custom.problemContainer ~)
       //data.get.title.map(t => h4(t)).getOrElse(""),
       div(styles.Custom.problemStatusContainer ~)(
-        produce(problemData)(pd => elements.Score(pd.score,
+        nestedOpt(nestedOption, produce(problemData)(pd => elements.Score(pd.score,
           dontHaveAnswers = pd.answers.isEmpty,
           waitingForConfirm = if (pd.score.toInt == 0) pd.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation]) else false).render), //floats right
-      ),
-      produce(problemData.subProp(_.title))(t => h3(styles.Custom.problemHeader)(t).render),
-      produce(problemData.subProp(_.problemHtml))(html => div(scalatags.JsDom.all.raw(html)).render),
-      produce(problemData.subProp(_.answerFieldType))(af => answerField(af, currentAnswer, submitAnswer)),
-      produce(problemData.subSeq(_.answers))(a => answersList(a).render)
+        )),
+      nestedOpt(nestedOption, produce(problemData.subProp(_.title))(t => h3(styles.Custom.problemHeader)(t).render)),
+      nestedOpt(nestedOption, produce(problemData.subProp(_.problemHtml))(html => div(scalatags.JsDom.all.raw(html)).render)),
+      nestedOpt(nestedOption, produce(problemData.subProp(_.answerFieldType))(af => answerField(af, currentAnswer, submitAnswer))),
+      nestedOpt(nestedOption, produce(problemData.subSeq(_.answers))(a => answersList(a).render))
     ).render
 
   }
@@ -98,12 +106,12 @@ object ProblemView {
         ).render
         val ace = js.Dynamic.global.ace
         val editor = ace.edit(editorDiv)
-//        editor.setTheme("ace/theme/github")
-        currentLanguage.listen( {
+        //        editor.setTheme("ace/theme/github")
+        currentLanguage.listen({
           case ProgrammingLanguage.Java => editor.session.setMode("ace/mode/java")
           case ProgrammingLanguage.Scala => editor.session.setMode("ace/mode/scala")
           case ProgrammingLanguage.Cpp => editor.session.setMode("ace/mode/c_cpp")
-        },true)
+        }, true)
 
         import io.circe._
         import io.circe.parser._
@@ -115,8 +123,10 @@ object ProblemView {
             case Left(_) => ca
             case Right(pa) => pa.program
           }
+
           editor.setValue(newValue)
           editor.clearSelection()
+
         }, true)
         //        editor.on("change",() => println("change") )
 
@@ -129,7 +139,7 @@ object ProblemView {
           label(`for` := inputId)(questionText),
           editorDiv,
           button(onclick :+= ((_: Event) => {
-            submitAnswer( ProgramAnswer(editor.getValue().asInstanceOf[String], currentLanguage.get).asJson.noSpaces)
+            submitAnswer(ProgramAnswer(editor.getValue().asInstanceOf[String], currentLanguage.get).asJson.noSpaces)
             true // prevent default
           }))("ответить")
         ).render

@@ -8,7 +8,7 @@ import constants.Text
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
 import frontend._
-import frontend.views.elements.{Expandable, RunResultsTable}
+import frontend.views.elements.{Expandable, ProblemView, RunResultsTable}
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom.{Element, Event, window}
@@ -35,125 +35,17 @@ class CoursePageView(
                       presenter: CoursePagePresenter
                     ) extends ContainerView {
 
-  def answerFieldId(problemId: String): String = "answerField" + problemId.filter(_.isLetterOrDigit)
-
-
-  private def answerField(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) = {
-    val af = problemData.subProp(_.answerFieldType).get
-    val inputId = answerFieldId(problemData.subProp(_.problemId).get)
-    af match {
-      case DoubleNumberField(questionText) =>
-        div(
-          label(`for` := inputId)(questionText),
-          //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
-          TextInput(problemData.subProp(_.currentAnswerRaw))(id := inputId, placeholder := "Ваш ответ(десятичная дробь)..."),
-          button(onclick :+= ((_: Event) => {
-            presenter.submitAnswer(problemData.subProp(_.problemId).get, problemData.subProp(_.currentAnswerRaw).get)
-            true // prevent default
-          }))("ответить")
-        )
-      case IntNumberField(questionText) => div(
-        label(`for` := inputId)(questionText),
-        //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
-        TextInput(problemData.subProp(_.currentAnswerRaw))(id := inputId, placeholder := "Ваш ответ(целое число)..."),
-        button(onclick :+= ((_: Event) => {
-          presenter.submitAnswer(problemData.subProp(_.problemId).get, problemData.subProp(_.currentAnswerRaw).get)
-          true // prevent default
-        }))("ответить")
-      )
-      case TextField(questionText, _) => div(
-        label(`for` := inputId)(questionText),
-        //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
-        TextInput(problemData.subProp(_.currentAnswerRaw))(id := inputId, placeholder := "Ваш ответ(текст)..."),
-        button(onclick :+= ((_: Event) => {
-          presenter.submitAnswer(problemData.subProp(_.problemId).get, problemData.subProp(_.currentAnswerRaw).get)
-          true // prevent default
-        }))("ответить")
-      )
-      case ProgramInTextField(questionText, programmingLanguage, initialProgram) =>
-        if (problemData.subProp(_.currentAnswerRaw).get == "" && initialProgram.nonEmpty)
-          problemData.subProp(_.currentAnswerRaw).set(initialProgram.get, true)
-        div(
-          label(`for` := inputId)(questionText),
-          //      TextInput(model.subProp(_.login))(id := loginId, placeholder := "Логин...")
-          TextArea(problemData.subProp(_.currentAnswerRaw))(styles.Custom.programInputTextArea ~, id := inputId, wrap := "off", rows := "20"),
-          button(onclick :+= ((_: Event) => {
-            presenter.submitAnswer(problemData.subProp(_.problemId).get, problemData.subProp(_.currentAnswerRaw).get)
-            true // prevent default
-          }))("ответить")
-        )
-      case SelectOneField(questionText, variants) => div("")
-      case SelectManyField(questionText, variants) => div("")
-    }
-  }
 
 
   //div(seq.flatMap(pr => Seq(p(pr.toString), br)))
 
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
     div(styles.Custom.problemContainer ~)(
-      //data.get.title.map(t => h4(t)).getOrElse(""),
-      div(styles.Custom.problemStatusContainer ~)(
-        elements.Score(problemData.subProp(_.score).get,
-          dontHaveAnswers = problemData.subProp(_.answers).get.isEmpty,
-          waitingForConfirm = if(problemData.get.score.toInt == 0) problemData.get.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation])else false)), //floats right
-      h3(styles.Custom.problemHeader)(problemData.get.title),
-      scalatags.JsDom.all.raw(problemData.subProp(_.problemHtml).get),
-      answerField(problemData, nested),
-      answersList(problemData.subProp(_.answers).get)
+      ProblemView(problemData, a => presenter.submitAnswer(problemData.get.problemId, a), Some(nested))
     ).render
 
-  def answerStatus(status: AnswerStatus) = status match {
-    case CourseShared.Verified(score, review, systemMessage, verifiedAt, _) =>
-      pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверено").toString)
-    case CourseShared.Rejected(systemMessage, rejectedAt) =>
-      pre(styles.Custom.problemStatusFailureFontColor, overflowX.auto)(systemMessage.getOrElse("Невозможно проверить").toString)
-    case CourseShared.BeingVerified() =>
-      pre(styles.Custom.problemStatusSuccessFontColor, overflowX.auto)("Проходит проверку")
-    case CourseShared.VerificationDelayed(systemMessage) =>
-      pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("Проверка отложена").toString)
-    case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
-      div(p("Ожидает проверки преподавателем"),
-        pre(styles.Custom.problemStatusPartialSucessFontColor, overflowX.auto)(systemMessage.getOrElse("").toString))
 
 
-  }
-
-
-  def answersList(answers: Seq[AnswerViewData]) = if (answers.isEmpty) div() else
-    div(styles.Custom.problemAnswersList ~)(
-      h3(Text.pYourAnswers),
-      table(styles.Custom.defaultTable ~)(
-        tr(
-          th(width := "20px")(Text.pAnswerNumber),
-          th(width := "50px")(Text.pAnswerAnsweredAt),
-          th(width := "80px")(Text.pAnswerScore),
-          th(width := "450px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerSystemMessage),
-          th(width := "150px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerReview),
-          th(width := "150px", minWidth := "100px", maxWidth := "40%")(Text.pAnswerAnswerText),
-        ),
-        for ((ans, i) <- answers.sortBy(_.answeredAt).zipWithIndex.reverse) yield tr(
-          td((i + 1).toString),
-          td(dateFormatter.format(ans.answeredAt)),
-          td((ans.score, ans.status) match {
-            case (Some(value), _: CourseShared.Verified) => elements.Score(value, dontHaveAnswers = false, waitingForConfirm = false)
-            case (Some(value), _: CourseShared.VerifiedAwaitingConfirmation) => elements.Score(value, dontHaveAnswers = false, waitingForConfirm = true)
-            case (None, _) => div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pAnswerNoScore)
-          }),
-          //todo check
-          td(answerStatus(ans.status), (ans.score, ans.status) match {
-            case (Some(MultipleRunsResultScore(runs)), _) => RunResultsTable(runs)
-            case (_, VerifiedAwaitingConfirmation(MultipleRunsResultScore(runs), _, _)) => RunResultsTable(runs)
-            case _ => p()
-          }),
-          td(ans.status match {
-            case CourseShared.Verified(_, review, _, _, _) => pre(overflowX.auto)(review.getOrElse("").toString)
-            case _ => ""
-          }),
-          td(Expandable(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
-        )
-      )
-    )
 
 
   //CONTENTS
@@ -369,7 +261,7 @@ case class CoursePagePresenter(
       case Success(value) => value match {
         case AnswerSubmitted(avd) =>
           updateAnswerData(avd)
-          requestProblemUpdate(problemId)
+          requestProblemUpdate(problemId) //todo update only status
         //          avd.status match {
         //            case VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
         //            case CourseShared.BeingVerified() =>
