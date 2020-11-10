@@ -81,6 +81,10 @@ object Custom extends StyleSheet.Inline {
 
   )
 
+  val languageSelect = style(
+    fontSize(biggerFontSize),
+  )
+
   //course selection
 
   val courseInfoContainer = style(

@@ -15,6 +15,7 @@ import org.scalajs.dom.Event
 import otsbridge.ProblemScore.MultipleRunsResultScore
 import otsbridge.ProgrammingLanguage.ProgrammingLanguage
 import otsbridge.{AnswerField, DoubleNumberField, IntNumberField, ProgramAnswer, ProgramInTextField, ProgrammingLanguage, SelectManyField, SelectOneField, TextField}
+import scalacss.internal.Pseudo.Custom
 import scalatags.JsDom.all._
 import viewData.AnswerViewData
 
@@ -111,6 +112,7 @@ object ProblemView {
           case ProgrammingLanguage.Java => editor.session.setMode("ace/mode/java")
           case ProgrammingLanguage.Scala => editor.session.setMode("ace/mode/scala")
           case ProgrammingLanguage.Cpp => editor.session.setMode("ace/mode/c_cpp")
+          case ProgrammingLanguage.Haskell => editor.session.setMode("ace/mode/haskell")
         }, true)
 
         import io.circe._
@@ -121,7 +123,9 @@ object ProblemView {
         currentAnswer.listen(ca => {
           val newValue = decode[ProgramAnswer](ca) match {
             case Left(_) => ca
-            case Right(pa) => pa.program
+            case Right(pa) =>
+            currentLanguage.set(pa.programmingLanguage)
+              pa.program
           }
 
           editor.setValue(newValue)
@@ -135,7 +139,8 @@ object ProblemView {
             case ProgrammingLanguage.Java => div("Java")
             case ProgrammingLanguage.Scala => div("Scala")
             case ProgrammingLanguage.Cpp => div("C++")
-          }),
+            case ProgrammingLanguage.Haskell => div("Haskell")
+          }, styles.Custom.languageSelect ~),
           label(`for` := inputId)(questionText),
           editorDiv,
           button(onclick :+= ((_: Event) => {

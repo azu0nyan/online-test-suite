@@ -93,7 +93,7 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
 
     javaOptions in Universal ++= Seq(
       // -J params will be added as jvm parameters
-      "-J-Xmx1024m",
+      "-J-Xmx4096m",
       "-J-Xms64m",
 
       // others will be added as app parameters
