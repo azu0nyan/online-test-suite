@@ -129,7 +129,7 @@ object AnswerOps {
         } else {
           onAnswerVerified(answer, score, systemMessage, None)
         }
-      case otsbridge.CantVerify(systemMessage) =>
+      case otsbridge. CantVerify(systemMessage) =>
         log.info(s"Answer : ${answer._id} cant verify cause : ${systemMessage.getOrElse("No message, unknown")}")
         answer.changeStatus(Rejected(systemMessage, Clock.systemUTC().instant()))
       case otsbridge.VerificationDelayed(systemMessage) =>
