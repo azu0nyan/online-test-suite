@@ -5,7 +5,7 @@ import frontend._
 import frontend.views.elements.ProblemView
 import io.udash.core.ContainerView
 import io.udash._
-import org.scalajs.dom.Element
+import org.scalajs.dom.{Element, MutationObserver, MutationObserverInit}
 import otsbridge.ProblemScore.BinaryScore
 import otsbridge.TextField
 import scalatags.JsDom.all._
@@ -19,10 +19,18 @@ class LtiProblemPageView(
                           presenter: LtiProblemPagePresenter
                         ) extends ContainerView {
 
+
+
   override def getTemplate: Modifier[Element] = {
-    div(margin := "20px")(
+    val res = div(margin := "20px")(
      ProblemView(presenter.currentProblemData, presenter.submitAnswer)
-    )
+    ).render
+    val obs = new MutationObserver((x, y)=> {
+      triggerTexUpdate()
+    })
+    obs.observe(res, MutationObserverInit(characterData = true, subtree = true))
+
+    res
   }
 }
 
