@@ -2,6 +2,7 @@ package frontend.views
 
 import frontend.{CourseSelectionPageState, LandingPageState, LoginPageState, RoutingState, currentToken}
 import io.udash.{Application, Presenter, State}
+import scala.scalajs.js
 
 trait GenericPresenter[T <: State] extends Presenter[T] {
   def app:Application[RoutingState]
@@ -14,6 +15,7 @@ trait GenericPresenter[T <: State] extends Presenter[T] {
   def toLandingPage(): Unit = app.goTo(LandingPageState)
 
   def toCourseSelectionPage(): Unit = app.goTo(CourseSelectionPageState)
+
 
 //  def toCourseSelectionPage(): Unit = app.goTo(CourseSelectionPageState())
 

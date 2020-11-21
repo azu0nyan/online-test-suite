@@ -11,7 +11,13 @@ object Skeleton {
       link(href := "favicon.svg", rel := "icon"),
 
       script(`type`:= "text/javascript", src := jsPath),
-      script(`type`:= "text/javascript", src := "/ace-builds/src-noconflict/ace.js" )
+      script(`type`:= "text/javascript", src := "/ace-builds/src-noconflict/ace.js" ),
+      raw(
+        raw"""
+             |<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+             |  <script id="MathJax-script" async
+             |          src="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js">
+             |  </script>""".stripMargin)
     ),
     body(margin := "0px")
   )
