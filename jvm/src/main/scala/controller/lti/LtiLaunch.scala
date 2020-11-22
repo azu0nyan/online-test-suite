@@ -14,6 +14,7 @@ import scala.util.Random
 object LtiLaunch {
 
   val ltiLoginPrefix = "lti-"
+  //http://localhost:8080/lti?custom_problem=javaCourseStringsEquality&user_id=2&lis_outcome_service_url=a&lis_result_sourcedid=2&oauth_consumer_key=TEST_MOODLE_INSTALLATION
   //http://localhost:8080/lti?custom_problem=javaCourseStringsEquality&user_id=2&lis_outcome_service_url=a&lis_result_sourcedid=2&oauth_consumer_key=qwe
 
   def launchRequest(request: Request, response: Response): String = {

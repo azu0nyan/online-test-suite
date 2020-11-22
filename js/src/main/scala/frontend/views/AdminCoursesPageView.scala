@@ -29,7 +29,6 @@ class AdminCoursesPageView(
         th(width := "150px")("Alias"),
         th(width := "150px")("заголовок"),
         th(width := "350px")("Описание"),
-        th(width := "100px")("Лимит времени"),
         th(width := "250px")("Задания"),
         th(width := "150px")(""),
       ),
