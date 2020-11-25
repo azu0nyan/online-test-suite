@@ -52,6 +52,10 @@ object Custom extends StyleSheet.Inline {
     borderRadius(roundCornerRadius),
   )
 
+  val defaultBox = style(
+    defaultBoxBordersPaddingsMargins,
+    display.block
+  )
 
   val inputContainer = style(
     defaultBoxBordersPaddingsMargins,

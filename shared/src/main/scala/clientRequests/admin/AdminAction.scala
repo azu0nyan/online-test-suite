@@ -18,6 +18,7 @@ sealed trait AdminActionRequest extends WithToken{
 case class ChangePassword(override val token: String, userIdOrLogin:String, newPassword:String) extends AdminActionRequest
 case class AddLtiKeys(override val token: String, consumerKey:String, sharedSecret:String) extends AdminActionRequest
 case class ListLtiKeys(override val token:String)extends AdminActionRequest
+case class RenameProblemAlias(override val token:String, oldAlias:String, newAlias:String)extends AdminActionRequest
 
 
 

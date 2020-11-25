@@ -28,17 +28,29 @@ class AdminActionsPageView(
       }))("Изменить"),
     ),
     div(styles.Custom.inputContainer ~)(
-      h3("Добавить пару LTI ключей"),
-      label(`for` := "ltiConsumerKeyId")("ConsumerKey:"),
-      TextInput(presenter.ltiConsumerKey)(id := "ltiConsumerKeyId", placeholder := "ConsumerKey"),
-      label(`for` := "ltiSharedSecretId")("SharedSecret:"),
-      TextInput(presenter.ltiSharedSecret)(id := "ltiSharedSecretId", placeholder := "SharedSecret"),
+      h3("Изменить алиас задания"),
+      label(`for` := "changeAliasOldId")("Старый алиас:"),
+      TextInput(presenter.renameAliasOld)(id := "changeAliasOldId", placeholder := "Старый алиас"),
+      label(`for` := "changeAliasNewId")("Новый алиас:"),
+      TextInput(presenter.renameAliasNew)(id := "changeAliasNewId", placeholder := "Новый алиас"),
       button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
-        presenter.addLtiKey()
+        presenter.renameAlias()
         true // prevent default
-      }))("Добавить или изменить"),
+      }))("Изменить"),
     ),
-    div(styles.Custom.inputContainer. ~)(
+    div(styles.Custom.defaultBox.~)(
+      div(styles.Custom.inputContainer ~)(
+        h3("Добавить пару LTI ключей"),
+        label(`for` := "ltiConsumerKeyId")("ConsumerKey:"),
+        TextInput(presenter.ltiConsumerKey)(id := "ltiConsumerKeyId", placeholder := "ConsumerKey"),
+        label(`for` := "ltiSharedSecretId")("SharedSecret:"),
+        TextInput(presenter.ltiSharedSecret)(id := "ltiSharedSecretId", placeholder := "SharedSecret"),
+        button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
+          presenter.addLtiKey()
+          true // prevent default
+        }))("Добавить или изменить"),
+      ),
+
       button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
         presenter.updateLtiListKeys()
         true // prevent default
@@ -89,7 +101,7 @@ case class AdminActionsPagePresenter(
       }
   }
 
-  val ltiListKeys: Property[Seq[(String,String, String)]] = Property.blank[Seq[(String,String, String)]]
+  val ltiListKeys: Property[Seq[(String, String, String)]] = Property.blank[Seq[(String, String, String)]]
   def updateLtiListKeys(): Unit = {
     frontend.sendRequest(clientRequests.admin.AdminAction,
       clientRequests.admin.ListLtiKeys(currentToken.get))
@@ -100,6 +112,18 @@ case class AdminActionsPagePresenter(
       }
   }
 
+
+  val renameAliasOld: Property[String] = Property.blank[String]
+  val renameAliasNew: Property[String] = Property.blank[String]
+
+  def renameAlias(): Unit = {
+    frontend.sendRequest(clientRequests.admin.AdminAction,
+      clientRequests.admin.RenameProblemAlias(currentToken.get, renameAliasOld.get, renameAliasNew.get))
+      .onComplete {
+        case Success(_) => showSuccessAlert("Алиасы изменены")
+        case Failure(_) => showErrorAlert("Ошибка при изменении алиаса")
+      }
+  }
 
   override def handleState(state: AdminActionsPageState.type): Unit = {
 
