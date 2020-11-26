@@ -27,7 +27,7 @@ class GroupGradesEditor(groupId: Property[String]) {
 
 
   def instantToStr(i: Instant) = {
-    s"${i.atOffset(ZoneOffset.UTC).getYear}-${i.atOffset(ZoneOffset.UTC).getMonthValue}-${i.atOffset(ZoneOffset.UTC).getDayOfMonth}"
+    f"${i.atOffset(ZoneOffset.UTC).getYear}-${i.atOffset(ZoneOffset.UTC).getMonthValue}%02d-${i.atOffset(ZoneOffset.UTC).getDayOfMonth}%02d"
   }
 
   //  def strToInstant(s: String): Instant = {
