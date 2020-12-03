@@ -6,6 +6,7 @@ import DbViewsShared.GradeRule.{Ceil, FixedGrade, Floor, GradedProblem, Round, S
 import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, GroupGradesListRequest, GroupGradesListResponse, GroupGradesListSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownGroupGradesListFailure, UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure, UnknownUpdateGroupGradeFailure, UpdateGroupGradeRequest, UpdateGroupGradeResponse, UpdateGroupGradeSuccess}
 import clientRequests.watcher.{GroupGradesRequest, GroupGradesResponse, GroupGradesSuccess, UnknownGroupGradesFailure}
 import clientRequests.{GetGradesRequest, GetGradesResponse, GetGradesSuccess, UnknownGetGradesFailure}
+import controller.UserRole.Student
 import controller.db.{Grade, Group, GroupGrade, Problem, User, grades, groupGrades, groups, users}
 import org.bson.types.ObjectId
 import viewData.UserGradeViewData
@@ -33,7 +34,7 @@ object GradeOps {
   }
 
   def groupGradesList(req: GroupGradesListRequest): GroupGradesListResponse = try {
-    val res = GroupGrade.forGroup(Group.byIdOrTitle(req.groupId).get).map(_.tiViewData)
+    val res = GroupGrade.forGroup(Group.byIdOrTitle(req.groupId).get).map(_.toViewData)
     GroupGradesListSuccess(res)
   } catch {
     case t: Throwable => log.error("", t)
@@ -132,7 +133,7 @@ object GradeOps {
   def requestGroupGrades(req: GroupGradesRequest): GroupGradesResponse = {
     controller.db.Group.byIdOrTitle(req.groupIdOrTitle) match {
       case Some(g) =>
-        val res = g.users.map { user =>
+        val res = g.users.filter(u => !req.onlyStudentGrades || u.role == Student()).map { user =>
           val preloadedMap = user.courseAliasProblemAliasProblem
           val gradesViewDatas = user.grades.map(g => UserGradeViewData(g._id.toString, g.description, calculateGradeValue(g)(Some(user), Some(preloadedMap)), g.date))
           val userViewData = user.toViewData

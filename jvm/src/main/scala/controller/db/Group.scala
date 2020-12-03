@@ -1,5 +1,6 @@
 package controller.db
 
+import controller.UserRole.Student
 import controller.{TemplatesRegistry, ToViewData}
 import org.mongodb.scala.bson.ObjectId
 import viewData.{GroupDetailedInfoViewData, GroupInfoViewData}
@@ -24,9 +25,10 @@ case class Group(_id: ObjectId, title: String, description: String) extends Mong
 
   def toViewData: GroupInfoViewData = GroupInfoViewData(_id.toHexString, title, description)
 
-  def toDetailedViewData: GroupDetailedInfoViewData = GroupDetailedInfoViewData(_id.toHexString, title, description,
+  def toDetailedViewData(onlyStudents:Boolean): GroupDetailedInfoViewData =
+    GroupDetailedInfoViewData(_id.toHexString, title, description,
     templatesForGroup.flatMap(t => TemplatesRegistry.getCourseTemplate(t.templateAlias)).map(ToViewData(_)),
-    users.map(_.toViewData))
+    users.filter(u => !onlyStudents || u.role == Student()).map(_.toViewData))
 
   def toIdTitleStr: String = s"[${_id.toHexString} $title]"
 

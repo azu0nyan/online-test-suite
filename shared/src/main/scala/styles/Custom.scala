@@ -24,6 +24,7 @@ object Custom extends StyleSheet.Inline {
     //    width(50 %%)
   )
 
+
   val headerImageBG = style(
     background := s"url(${Paths.headerImage})",
     backgroundSize := "contains"
@@ -89,6 +90,11 @@ object Custom extends StyleSheet.Inline {
     fontSize(biggerFontSize),
   )
 
+
+  val infoText = style(
+    fontSize(smallFontSize),
+    color(gray)
+  )
   //course selection
 
   val courseInfoContainer = style(

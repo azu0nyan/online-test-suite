@@ -10,7 +10,7 @@ object GroupGrades extends Route[GroupGradesRequest, GroupGradesResponse] {
 }
 
 //REQ
-case class GroupGradesRequest(token: String, groupIdOrTitle: String) extends WithToken
+case class GroupGradesRequest(token: String, groupIdOrTitle: String, onlyStudentGrades:Boolean) extends WithToken
 
 //RES
 sealed trait GroupGradesResponse

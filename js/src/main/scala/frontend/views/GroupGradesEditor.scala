@@ -137,6 +137,8 @@ class GroupGradesEditor(groupId: Property[String]) {
     )
   }
 
+
+
   def updateGradesList(): Unit = {
     frontend.sendRequest(clientRequests.teacher.GroupGradesList, GroupGradesListRequest(currentToken.get, groupId.get))
       .onComplete {
@@ -167,10 +169,10 @@ class GroupGradesEditor(groupId: Property[String]) {
   def groupGradesListHtml = div(padding := styles.horizontalPadding.value)("Оценки группы",
     table(styles.Custom.defaultTable ~, width := "100vw")(
       tr(
-        th(width := "15%")("ИД"),
+        th(width := "10%")("ИД"),
         th(width := "15%")("Описание"),
-        th(width := "50%")("Правило"),
-        th(width := "10%")("Дата"),
+        th(width := "45%")("Правило"),
+        th(width := "20%")("Дата"),
         th(width := "10%")("Скрыта до"),
       ),
       newGradeTr,

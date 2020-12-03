@@ -9,7 +9,7 @@ object GroupInfo extends Route[GroupInfoRequest, GroupInfoResponse] {
 }
 
 //REQ
-case class GroupInfoRequest(token:String, groupId:String) extends WithToken
+case class GroupInfoRequest(token:String, groupId:String, onlyStudents:Boolean) extends WithToken
 
 
 //RES

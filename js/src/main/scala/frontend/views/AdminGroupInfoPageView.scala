@@ -110,7 +110,7 @@ case class AdminGroupInfoPagePresenter(
 
 
   def requestGroupInfoUpdate(groupId: String): Unit = {
-    frontend.sendRequest(clientRequests.admin.GroupInfo, GroupInfoRequest(currentToken.get, groupId)) onComplete {
+    frontend.sendRequest(clientRequests.admin.GroupInfo, GroupInfoRequest(currentToken.get, groupId, onlyStudents = true)) onComplete {
       case Success(GroupInfoResponseSuccess(info)) => groupInfo.set(info, true)
       case resp@_ =>
         if(debugAlerts) showErrorAlert(s"$resp")

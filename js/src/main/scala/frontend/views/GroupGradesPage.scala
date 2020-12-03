@@ -19,6 +19,7 @@ import io.udash.bootstrap.utils.UdashIcons.FontAwesome.Solid.users
 import org.scalajs.dom.Element
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
+import styles.Custom.infoText
 import viewData.{GroupGradeViewData, UserGradeViewData, UserViewData}
 
 //import io.udash._
@@ -156,7 +157,11 @@ class GroupGradesPageView(
       table(styles.Custom.defaultTable ~, width := "100vw", margin := styles.horizontalPadding.value)(
         tr(
           th("Имя", width := "200px"),
-          for (title <- presenter.dates.toList) yield th(f"${title._1}%02d ${title._2}%02d ${title._3}%2d")
+          for (title <- presenter.dates.toList) yield {
+            val grade = presenter.getGradeByDate(title)
+
+            th()(f"${title._1}%02d ${title._2}%02d ${title._3}%2d", for(g <- grade) yield p(infoText ~)(g.description))
+          }
         ),
         for ((u, dateToGrade) <- presenter.users.toSeq) yield tr(
           td(s"${u.login} ${u.firstName.getOrElse("")} ${u.lastName.getOrElse("")}"),
@@ -179,13 +184,18 @@ case class GroupGradesPagePresenter(
                                      app: Application[RoutingState]
                                    ) extends GenericPresenter[GroupGradesPageState] {
 
-  val groupGradesList: SeqProperty[GroupGradeViewData] = SeqProperty.blank
+//  val groupGradesList: SeqProperty[GroupGradeViewData] = SeqProperty.blank
+
 
   val groupId: Property[String] = Property.blank
 
   val groupGradesEditor = new GroupGradesEditor(groupId)
 
-//  gradeRuleEditor.listen(c => c.updateGradesList())
+  def getGradeByDate(dmy:(Int, Int, Int)):Seq[GroupGradeViewData] = groupGradesEditor.groupGradesList.get.toSeq.filter(gvd =>
+    instantToDMY(gvd.date) == dmy)
+
+
+  //  gradeRuleEditor.listen(c => c.updateGradesList())
 
   val loaded: Property[Boolean] = Property.blank
 
@@ -222,7 +232,7 @@ case class GroupGradesPagePresenter(
 
   def requestDataUpdate(): Unit = {
     frontend
-      .sendRequest(clientRequests.watcher.GroupGrades, GroupGradesRequest(currentToken.get, groupId.get)) onComplete {
+      .sendRequest(clientRequests.watcher.GroupGrades, GroupGradesRequest(currentToken.get, groupId.get, true)) onComplete {
       case Success(GroupGradesSuccess(g)) =>
         loaded.set(false, true)
         val DMY = (g.flatMap(x => x._2).map(x => instantToDMY(x.date)).toSet.toList ++ addDates).toSet.toSeq

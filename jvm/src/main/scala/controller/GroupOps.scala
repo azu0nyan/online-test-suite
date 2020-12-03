@@ -22,7 +22,7 @@ object GroupOps {
 
   def groupList(req: GroupListRequest): GroupListResponse = {
     try {
-      GroupListResponseSuccess(groups.all().map(_.toDetailedViewData))
+      GroupListResponseSuccess(groups.all().map(_.toDetailedViewData(true)))//todo only students
     } catch {
       case _: Throwable => GroupListResponseFailure()
     }
@@ -30,7 +30,7 @@ object GroupOps {
 
   def group(req: GroupInfoRequest): GroupInfoResponse = {
     try {
-      GroupInfoResponseSuccess(groups.byId(new ObjectId(req.groupId)).get.toDetailedViewData)
+      GroupInfoResponseSuccess(groups.byId(new ObjectId(req.groupId)).get.toDetailedViewData(req.onlyStudents))
     } catch {
       case _: Throwable => GroupInfoResponseFailure()
     }
