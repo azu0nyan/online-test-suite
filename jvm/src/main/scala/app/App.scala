@@ -35,6 +35,7 @@ object App {
     TemplatesRegistry.registerDataPack(courses.datastructures.data)
     TemplatesRegistry.registerDataPack(courses.algos.data)
     TemplatesRegistry.registerDataPack(courses.graphics3d.data)
+    TemplatesRegistry.registerDataPack(myCourses.g6_20_21.data)
     TemplatesRegistry.registerDataPack(myCourses.g7_20_21.data)
     TemplatesRegistry.registerDataPack(myCourses.g7i_20_21.data)
     TemplatesRegistry.registerDataPack(myCourses.g8_20_21.data)
