@@ -1,13 +1,30 @@
 package controller
 
+import java.io
+import java.io.PrintWriter
 import java.time.Clock
 
 import DbViewsShared.CourseShared.{BeingVerified, Rejected}
+import app.App
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 import otsbridge.CantVerify
+import sourcecode.File
 
 object Maintenance {
+
+  def dumpCourse(file: String, alias: String) = {
+    log.info(s"Dumping course html $alias to $file")
+    App.initAliases()
+    val pw = new PrintWriter(new java.io.File(file))
+     TemplatesRegistry.getCourseTemplate(alias) match {
+      case Some(value) => pw.println(value.courseData.fullHtml(TemplatesRegistry.aliasToPT.toMap))
+      case None =>
+    }
+    pw.close()
+
+  }
+
   def renameProblemAlias(oldAlias: String, newAlias: String) = {
     log.info(s"Renaming problem alias `$oldAlias` to `$newAlias`")
     val toUpdate = db.problems.byFieldMany("templateAlias", oldAlias)
