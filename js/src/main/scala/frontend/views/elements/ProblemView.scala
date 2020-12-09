@@ -88,7 +88,7 @@ object ProblemView {
           if (lines <= 1) {
             TextInput(currentAnswer)(id := inputId, placeholder := "Ваш ответ(текст)...")
           } else {
-            TextArea(currentAnswer)(id := inputId, rows := lines,  placeholder := "Ваш ответ(текст)...")
+            TextArea(currentAnswer)(id := inputId, rows := lines, width := "100%",  placeholder := "Ваш ответ(текст)...")
           },
           br(),
           button(onclick :+= ((_: Event) => {

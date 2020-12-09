@@ -286,6 +286,7 @@ case class CoursePagePresenter(
         courseId.set(cs.courseId)
         course.set(cs)
         currentPath.set(currentPath.get)
+        triggerTexUpdate()
       case Success(failure@_) =>
         showErrorAlert(s"Немогу загрузить информацию о курсах")
         println(s"course request failure $failure")
@@ -308,6 +309,7 @@ case class CoursePagePresenter(
     }
     courseId.set(state.courseId)
     currentPath.set(state.lookAt)
+    triggerTexUpdate()
   }
 }
 
