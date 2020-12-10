@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.admin.AdminActionLtiKeys
+import clientRequests.admin.{AdminActionImpersonateSuccess, AdminActionLtiKeys}
 import frontend._
 import io.udash.core.ContainerView
 import io.udash._
@@ -24,6 +24,15 @@ class AdminActionsPageView(
       TextInput(presenter.changePasswordPassword)(id := "changePasswordPasswordId", placeholder := "Новый пароль"),
       button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
         presenter.changePassword()
+        true // prevent default
+      }))("Изменить"),
+    ),
+    div(styles.Custom.inputContainer ~)(
+      h3("Зайти за"),
+      label(`for` := "impesonateId")("ИД или алиас:"),
+      TextInput(presenter.impersonateLoginOrId)(id := "impesonateId", placeholder := "Логин или ИД"),
+      button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
+        presenter.impersonate()
         true // prevent default
       }))("Изменить"),
     ),
@@ -109,6 +118,19 @@ case class AdminActionsPagePresenter(
         case Success(AdminActionLtiKeys(keys)) =>
           ltiListKeys.set(keys, true)
         case _ => showErrorAlert("Ошибка при достуе к списку ключей")
+      }
+  }
+
+
+  val impersonateLoginOrId: Property[String] = Property.blank[String]
+  def impersonate(): Unit = {
+    frontend.sendRequest(clientRequests.admin.AdminAction,
+      clientRequests.admin.Impersonate(currentToken.get, impersonateLoginOrId.get))
+      .onComplete {
+        case Success(AdminActionImpersonateSuccess(newToken)) =>
+          currentToken.set(newToken, true)
+          showSuccessAlert("Имперсонирован")
+        case _ => showErrorAlert("Ошибка при имперсонировании")
       }
   }
 
