@@ -18,7 +18,7 @@ object Maintenance {
     App.initAliases()
     val pw = new PrintWriter(new java.io.File(file))
      TemplatesRegistry.getCourseTemplate(alias) match {
-      case Some(value) => pw.println(value.courseData.fullHtml(TemplatesRegistry.aliasToPT.toMap))
+      case Some(value) => //pw.println(value.courseData.fullHtml(TemplatesRegistry.aliasToPT.toMap))
       case None =>
     }
     pw.close()
