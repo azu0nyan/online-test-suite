@@ -51,7 +51,7 @@ class CoursePageView(
   //CONTENTS
   def shouldBeDisplayedInContents(cp: CoursePiece): Boolean =
     cp match {
-      case CoursePiece.Problem(_, _) | _ if cp.displayInContentsHtml.nonEmpty => return true
+      case CoursePiece.Problem(_, _, Some(_)) | _ if cp.displayInContentsHtml.nonEmpty => return true
       case container: CoursePiece.Container => container.childs.exists(shouldBeDisplayedInContents)
       case _ => return false
     }
@@ -63,7 +63,7 @@ class CoursePageView(
     val pathToMe = currentPath :+ cd.alias
     val pathToMeStr = pathToString(pathToMe)
     val me = cd match {
-      case CoursePiece.Problem(problemAlias, displayMe) =>
+      case CoursePiece.Problem(problemAlias, displayMe, _) =>
         div(onclick :+= ((_: Event) => {
           presenter.app.goTo(CoursePageState(presenter.courseId.get, problempPath(problemAlias)))
           true // prevent default
@@ -156,12 +156,12 @@ class CoursePageView(
       )
       case CoursePiece.Paragraph(alias, tHTML, _) => raw(tHTML)
       case CoursePiece.HtmlToDisplay(alias, displayMe, htmlRaw) => raw(htmlRaw)
-      case CoursePiece.TextWithHeading(alias, heading, bodyHtml, displayMe) =>
+      case CoursePiece.TextWithHeading(alias, heading, bodyHtml, displayMe, contents) =>
         div(
           h1(heading),
           raw(bodyHtml)
         )
-      case CoursePiece.Problem(problemAlias, displayMe) =>
+      case CoursePiece.Problem(problemAlias, displayMe, contents) =>
         nested(repeatWithNested(course.subSeq(_.problems).filter(_.templateAlias == problemAlias))((p, nested) => problemHtml(p.asModel, nested)))
 
       case container: CoursePiece.Container => renderChilds(container.childs, pathToMe, nested)
