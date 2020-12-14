@@ -31,6 +31,8 @@ case object MyGradesPageState extends FinalRoutingState(Some(RootState))
 
 case object AppPageState extends FinalRoutingState(Some(RootState))
 
+
+case class GroupAnswersComparisonPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
 case class GroupScoresPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
 case class GroupGradesPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
 

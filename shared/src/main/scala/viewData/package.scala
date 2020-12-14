@@ -1,5 +1,4 @@
 import java.time.Instant
-
 import DbViewsShared.{CourseShared, GradeOverride, GradeRule}
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import otsbridge.{AnswerField, ProblemScore}
@@ -34,7 +33,10 @@ package object viewData {
   case class GroupDetailedInfoViewData(groupId: String, groupTitle: String, description: String, courses: Seq[CourseTemplateViewData], users: Seq[UserViewData])
 
   /** Информация о пользователе для отображения */
-  case class UserViewData(id: String, login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String)
+  case class UserViewData(id: String, login: String, firstName: Option[String], lastName: Option[String], email: Option[String], groups: Seq[GroupInfoViewData], role: String) {
+    def loginNameString: String = s"${login} ${firstName.getOrElse("")} ${lastName.getOrElse("")}"
+
+  }
 
   case class AnswerViewData(
                              answerId: String,

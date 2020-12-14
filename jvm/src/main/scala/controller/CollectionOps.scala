@@ -11,6 +11,7 @@ import org.mongodb.scala.{ClientSession, MongoCollection}
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
+import scala.util.Try
 
 trait CollectionOps {
 
@@ -53,6 +54,8 @@ trait CollectionOps {
       }.headOption(), Duration.Inf)
       t
     }
+
+
 
     /** blocking */
 //    def byId(id: String, session: Option[ClientSession] = None): Option[T] = byField("_id", new ObjectId(id), session)

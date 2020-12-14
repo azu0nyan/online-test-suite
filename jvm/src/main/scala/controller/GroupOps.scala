@@ -2,8 +2,10 @@ package controller
 
 import clientRequests.admin.{AddUserToGroupFailure, AddUserToGroupRequest, AddUserToGroupResponse, AddUserToGroupSuccess, GroupInfoRequest, GroupInfoResponse, GroupInfoResponseFailure, GroupInfoResponseSuccess, GroupListRequest, GroupListResponse, GroupListResponseFailure, GroupListResponseSuccess, NewGroupRequest, NewGroupResponse, NewGroupSuccess, RemoveUserFromGroupFailure, RemoveUserFromGroupRequest, RemoveUserFromGroupResponse, RemoveUserFromGroupSuccess, TitleAlreadyClaimed, UnknownNewGroupFailure}
 import clientRequests.watcher.{GroupCourseInfo, GroupProblemInfo, GroupScoresRequest, GroupScoresResponse, GroupScoresSuccess}
+import controller.UserRole.Student
 import controller.db._
 import org.mongodb.scala.bson.ObjectId
+import utils.system.CalcExecTime
 
 object GroupOps {
   def newGroup(req: NewGroupRequest): NewGroupResponse =
@@ -100,21 +102,23 @@ object GroupOps {
 
 
   def requestGroupScores(req: GroupScoresRequest): GroupScoresResponse = req match {
-    case GroupScoresRequest(token, groupId, courseAliases) =>
+    case GroupScoresRequest(token, groupId, courseAliases, onlyStudentAnswers) =>
       val g = db.groups.byId(new ObjectId(groupId)).get
       val coursesTemplates =
         (if (courseAliases.isEmpty) CourseTemplateForGroup.byGroup(g).map(_.templateAlias) else courseAliases).flatMap(TemplatesRegistry.getCourseTemplate)
 
       val users = g.users
       log.info(s"Getting scores for ${coursesTemplates.size} course and ${users.size} user, from group ${g.title}")
-      val usersAndProblems = for (
-        u <- users
+      val (usersAndProblems, t) = CalcExecTime.withResult(
+       for (
+        u <- users.filter(u => !onlyStudentAnswers | u.role == Student())
       ) yield (u.toViewData, {
         for (
           c <- u.courses if coursesTemplates.exists(_.uniqueAlias == c.templateAlias);
           p <- c.ownProblems
         ) yield p.toViewData
-      })
+      }))
+      log.info(s"Got scores for ${coursesTemplates.size} course and ${users.size} user, from group ${g.title} time ${t.dt} ms")
 
       GroupScoresSuccess(coursesTemplates.map(ct =>
         GroupCourseInfo(ct.uniqueAlias, ct.courseTitle,

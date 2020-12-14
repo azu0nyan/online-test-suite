@@ -1,6 +1,6 @@
 package frontend
 
-import frontend.views.{AdminActionsPageViewFactory, AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, GroupGradesPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, LtiProblemPageViewFactory, MyGradesPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
+import frontend.views.{AdminActionsPageViewFactory, AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, ErrorPageViewFactory, GroupAnswersComparisonPageViewFactory, GroupGradesPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, LtiProblemPageViewFactory, MyGradesPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
 import io.udash.core.{ViewFactory, ViewFactoryRegistry}
 
 class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
@@ -22,12 +22,13 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
       case RootState => RootPageViewFactory
       case TeacherConfirmAnswersPageState(_, _) => TeacherConfirmAnswersPageViewFactory
       case GroupGradesPageState(_) => GroupGradesPageViewFactory
+      case GroupScoresPageState(_) => GroupScoresPageViewFactory
+      case GroupAnswersComparisonPageState(_) => GroupAnswersComparisonPageViewFactory
+
       case MyGradesPageState => MyGradesPageViewFactory
 
+
       case LtiProblemPageState(_, _) => LtiProblemPageViewFactory
-
-
-      case GroupScoresPageState(_) => GroupScoresPageViewFactory
       //case AppPageState => AppPageViewFactory
       case _ => ErrorPageViewFactory
     }

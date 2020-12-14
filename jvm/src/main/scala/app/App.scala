@@ -14,12 +14,14 @@ object App {
       println("-ruwg removeUsersWithoutGroups")
       println("-rawp removeAnswersWithoutProblems")
       println("-rpwc removeProblemsWithoutCourse")
+      println("-rpwt removeProblemsWithoutTemplates")
     }
 
     for(a <- args) a match {
       case "-snp" | "--startNewProblem" => Maintenance.findAndFixNonStartedProblem()
       case "-ruwg" | "--removeUsersWithoutGroups" => Maintenance.removeUsersWOGroups()
       case "-rawp" | "--removeAnswersWithoutProblems" => Maintenance.removeAnswersWoProblems()
+      case "-rpwt" | "--removeProblemWithoutTemplatees" => Maintenance.removeProblemsWOTemplates()
       case "-rpwc" | "--removeProblemsWithoutCourse" => Maintenance.removeProblemsWOCourse()
       case "-cbwa" | "--changeBeingVerifiedAnswers" => Maintenance.changeStatusBeingVerifiedAnswers()
       case _ => println(s"Unknown parameter $a")

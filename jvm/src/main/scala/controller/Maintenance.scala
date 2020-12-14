@@ -87,6 +87,12 @@ object Maintenance {
     toRemove.foreach(ProblemOps.removeProblem)
   }
 
+  def removeProblemsWOTemplates(): Unit = {
+    val toRemove = db.problems.all().filter(p => TemplatesRegistry.getProblemTemplate(p.templateAlias).isEmpty)
+    log.info(s"Found ${toRemove.size} problems without alias. Removing...")
+    toRemove.foreach(ProblemOps.removeProblem)
+  }
+
   def changeStatusBeingVerifiedAnswers(): Unit = {
     val toChange = db.answers.all().filter(a => a.status.isInstanceOf[BeingVerified])
     log.info(s"Found ${toChange.size} being verified answers invalidating")

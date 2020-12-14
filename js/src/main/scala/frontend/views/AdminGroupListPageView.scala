@@ -67,6 +67,10 @@ class AdminGroupListPageView(
         presenter.app.goTo(GroupGradesPageState(data.get.groupId))
         true // prevent default
       }))("Оценки"),
+      button(onclick :+= ((_: Event) => {
+        presenter.app.goTo(GroupAnswersComparisonPageState(data.get.groupId))
+        true // prevent default
+      }))("Ответы"),
     )
   ).render
 

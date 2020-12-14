@@ -66,6 +66,14 @@ object Custom extends StyleSheet.Inline {
     display.block
   )
 
+  val checkBoxLine = style(
+    defaultBoxBordersPaddingsMargins,
+    display.flex,
+    flexDirection.row,
+    overflow.scroll,
+    width(95 vw)
+  )
+
   //  val webkitAppearance = Attrs.real("align-items", " ")
 
   val gradeSelect = style(
@@ -160,6 +168,37 @@ object Custom extends StyleSheet.Inline {
       borderStyle.solid,
       borderColor(tableBordersColor)
     )
+  )
+
+  val unlimitedWidthTable = style(
+
+    tableLayout.fixed,
+    overflowX.hidden,
+    color(defaultFontColor),
+    fontSize(mediumFontSize),
+    borderCollapse.collapse,
+    unsafeChild("td")(
+      overflowX.hidden,
+      padding(smallPadding),
+      textAlign.left,
+      borderWidth(tableBorderWidth),
+      borderStyle.solid,
+      borderColor(tableBordersColor)
+    ),
+    unsafeChild("th")(
+      overflowX.hidden,
+      padding(smallPadding),
+      textAlign.left,
+      borderWidth(tableBorderWidth),
+      borderStyle.solid,
+      borderColor(tableBordersColor)
+    )
+  )
+
+  val answerCellDiv = style(
+    width(300 px),
+    height(600 px),
+    overflow.auto,
   )
 
   val problemHeader = style(

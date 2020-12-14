@@ -50,6 +50,7 @@ object HttpServer {
     addRoute(clientRequests.teacher.OverrideGrade, GradeOps.overrideGrade, teacher)
     addRoute(clientRequests.teacher.GroupGradesList, GradeOps.groupGradesList, teacher)
     addRoute(clientRequests.teacher.UpdateGroupGrade, GradeOps.updateGroupGrade, teacher)
+    addRoute(clientRequests.teacher.InvalidateProblem, GradeOps.invalidateProblem, teacher)
 
     addRoute(clientRequests.admin.AdminAction, AdminOps.processAdminAction, adminOnly)
     addRoute(clientRequests.admin.AddCourseToGroup, CustomCourseOps.addCourseToGroup, adminOnly)

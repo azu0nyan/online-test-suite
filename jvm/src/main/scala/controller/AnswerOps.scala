@@ -42,7 +42,9 @@ object AnswerOps {
       case Some(user) =>
 
         db.problems.byId(new ObjectId(req.problemIdHex)) match {
-          case Some(problem) =>
+          case Some(problem) if !InvalidatedProblem.isValid(problem) =>
+            AnswerSubmissionClosed(InvalidatedProblem.invalidCause(problem))
+          case Some(problem) if InvalidatedProblem.isValid(problem) =>
             val course = db.courses.byId(problem.courseId)
             if (course.isEmpty) {
               log.error(s"CRITICAL! possible DB corruption, there shouldn't been existing problem linked for existing course. \n " +
@@ -109,6 +111,9 @@ object AnswerOps {
         log.error(t.getMessage)
         UnknownTeacherConfirmAnswerFailure()
     }
+
+
+
 
   def onAnswerVerified(answer: Answer, score: ProblemScore, systemMessage: Option[String], review: Option[String]): Unit = {
     log.info(s"Answer : ${answer._id} verified changing status, score ${score.toPrettyString} ")

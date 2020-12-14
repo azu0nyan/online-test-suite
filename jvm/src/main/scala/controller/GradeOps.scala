@@ -1,17 +1,36 @@
 package controller
 
+import DbViewsShared.CourseShared.Rejected
 import DbViewsShared.GradeOverride
 import DbViewsShared.GradeOverride._
 import DbViewsShared.GradeRule.{Ceil, FixedGrade, Floor, GradedProblem, Round, SumScoresGrade}
-import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, GroupGradesListRequest, GroupGradesListResponse, GroupGradesListSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownGroupGradesListFailure, UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure, UnknownUpdateGroupGradeFailure, UpdateGroupGradeRequest, UpdateGroupGradeResponse, UpdateGroupGradeSuccess}
+import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, GroupGradesListRequest, GroupGradesListResponse, GroupGradesListSuccess, InvalidateProblemRequest, InvalidateProblemResponse, InvalidateProblemSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownGroupGradesListFailure, UnknownInvalidateProblemFailure, UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure, UnknownUpdateGroupGradeFailure, UpdateGroupGradeRequest, UpdateGroupGradeResponse, UpdateGroupGradeSuccess}
 import clientRequests.watcher.{GroupGradesRequest, GroupGradesResponse, GroupGradesSuccess, UnknownGroupGradesFailure}
 import clientRequests.{GetGradesRequest, GetGradesResponse, GetGradesSuccess, UnknownGetGradesFailure}
 import controller.UserRole.Student
-import controller.db.{Grade, Group, GroupGrade, Problem, User, grades, groupGrades, groups, users}
+import controller.db.{Grade, Group, GroupGrade, InvalidatedProblem, Problem, User, grades, groupGrades, groups, problems, users}
 import org.bson.types.ObjectId
 import viewData.UserGradeViewData
 
+import java.time.Clock
+
 object GradeOps {
+
+  def invalidateProblem(req: InvalidateProblemRequest): InvalidateProblemResponse = try {
+    problems.byId(new ObjectId(req.problemId)).foreach { p =>
+      db.invalidatedProblems.insert(InvalidatedProblem(p._id, req.answerMessage.orElse(Some("MANUAL REJECT"))))
+      req.answerId.flatMap(id => db.answers.byId(new ObjectId(id))).foreach { a =>
+        db.answers.updateField(a, "status", Rejected(req.answerMessage.orElse(Some("MANUAL REJECT")), Clock.systemUTC().instant()))
+      }
+      p.recalculateAndUpdateScoreIfNeeded()
+    }
+    InvalidateProblemSuccess()
+  } catch {
+    case t: Throwable =>
+      log.error(s"Error invalidating problem $req", t)
+      UnknownInvalidateProblemFailure()
+  }
+
   def updateGroupGrade(req: UpdateGroupGradeRequest): UpdateGroupGradeResponse = try {
     log.info(s"Updating group grade $req")
     val g = groupGrades.byId(new ObjectId(req.groupGradeId)).get
@@ -134,7 +153,7 @@ object GradeOps {
     controller.db.Group.byIdOrTitle(req.groupIdOrTitle) match {
       case Some(g) =>
         val res = g.users.filter(u => !req.onlyStudentGrades || u.role == Student()).map { user =>
-          val preloadedMap = user.courseAliasProblemAliasProblem
+          val preloadedMap = user.courseAliasProblemAliasProblem(true)
           val gradesViewDatas = user.grades.map(g => UserGradeViewData(g._id.toString, g.description, calculateGradeValue(g)(Some(user), Some(preloadedMap)), g.date))
           val userViewData = user.toViewData
           (userViewData, gradesViewDatas)
@@ -148,7 +167,7 @@ object GradeOps {
   def getGrades(req: GetGradesRequest): GetGradesResponse =
     LoginUserOps.decodeAndValidateUserToken(req.token) match {
       case Some(user) =>
-        val preloadedMap = user.courseAliasProblemAliasProblem
+        val preloadedMap = user.courseAliasProblemAliasProblem(true)
         GetGradesSuccess(user.grades.map(g => UserGradeViewData(g._id.toString, g.description, calculateGradeValue(g)(Some(user), Some(preloadedMap)), g.date)))
       case None =>
         UnknownGetGradesFailure()
@@ -173,7 +192,7 @@ object GradeOps {
             case SumScoresGrade(gradedProblems, round) =>
 
               val user = preloadedUser.getOrElse(users.byId(g.userId).get)
-              val courseProblemMap = preloadedUserProblemsMap.getOrElse(user.courseAliasProblemAliasProblem)
+              val courseProblemMap = preloadedUserProblemsMap.getOrElse(user.courseAliasProblemAliasProblem(true))
 
               val unRounded = 2 + gradedProblems.flatMap { case GradedProblem(courseAlias, problemAlias, weight, ifNotMaxMultiplier) =>
                 courseProblemMap.get(courseAlias).flatMap(_.get(problemAlias)).map(_.score)

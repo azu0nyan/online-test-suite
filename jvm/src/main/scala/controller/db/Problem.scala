@@ -1,5 +1,6 @@
 package controller.db
 
+import DbViewsShared.CourseShared
 import controller.Generator.GeneratedProblem
 import controller.{TemplatesRegistry, db, log}
 import otsbridge._
@@ -23,6 +24,9 @@ object Problem {
   def apply(problemListId: ObjectId, templateAlias: String, seed: Int, attemptsLeft:Option[Int], score:ProblemScore): Problem =
     new Problem(new ObjectId(), problemListId, templateAlias, seed, attemptsLeft, score)
 
+
+
+
 }
 
 
@@ -37,6 +41,14 @@ case class Problem(
 
   def course: Course = courses.byId(courseId).get
 
+
+  def recalculateAndUpdateScoreIfNeeded():Unit = {
+    val bestScore =answers.flatMap(a => Option.when(a.status.isInstanceOf[CourseShared.Verified])(a.status.asInstanceOf[CourseShared.Verified].score))
+      .foldLeft(template.initialScore)((best, cur) => otsbridge.CompareProblemScore.bestOf(best, cur))
+    if(bestScore != score){
+      problems.updateField(this, "score", bestScore)
+    }
+  }
 
   def updateScore(score: ProblemScore):Problem = {
     db.problems.updateField(this, "score", score)

@@ -1,6 +1,6 @@
 import sbt.Keys.libraryDependencies
 
-ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalaVersion := "2.13.4"
 
 cancelable in Global := true
 

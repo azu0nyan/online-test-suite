@@ -14,7 +14,7 @@ case class GroupProblemInfo(alias:String, title:String)
 case class GroupCourseInfo(alias:String, title:String, problemTitleAlias:Seq[GroupProblemInfo])
 
 //REQ
-case class GroupScoresRequest(token:String, groupId:String, courseAliases:Seq[String]) extends WithToken
+case class GroupScoresRequest(token:String, groupId:String, courseAliases:Seq[String], onlyStudentAnswers:Boolean = true) extends WithToken
 
 
 

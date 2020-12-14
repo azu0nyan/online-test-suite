@@ -2,7 +2,7 @@ package frontend.views
 
 import DbViewsShared.CourseShared
 import DbViewsShared.CourseShared.{AnswerStatus, VerifiedAwaitingConfirmation}
-import clientRequests.{AlreadyVerifyingAnswer, AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, GetProblemDataRequest, GetProblemDataSuccess, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
+import clientRequests.{AlreadyVerifyingAnswer, AnswerSubmissionClosed, AnswerSubmitted, CourseDataRequest, GetCourseDataSuccess, GetCoursesListFailure, GetProblemDataRequest, GetProblemDataSuccess, MaximumAttemptsLimitExceeded, ProblemIsNotFromUserCourse, ProblemNotFound, RequestSubmitAnswerFailure, SubmitAnswerRequest, UserCourseWithProblemNotFound}
 import constants.Text
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -272,6 +272,8 @@ case class CoursePagePresenter(
           showWarningAlert("Ответ на это задание уже проверяется, наберитесь терпения")
         case MaximumAttemptsLimitExceeded(attempts) =>
           showErrorAlert(s"Превышено максимальное колличество попыток")
+        case AnswerSubmissionClosed(cause)=>
+          showErrorAlert(s"Прием задания закрыт." + cause.map(s => s" Прична: $s").getOrElse(""))
         case _ => showErrorAlert()
       }
       case Failure(exception) =>

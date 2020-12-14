@@ -83,10 +83,10 @@ case class User(_id: ObjectId,
     UserCoursesInfoViewData(courseTemplates.map(_.toViewData) ++ TemplatesRegistry.templatesForAllUsers.map(ToViewData.apply), courses.map(_.toInfoViewData))
 
   //  def courseAliasProblemAliasProblem: String => String => Problem = {
-  def courseAliasProblemAliasProblem: Map[String, Map[String, Problem]] = {
+  def courseAliasProblemAliasProblem(onlyValid:Boolean): Map[String, Map[String, Problem]] = {
     courses.map(c =>
       (c.templateAlias,
-        c.ownProblems.map(p => (p.templateAlias, p)).toMap)
+        c.ownProblems.filter(p => !onlyValid | InvalidatedProblem.isValid(p)).map(p => (p.templateAlias, p)).toMap)
     ).toMap
   }
 }
