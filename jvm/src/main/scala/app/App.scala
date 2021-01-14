@@ -32,6 +32,7 @@ object App {
   }
 
   def initAliases(): Unit = {
+
 //    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
     TemplatesRegistry.registerDataPack(courses.javaCourse.data)
     TemplatesRegistry.registerDataPack(courses.datastructures.data)
