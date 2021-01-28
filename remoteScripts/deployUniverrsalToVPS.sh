@@ -1,8 +1,10 @@
 #!/bin/bash
 
 
+#USER="cni"
 USER="azu"
 PASSWORD=""
+#HOST="tester"
 HOST="130.193.57.57"
 FILE="online-test-suite-0.2-SNAPSHOT.zip"
 DIR="tester"
