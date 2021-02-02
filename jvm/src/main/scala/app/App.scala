@@ -32,6 +32,7 @@ object App {
   }
 
   def initAliases(): Unit = {
+    log.info(s"Loading courses and problems")
 //    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
     TemplatesRegistry.registerDataPack(courses.javaCourse.data)
     TemplatesRegistry.registerDataPack(courses.datastructures.data)
@@ -49,6 +50,7 @@ object App {
     TemplatesRegistry.registerDataPack(myCourses.g11_20_21.data)
     TemplatesRegistry.registerDataPack(Projects.data)
 
+    log.info(s"Loaded ${TemplatesRegistry.aliasToCourseTemplate.size} courses, ${TemplatesRegistry.aliasToPT.size} problems.")
     //    TemplatesRegistry.registerOrUpdateCourseTemplate(tasks.javaCourse.JavaCourse)
   }
 
