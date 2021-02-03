@@ -13,7 +13,7 @@ import spark.Spark._
 import viewData.UserViewData
 object HttpServer {
 
-  def initRoutesAndStart(host:String = "0.0.0.0", port_ :Int = 8080): Unit ={
+  def initRoutesAndStart(host:String = "0.0.0.0", port_ :Int = 8007): Unit ={
     log.info(s"set external static files location to ${Paths.get("").toAbsolutePath.toString}")
     threadPool(200, 2, 60 * 60 * 1000)
     staticFileLocation("/")//todo
