@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.teacher.{AnswersForConfirmationRequest, AnswersForConfirmationSuccess, TeacherConfirmAnswerRequest}
+import clientRequests.teacher.{AnswersForConfirmationRequest, AnswersForConfirmationSuccess, TeacherConfirmAnswerRequest, TeacherConfirmAnswerSuccess}
 import frontend._
 import io.udash.core.ContainerView
 import io.udash._
@@ -13,7 +13,7 @@ import viewData.AnswerForConfirmationViewData
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.Success
+import scala.util.{Failure, Success}
 
 class TeacherConfirmAnswersPageView(
                                      presenter: TeacherConfirmAnswersPagePresenter
@@ -72,6 +72,11 @@ class TeacherConfirmAnswersPagePresenter(
     val score = scores(answerId).get
     frontend //todo onComplete
       .sendRequest(clientRequests.teacher.TeacherConfirmAnswer, TeacherConfirmAnswerRequest(currentToken.get, answerId, score, if (review.isEmpty) None else Some(review)))
+      .onComplete{
+        case Success(TeacherConfirmAnswerSuccess()) => showSuccessAlert("Статус ответа извеменен")
+        case _ => showErrorAlert("Неизвестная ошибка")
+      }
+
   }
 
   def dismiss(answerId: String) = {
@@ -79,7 +84,10 @@ class TeacherConfirmAnswersPagePresenter(
     val score = new BinaryScore(false)
     frontend //todo onComplete
       .sendRequest(clientRequests.teacher.TeacherConfirmAnswer, TeacherConfirmAnswerRequest(currentToken.get, answerId, score, if (review.isEmpty) None else Some(review)))
-
+      .onComplete{
+        case Success(TeacherConfirmAnswerSuccess()) => showSuccessAlert("Статус ответа извеменен")
+        case _ => showErrorAlert("Неизвестная ошибка")
+      }
   }
 
 
@@ -100,6 +108,7 @@ class TeacherConfirmAnswersPagePresenter(
           }
           answers.set(a)
         case _ =>
+          showErrorAlert("Немогу загрузить задания для проверки")
       }
   }
 }
