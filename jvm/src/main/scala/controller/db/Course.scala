@@ -14,18 +14,18 @@ object Course {
   def byTemplateAlias(templateAlias: String): Seq[Course] = courses.byFieldMany("templateAlias", templateAlias)
 
 
-  def apply(userID: ObjectId, templateAlias: String,seed:Int, status: CourseStatus, problemIds: Seq[ObjectId]): Course =
-    Course(new ObjectId(), userID, templateAlias,seed, status, problemIds)
+  def apply(userID: ObjectId, templateAlias: String, seed: Int, status: CourseStatus, problemIds: Seq[ObjectId]): Course =
+    Course(new ObjectId(), userID, templateAlias, seed, status, problemIds)
 
   def forUser(user: User): Seq[Course] = courses.byFieldMany("userId", user._id)
 
 }
 
-case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed:Int, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
+case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed: Int, status: CourseStatus, problemIds: Seq[ObjectId]) extends MongoObject {
 
   def addProblem(p: Problem): Course = {
     val updated = courses.byId(_id).get
-    if(!updated.problemIds.contains(p._id)) {
+    if (!updated.problemIds.contains(p._id)) {
       courses.updateField(updated, "problemIds", updated.problemIds :+ p._id)
       updated.copy(problemIds = problemIds :+ p._id)
     } else {
@@ -49,9 +49,18 @@ case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed:I
   def toInfoViewData: CourseInfoViewData = CourseInfoViewData(_id.toHexString, template.courseTitle, status, template.description)
 
 
+  def toViewData: CourseViewData = {
+    val problems = ownProblems.flatMap { p =>
+      try {
+        Some(p.toViewData)
+      } catch {
+        case t: Throwable => log.error("Can't get view data", t)
+          None
+      }
 
-  def toViewData: CourseViewData =
-    CourseViewData(_id.toHexString, template.courseTitle, status, template.courseData, ownProblems.flatMap(x => Try(x.toViewData).toOption), template.description)
+    }
+    CourseViewData(_id.toHexString, template.courseTitle, status, template.courseData, problems, template.description)
+  }
 
-  def ownProblems:Seq[Problem] = problemIds.flatMap(problems.byId(_))
+  def ownProblems: Seq[Problem] = problemIds.flatMap(problems.byId(_))
 }
