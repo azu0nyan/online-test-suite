@@ -4,8 +4,8 @@
 USER="cni"
 #USER="azu"
 PASSWORD=""
-#HOST="tester"
-HOST="192.168.2.7"
+HOST="tester"
+#HOST="10.1.2.7"
 FILE="online-test-suite-0.2-SNAPSHOT.zip"
 DIR="tester"
 
