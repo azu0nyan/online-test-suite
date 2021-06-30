@@ -1,6 +1,6 @@
 package frontend.views
 
-import clientRequests.admin.{CourseListRequest, CourseListSuccess, NewCustomCourseRequest}
+import clientRequests.admin.{CourseListRequest, CourseListSuccess, NewCourseTemplateRequest}
 import frontend._
 import frontend.views.elements.Expandable
 import io.udash.core.ContainerView
@@ -63,7 +63,7 @@ case class AdminCoursesPagePresenter(
 
                                     ) extends GenericPresenter[AdminCoursesPageState.type] {
   def newCourse() = {
-    frontend.sendRequest(clientRequests.admin.NewCustomCourse, NewCustomCourseRequest(currentToken.get, newCourseName.get)) onComplete { _ =>
+    frontend.sendRequest(clientRequests.admin.NewCourseTemplate, NewCourseTemplateRequest(currentToken.get, newCourseName.get)) onComplete { _ =>
       updateList()
     }
   }

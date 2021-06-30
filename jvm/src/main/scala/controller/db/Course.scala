@@ -35,6 +35,17 @@ case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed: 
 
   }
 
+  def removeProblem(p: Problem):Course = {
+    val updated = courses.byId(_id).get
+    if (!updated.problemIds.contains(p._id)) {
+      courses.updateField(updated, "problemIds", updated.problemIds.filter(_ != p._id))
+      updated.copy(problemIds = updated.problemIds.filter(_ != p._id))
+    } else {
+      log.error("Course does not contains problems")
+      updated
+    }
+  }
+
   def user: User = users.byId(userId).get
 
   def idAlias = s"[${_id.toHexString} $templateAlias]"

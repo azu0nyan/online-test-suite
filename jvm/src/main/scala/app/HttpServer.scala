@@ -54,18 +54,20 @@ object HttpServer {
 
     addRoute(clientRequests.admin.AdminAction, AdminOps.processAdminAction, adminOnly)
     addRoute(clientRequests.admin.AddCourseToGroup, CoursesOps.addCourseToGroup, adminOnly)
-    addRoute(clientRequests.admin.AddProblemToCourse, CustomCourseOps.addProblemToCourse, adminOnly)
     addRoute(clientRequests.admin.AddUserToGroup, GroupOps.addUserToGroup, adminOnly)
     addRoute(clientRequests.admin.AdminCourseInfo, CoursesOps.courseInfo, adminOnly)
     addRoute(clientRequests.admin.CourseList, CoursesOps.courseList, adminOnly)
     addRoute(clientRequests.admin.GroupInfo, GroupOps.group, adminOnly)
     addRoute(clientRequests.admin.GroupList, GroupOps.groupList, adminOnly)
     addRoute(clientRequests.admin.NewGroup, GroupOps.newGroup, adminOnly)
-    addRoute(clientRequests.admin.NewCustomCourse, CustomCourseOps.newCustomCourse, adminOnly)
     addRoute(clientRequests.admin.ProblemTemplateList, ProblemOps.problemTemplateList, adminOnly)
     addRoute(clientRequests.admin.RemoveUserFromGroup, GroupOps.removeUserFromGroup, adminOnly)
-    addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
     addRoute(clientRequests.admin.UserList, UserOps.userList , adminOnly)
+    //custom course edit
+    addRoute(clientRequests.admin.RemoveProblemFromCourseTemplate, CustomCourseOps.removeProblemFromCourseTemplate, adminOnly)
+    addRoute(clientRequests.admin.AddProblemToCourseTemplate, CustomCourseOps.addProblemToCourseTemplate, adminOnly)
+    addRoute(clientRequests.admin.NewCourseTemplate, CustomCourseOps.newCustomCourse, adminOnly)
+    addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
 
 
 

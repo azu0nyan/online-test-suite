@@ -25,7 +25,15 @@ case class CustomCourseTemplate(
   def activeInstances:Seq[Course] = Course.byTemplateAlias(uniqueAlias)
 
   def addProblem(problem: ProblemTemplate) :CustomCourseTemplate = {
-    customCourseTemplates.updateField(this, "problemAliasesToGenerate", problemAliasesToGenerate :+ problem.uniqueAlias)
+    customCourseTemplates.updateField(this, "problemAliasesToGenerate",
+      problemAliasesToGenerate :+ problem.uniqueAlias)
+    updatedFromDb[CustomCourseTemplate]
+  }
+
+  def removeProblem(alias:String):CustomCourseTemplate = {
+    customCourseTemplates.updateField(this, "problemAliasesToGenerate",
+      problemAliasesToGenerate.filterNot(_ == alias)
+    )
     updatedFromDb[CustomCourseTemplate]
   }
 
