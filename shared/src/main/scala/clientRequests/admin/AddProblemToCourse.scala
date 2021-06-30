@@ -16,6 +16,8 @@ sealed trait AddProblemToCourseResponse
 case class AddProblemToCourseSuccess() extends AddProblemToCourseResponse
 
 sealed trait AddProblemToCourseFailure extends AddProblemToCourseResponse
-case class AliasAlreadyAdded() extends AddProblemToCourseFailure
+case class UnknownCourse() extends AddProblemToCourseFailure
+case class UnknownAlias() extends AddProblemToCourseFailure
+case class DuplicateAlias() extends AddProblemToCourseFailure
 case class AddProblemToCourseUnknownFailure(failure: GenericRequestFailure) extends AddProblemToCourseFailure
 

@@ -26,8 +26,8 @@ object ToViewData {
   }
 
 
-  def toCustomCourseViewData(ct: CourseTemplate): AdminCourseViewData = AdminCourseViewData(
-    ct.uniqueAlias, ct.courseTitle, ct.description, ct.courseData, ct.problemAliasesToGenerate, false
+  def toAdminCourseViewData(ct: CourseTemplate): AdminCourseViewData = AdminCourseViewData(
+    ct.uniqueAlias, ct.courseTitle, ct.description, ct.courseData, ct.problemAliasesToGenerate, ct.editable
   )
 
   def apply(ct: CourseTemplate): CourseTemplateViewData =

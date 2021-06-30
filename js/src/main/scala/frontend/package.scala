@@ -23,7 +23,7 @@ package object frontend extends Bindings with Alerts {
   val dateFormatterDYM = DateTimeFormatter.ofPattern("dd MM yyyy").withZone(ZoneOffset.ofHours(3)) //todo new Date().getTimezoneOffset().toInt
 
 
-  var lastUpdate = 0l
+  var lastUpdate = 0L
   def triggerTexUpdate(): Unit = {
     println(System.currentTimeMillis())
     println(lastUpdate)

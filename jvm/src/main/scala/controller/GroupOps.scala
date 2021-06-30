@@ -41,7 +41,6 @@ object GroupOps {
   }
 
   //Process requests
-
   def addUserToGroup(req: AddUserToGroupRequest): AddUserToGroupResponse = {
     User.byIdOrLogin(req.userHexIdOrLogin).flatMap { u =>
       Group.byIdOrTitle(req.groupIdOrTitle).map { g =>

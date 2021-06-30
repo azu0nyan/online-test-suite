@@ -10,7 +10,7 @@ object UpdateCustomCourse extends Route[UpdateCustomCourseRequest, UpdateCustomC
 }
 
 //REQ
-case class UpdateCustomCourseRequest(token:String, courseAlias: String, title: String, description:Option[String], allowedForAll:Boolean, courseData:CourseRoot) extends WithToken
+case class UpdateCustomCourseRequest(token:String, courseAlias: String, title: String, description:String, allowedForAll:Boolean, courseData:CourseRoot) extends WithToken
 
 //RES
 sealed trait UpdateCustomCourseResponse

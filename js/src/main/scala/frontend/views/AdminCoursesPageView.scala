@@ -1,7 +1,8 @@
 package frontend.views
 
-import clientRequests.admin.{CourseListRequest, CourseListSuccess,   NewCustomCourseRequest}
+import clientRequests.admin.{CourseListRequest, CourseListSuccess, NewCustomCourseRequest}
 import frontend._
+import frontend.views.elements.Expandable
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.{Element, Event}
@@ -36,12 +37,19 @@ class AdminCoursesPageView(
         tr(
           td(pr.get.courseAlias),
           td(pr.get.courseTitle),
-          td(pr.get.description.getOrElse("").toString),
-          td(pr.get.problemAliasesToGenerate.mkString(", ")),
+          td(pr.get.description),
+          td(
+            if(pr.get.problemAliasesToGenerate.size > 3)
+              Expandable(
+                h4(s"Задания: ${pr.get.problemAliasesToGenerate.size}"),
+                p(pr.get.problemAliasesToGenerate.mkString(", "))
+              )
+            else p(pr.get.problemAliasesToGenerate.mkString(", "))
+          ),
           td(button(onclick :+= ((_: Event) => {
             presenter.app.goTo(AdminCourseTemplateInfoPageState(pr.get.courseAlias))
             true // prevent default
-          }))(if(pr.get.editable) "Подробнее/ изменить" else "Подробнее"))
+          }))(if(pr.get.editable) "Подробнее/изменить" else "Подробнее"))
         )
       }.render)
     )
