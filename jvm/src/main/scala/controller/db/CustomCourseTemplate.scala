@@ -8,6 +8,8 @@ import viewData.AdminCourseViewData
 
 
 object CustomCourseTemplate {
+  def all:Seq[CustomCourseTemplate] = customCourseTemplates.all()
+
   def byAlias(courseAlias: String) : Option[CustomCourseTemplate] = customCourseTemplates.byField("uniqueAlias", courseAlias)
 
   def apply(uniqueAlias: String, courseTitle: String, description: String, courseData: CourseRoot, problemAliasesToGenerate: Seq[String]): CustomCourseTemplate =

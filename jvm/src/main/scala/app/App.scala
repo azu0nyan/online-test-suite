@@ -1,5 +1,6 @@
 package app
 
+import controller.db.CustomCourseTemplate
 import controller.{Maintenance, TemplatesRegistry}
 import impl.BinaryCountingOfAncientRussians
 
@@ -32,6 +33,9 @@ object App {
   }
 
   def initAliases(): Unit = {
+
+    for(c <- CustomCourseTemplate.all)
+      TemplatesRegistry.registerOrUpdateCourseTemplate(c)
 
 //    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
     TemplatesRegistry.registerDataPack(courses.javaCourse.data)

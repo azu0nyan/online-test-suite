@@ -23,12 +23,12 @@ class AdminCourseTemplateInfoPageView(
 
   override def getTemplate: Modifier[Element] =
     div(
+      EditableField.forString(course.subProp(_.description), x => p(x), x => presenter.changeDescription(x)),
       EditableField.forString(course.subProp(_.courseTitle), x => h1(x), x => presenter.changeTitle(x)),
-      EditableField.forString(course.subProp(_.description), x => h1(x), x => presenter.changeDescription(x)),
       produce(course.subProp(_.courseAlias))(alias => h4(s"Алиас: $alias").render),
-      EditableField[CourseRoot](course.subProp(_.courseData), x => p(x.toString),
-        _.toString, x => None, x => presenter.changeCourseData(x)),
-      //          Expandable(h4("Структура курса"), p(course.courseData.toString)),
+      //      EditableField[CourseRoot](course.subProp(_.courseData), x => p(x.toString),
+      //        _.toString, x => None, x => presenter.changeCourseData(x)),
+      Expandable(h4("Структура курса"), p(course.get.courseData.toString)),
       table(styles.Custom.defaultTable ~)(
         tr(
           th(width := "50px")("№"),
@@ -65,7 +65,6 @@ class AdminCourseTemplateInfoPageView(
 
 case class AdminCourseTemplateInfoPagePresenter(
                                                  app: Application[RoutingState],
-
                                                ) extends GenericPresenter[AdminCourseTemplateInfoPageState] {
 
   val currentAlias: Property[String] = Property("")
@@ -128,7 +127,7 @@ case class AdminCourseTemplateInfoPagePresenter(
     loadCourseData(currentAlias.get)
   }
 
-  def loadCourseData(alias:String): Unit  = {
+  def loadCourseData(alias: String): Unit = {
     frontend.sendRequest(clientRequests.admin.AdminCourseInfo, CourseInfoRequest(currentToken.get, alias)) onComplete {
       case Success(CourseInfoSuccess(courseInfo)) =>
         currentCourse.set(courseInfo)

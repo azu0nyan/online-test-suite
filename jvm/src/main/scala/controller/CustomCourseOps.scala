@@ -75,11 +75,6 @@ object CustomCourseOps {
             )
           )))
 
-    //  val defaultCourseStructure: CourseRoot =
-    //    CourseRoot("enter title", "course's annotation",
-    //      Seq(CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>", Seq()
-    //      )))
-
     def newCustomCourse(req: NewCourseTemplateRequest): NewCourseTemplateResponse = {
       if (TemplatesRegistry.getProblemTemplate(req.uniqueAlias).isEmpty &&
         CustomCourseTemplate.byAlias(req.uniqueAlias).isEmpty) {
