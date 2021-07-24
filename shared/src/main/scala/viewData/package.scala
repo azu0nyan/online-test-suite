@@ -14,7 +14,7 @@ package object viewData {
   case class ProblemTemplateExampleViewData(title: String, initialScore: ProblemScore, alias: String, allowedAttempts: Option[Int], exampleHtml: String, answerField: AnswerField)
 
   /** admin */
-  case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: Option[String],
+  case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: String,
                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable: Boolean)
 
   /** teacher */
@@ -64,13 +64,13 @@ package object viewData {
                             )
 
   /** Вся информация о курсе, отображаемая во время его выполнения */
-  case class CourseViewData(courseId: String, title: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemViewData], description: Option[String])
+  case class CourseViewData(courseId: String, title: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemViewData], description: String)
 
   /** Информация видная в списке активных курсов */
-  case class CourseInfoViewData(courseId: String, title: String, status: CourseStatus, description: Option[String])
+  case class CourseInfoViewData(courseId: String, title: String, status: CourseStatus, description: String)
 
   /** Информация видная в списке курсов которые можно пройти */
-  case class CourseTemplateViewData(courseTemplateAlias: String, title: String, description: Option[String])
+  case class CourseTemplateViewData(courseTemplateAlias: String, title: String, description: String)
 
   /** Информация видная на странице выбора курса */
   case class UserCoursesInfoViewData(templates: Seq[CourseTemplateViewData], existing: Seq[CourseInfoViewData])

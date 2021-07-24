@@ -1,7 +1,8 @@
 package controller
 
+import com.typesafe.scalalogging.Logger
 import clientRequests.UnknownException
-import clientRequests.admin.{AddCourseToGroupRequest, AddCourseToGroupResponse, AddCourseToGroupSuccess, AddProblemToCourseRequest, AddProblemToCourseResponse, AddProblemToCourseSuccess, AddProblemToCourseUnknownFailure, AliasAlreadyAdded, AliasNotUnique, CourseListRequest, CourseListResponse, CourseListSuccess, CustomCourseInfoRequest, CustomCourseInfoResponse, CustomCourseInfoSuccess,    NewCustomCourseRequest, NewCustomCourseResponse, NewCustomCourseSuccess, UnknownAddCourseToGroupFailure, UnknownCustomCourseInfoFailure, UnknownFailure, UnknownUpdateCustomCourseFailure, UpdateCustomCourseRequest, UpdateCustomCourseResponse, UpdateCustomCourseSuccess}
+import clientRequests.admin.{AddCourseToGroupRequest, AddCourseToGroupResponse, AddCourseToGroupSuccess, AddProblemToCourseTemplateRequest, AddProblemToCourseTemplateResponse, AddProblemToCourseTemplateSuccess, AddProblemToCourseTemplateUnknownFailure, AliasNotUnique, CourseInfoRequest, CourseInfoResponse, CourseInfoSuccess, CourseListRequest, CourseListResponse, CourseListSuccess, CourseTemplateDoesNotContainsProblem, DuplicateAlias, NewCourseTemplateRequest, NewCourseTemplateResponse, NewCourseTemplateSuccess, RemoveProblemFromCourseRequest, RemoveProblemFromCourseResponse, RemoveProblemFromCourseSuccess, RemoveProblemFromCourseTemplate, UnknownAddCourseToGroupFailure, UnknownAlias, UnknownCourseInfoFailure, UnknownCourseTemplate, UnknownCourseToRemoveFrom, UnknownFailure, UnknownUpdateCustomCourseFailure, UpdateCustomCourseRequest, UpdateCustomCourseResponse, UpdateCustomCourseSuccess}
 import controller.db._
 import org.bson.types.ObjectId
 import otsbridge.CoursePiece
@@ -10,102 +11,102 @@ import otsbridge.CoursePiece.CourseRoot
 import scala.util.Random
 
 object CustomCourseOps {
+  val log = Logger(this.getClass)
 
-  def addCourseToGroup(req: AddCourseToGroupRequest): AddCourseToGroupResponse = {
-    val gr = groups.byId(new ObjectId(req.groupId))
-    val course = TemplatesRegistry.getCourseTemplate(req.courseAlias)
-    if (gr.nonEmpty && course.nonEmpty &&
-      !gr.get.templatesForGroup.exists(_.templateAlias == course.get.uniqueAlias)) {
-      val courseForGroup = CourseTemplateForGroup(gr.get._id, course.get.uniqueAlias, req.forceToGroupMembers)
-      courseTemplateForGroup.insert(courseForGroup)
-
-      //start course for group members if needed
-      gr.get.users.foreach(GroupOps.ensureGroupCoursesStarted(_, gr.get))
-      AddCourseToGroupSuccess()
-    } else {
-      UnknownAddCourseToGroupFailure()
-    }
-  }
-
-  @Deprecated
-  def addProblemToCourse(req: AddProblemToCourseRequest): AddProblemToCourseResponse = {
+  def removeProblemFromCourseTemplate(req: RemoveProblemFromCourseRequest): RemoveProblemFromCourseResponse = {
     val courseOpt = CustomCourseTemplate.byAlias(req.courseAlias)
-    val problemOpt = TemplatesRegistry.getProblemTemplate(req.problemAlias)
-    if (courseOpt.nonEmpty && problemOpt.nonEmpty) {
+    if (courseOpt.isEmpty) UnknownCourseToRemoveFrom()
+    else {
       val course = courseOpt.get
-      val problem = problemOpt.get
-      if (!course.problemAliasesToGenerate.contains(problem.uniqueAlias)) {
-        log.info(s"Adding new problem ${problem.uniqueAlias} to custom course ${course.uniqueAlias}")
-        val updated = course.addProblem(problem)
+      if (course.problemAliasesToGenerate.contains(req.problemAlias)) {
+        log.info(s"Removing problem ${req.problemAlias} from course template ${req.courseAlias}")
+        val updated = course.removeProblem(req.problemAlias)
         TemplatesRegistry.registerOrUpdateCourseTemplate(updated)
-        log.info(s"Adding problem instances to existing course participants")
-        updated.activeInstances.foreach { c =>
-          val newProblem = Problem.formGenerated(course._id, Generator.generateProblem(problem, c.seed))
-          problems.insert(newProblem)
-          log.info(s"Added problem ${newProblem._id}")
+        for(instance <- updated.activeInstances;
+            problem <- instance.ownProblems.find(_.templateAlias == req.problemAlias)){
+          instance.removeProblem(problem)
+          ProblemOps.removeProblem(problem)
+          log.info(s"Removing problem $problem")
         }
-        AddProblemToCourseSuccess()
+        RemoveProblemFromCourseSuccess()
+      } else CourseTemplateDoesNotContainsProblem()
+    }
+  }
+
+    def addProblemToCourseTemplate(req: AddProblemToCourseTemplateRequest): AddProblemToCourseTemplateResponse = try {
+      val courseOpt = CustomCourseTemplate.byAlias(req.courseAlias)
+      val problemOpt = TemplatesRegistry.getProblemTemplate(req.problemAlias)
+      if (problemOpt.isEmpty) {
+        UnknownAlias()
+      } else if (courseOpt.isEmpty) {
+        UnknownCourseTemplate()
       } else {
-        AliasAlreadyAdded()
+        val course = courseOpt.get
+        val problem = problemOpt.get
+        if (!course.problemAliasesToGenerate.contains(problem.uniqueAlias)) {
+          log.info(s"Adding new problem ${problem.uniqueAlias} to custom course ${course.uniqueAlias}")
+          val updated = course.addProblem(problem)
+          TemplatesRegistry.registerOrUpdateCourseTemplate(updated)
+          val instances = updated.activeInstances
+          log.info(s"Adding problem instances to ${instances.size} existing course instances")
+          instances.foreach { c =>
+            val newProblem = Generator.addProblemToCourse(problem, c)
+            log.info(s"Added problem ${newProblem._id}")
+          }
+          AddProblemToCourseTemplateSuccess()
+        } else {
+          DuplicateAlias()
+        }
       }
-    } else {
-      AddProblemToCourseUnknownFailure(UnknownException())
+    } catch {
+      case t: Throwable =>
+        log.error("Error while adding problem to course", t)
+        AddProblemToCourseTemplateUnknownFailure(UnknownException())
     }
-  }
 
-  def customCourseInfo(req: CustomCourseInfoRequest): CustomCourseInfoResponse = {
-    CustomCourseTemplate.byAlias(req.alias) match {
-      case Some(cct) => CustomCourseInfoSuccess(cct.toViewData)
-      case None => UnknownCustomCourseInfoFailure()
-    }
-  }
 
-  def courseList(req: CourseListRequest): CourseListResponse = {
-   val customCourses = customCourseTemplates.all().map(_.toViewData)
-   val courses = TemplatesRegistry.courses.filter(c => !customCourses.exists(_.courseAlias == c.uniqueAlias ))
-    CourseListSuccess(customCourseTemplates.all().map(_.toViewData) ++ courses.map(ToViewData.toCustomCourseViewData))
-  }
+    //todo more templates
+    val defaultCourseStructure: CourseRoot =
+      CourseRoot("enter title", "course's annotation",
+        Seq(
+          CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>",
+            Seq(
+              CoursePiece.SubTheme("subtheme1", "Subtheme 1 title", "<p> some subtheme text</p>", Seq())
+            )
+          )))
 
-  //todo more templates
-   val defaultCourseStructure: CourseRoot =
-     CourseRoot("enter title", "course's annotation",
-       Seq(
-         CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>",
-           Seq(
-             CoursePiece.SubTheme("subtheme1", "Subtheme 1 title", "<p> some subtheme text</p>", Seq())
-           )
-         )))
-
-//  val defaultCourseStructure: CourseRoot =
-//    CourseRoot("enter title", "course's annotation",
-//      Seq(CoursePiece.Theme("theme1", " Theme 1 title", "<p> some theme text </p>", Seq()
-//      )))
-
-  def newCustomCourse(req: NewCustomCourseRequest): NewCustomCourseResponse = {
-    if (TemplatesRegistry.getProblemTemplate(req.uniqueAlias).isEmpty &&
-      CustomCourseTemplate.byAlias(req.uniqueAlias).isEmpty) {
-      log.info(s"Creating new custom course with alias ${req.uniqueAlias}")
-      val toInsert = CustomCourseTemplate(req.uniqueAlias,
-        "enter title",
-        Some("enter description"),
+    def newCustomCourse(req: NewCourseTemplateRequest): NewCourseTemplateResponse = {
+      if (TemplatesRegistry.getProblemTemplate(req.uniqueAlias).isEmpty &&
+        CustomCourseTemplate.byAlias(req.uniqueAlias).isEmpty) {
+        log.info(s"Creating new custom course with alias ${req.uniqueAlias}")
+        val toInsert = CustomCourseTemplate(req.uniqueAlias,
+          "enter title",
+          ("enter description"),
           defaultCourseStructure, Seq())
-      customCourseTemplates.insert(toInsert)
-      NewCustomCourseSuccess(toInsert._id.toHexString)
-    } else {
-      AliasNotUnique()
+        customCourseTemplates.insert(toInsert)
+        NewCourseTemplateSuccess(toInsert._id.toHexString)
+      } else {
+        AliasNotUnique()
+      }
     }
-  }
 
-  def updateCustomCourse(req: UpdateCustomCourseRequest): UpdateCustomCourseResponse = {
-    CustomCourseTemplate.byAlias(req.courseAlias) match {
-      case Some(cct) =>
-        if (req.courseData != cct.courseData) customCourseTemplates.updateField(cct, "courseData", req.courseData)
-        if (req.description != cct.description) customCourseTemplates.updateField(cct, "description", req.description)
-        if (req.title != cct.courseTitle) customCourseTemplates.updateField(cct, "courseTitle", req.title)
-        TemplatesRegistry.registerOrUpdateCourseTemplate(cct.updatedFromDb[CustomCourseTemplate])
-        UpdateCustomCourseSuccess()
-      case None => UnknownUpdateCustomCourseFailure()
+    def updateCustomCourse(req: UpdateCustomCourseRequest): UpdateCustomCourseResponse = try {
+      CustomCourseTemplate.byAlias(req.courseAlias) match {
+        case Some(cct) =>
+          for (t <- req.updatedData.title if t != cct.courseTitle)
+            customCourseTemplates.updateField(cct, "courseTitle", t)
+          for (d <- req.updatedData.description if d != cct.description)
+            customCourseTemplates.updateField(cct, "description", d)
+          for (cd <- req.updatedData.courseData if cd != cct.courseData)
+            customCourseTemplates.updateField(cct, "courseData", cd)
+          TemplatesRegistry.registerOrUpdateCourseTemplate(cct.updatedFromDb[CustomCourseTemplate])
+          UpdateCustomCourseSuccess()
+        case None => UnknownUpdateCustomCourseFailure()
+      }
+    } catch {
+      case t: Throwable =>
+        log.error(s"Error while updating course data $req", t)
+        UnknownUpdateCustomCourseFailure()
     }
-  }
 
-}
+  }

@@ -25,6 +25,7 @@ object TemplatesRegistry {
   }
 
   def registerOrUpdateCourseTemplate(pl: CourseTemplate): Unit = {
+    println(s"Registering template ${pl.uniqueAlias}")
     aliasToCourseTemplate.update(pl.uniqueAlias, pl)
     //    pl.problemsToGenerate.foreach(registerProblemTemplate)
   }

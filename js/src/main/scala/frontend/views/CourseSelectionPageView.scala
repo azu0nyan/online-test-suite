@@ -24,7 +24,7 @@ class CourseSelectionPageView(
   private def courseTemplateHtml(ct: CourseTemplateViewData) =
     div(styles.Custom.courseInfoContainer)(
       h3(ct.title), br,
-      p(ct.description.getOrElse("").toString), br,
+      p(ct.description), br,
       button(onclick :+= ((_: Event) => {
         presenter.startNewCourse(ct.courseTemplateAlias)
         true // prevent default
@@ -43,7 +43,7 @@ class CourseSelectionPageView(
   private def courseHtml(ci: CourseInfoViewData) =
     div(styles.Custom.courseInfoContainer)(
       h3(ci.title), br,
-      p(ci.description.getOrElse("").toString), br,
+      p(ci.description), br,
       statusHtml(ci.status),
       button(onclick :+= ((_: Event) => {
         presenter.continueCourse(ci.courseId)

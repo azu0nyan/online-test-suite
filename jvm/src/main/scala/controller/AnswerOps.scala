@@ -2,7 +2,6 @@ package controller
 
 import java.time.Clock
 import java.util.concurrent.TimeUnit
-
 import DbViewsShared.CourseShared._
 import clientRequests.teacher.{AnswersForConfirmationRequest, AnswersForConfirmationResponse, AnswersForConfirmationSuccess, TeacherConfirmAnswerRequest, TeacherConfirmAnswerResponse, TeacherConfirmAnswerSuccess, UnknownAnswersForConfirmationFailure, UnknownTeacherConfirmAnswerFailure}
 import controller.db._
@@ -12,6 +11,7 @@ import otsbridge.{AnswerVerificationResult, ProblemTemplate}
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.reflect.ClassTag
+import scala.util.Try
 //import otsbridge.{AnswerVerificationResult, CantVerify, VerificationDelayed, Verified}
 import org.mongodb.scala.bson.ObjectId
 import cats.implicits._
@@ -87,7 +87,15 @@ object AnswerOps {
 
   def answersForConfirmation(req: AnswersForConfirmationRequest): AnswersForConfirmationResponse =
     try {
-      AnswersForConfirmationSuccess(Answer.answersForConfirmation(req.groupId, req.problemId).map(ToViewData.toAnswerForConfirmation))
+
+      val (good, bad) = Answer.answersForConfirmation(req.groupId, req.problemId)
+        .map(x => Try(ToViewData.toAnswerForConfirmation(x))).partition(_.isSuccess)
+
+      log.error(s"Found ${bad.size} bad answers, cant generate confirmation data.")
+      bad.foreach(e => log.error("", e))
+
+      AnswersForConfirmationSuccess(good.flatMap(_.toOption))
+
     } catch {
       case t: Throwable =>
         log.error(t.getMessage)
@@ -113,8 +121,6 @@ object AnswerOps {
     }
 
 
-
-
   def onAnswerVerified(answer: Answer, score: ProblemScore, systemMessage: Option[String], review: Option[String]): Unit = {
     log.info(s"Answer : ${answer._id} verified changing status, score ${score.toPrettyString} ")
     answer.changeStatus(Verified(score, review, systemMessage, Clock.systemUTC().instant(), None))
@@ -134,7 +140,7 @@ object AnswerOps {
         } else {
           onAnswerVerified(answer, score, systemMessage, None)
         }
-      case otsbridge. CantVerify(systemMessage) =>
+      case otsbridge.CantVerify(systemMessage) =>
         log.info(s"Answer : ${answer._id} cant verify cause : ${systemMessage.getOrElse("No message, unknown")}")
         answer.changeStatus(Rejected(systemMessage, Clock.systemUTC().instant()))
       case otsbridge.VerificationDelayed(systemMessage) =>

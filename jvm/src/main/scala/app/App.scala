@@ -1,5 +1,6 @@
 package app
 
+import controller.db.CustomCourseTemplate
 import controller.{Maintenance, TemplatesRegistry}
 import impl.BinaryCountingOfAncientRussians
 
@@ -32,13 +33,17 @@ object App {
   }
 
   def initAliases(): Unit = {
-    log.info(s"Loading courses and problems")
+
+    for(c <- CustomCourseTemplate.all)
+      TemplatesRegistry.registerOrUpdateCourseTemplate(c)
+
 //    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
     TemplatesRegistry.registerDataPack(courses.javaCourse.data)
     TemplatesRegistry.registerDataPack(courses.datastructures.data)
     TemplatesRegistry.registerDataPack(courses.algos.data)
     TemplatesRegistry.registerDataPack(courses.graphics3d.data)
     TemplatesRegistry.registerDataPack(courses.simpleProblems.data)
+    TemplatesRegistry.registerDataPack(courses.unorderedProblems.data)
 
     TemplatesRegistry.registerDataPack(myCourses.g6_20_21.data)
     TemplatesRegistry.registerDataPack(myCourses.g7_20_21.data)
@@ -50,7 +55,6 @@ object App {
     TemplatesRegistry.registerDataPack(myCourses.g11_20_21.data)
     TemplatesRegistry.registerDataPack(Projects.data)
 
-    log.info(s"Loaded ${TemplatesRegistry.aliasToCourseTemplate.size} courses, ${TemplatesRegistry.aliasToPT.size} problems.")
     //    TemplatesRegistry.registerOrUpdateCourseTemplate(tasks.javaCourse.JavaCourse)
   }
 

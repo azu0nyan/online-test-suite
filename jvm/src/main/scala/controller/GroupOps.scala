@@ -7,6 +7,8 @@ import controller.db._
 import org.mongodb.scala.bson.ObjectId
 import utils.system.CalcExecTime
 
+import scala.reflect.runtime.universe.Try
+
 object GroupOps {
   def newGroup(req: NewGroupRequest): NewGroupResponse =
     try {
@@ -24,7 +26,7 @@ object GroupOps {
 
   def groupList(req: GroupListRequest): GroupListResponse = {
     try {
-      GroupListResponseSuccess(groups.all().map(_.toDetailedViewData(true)))//todo only students
+      GroupListResponseSuccess(groups.all().map(_.toDetailedViewData(true))) //todo only students
     } catch {
       case _: Throwable => GroupListResponseFailure()
     }
@@ -39,7 +41,6 @@ object GroupOps {
   }
 
   //Process requests
-
   def addUserToGroup(req: AddUserToGroupRequest): AddUserToGroupResponse = {
     User.byIdOrLogin(req.userHexIdOrLogin).flatMap { u =>
       Group.byIdOrTitle(req.groupIdOrTitle).map { g =>
@@ -110,14 +111,16 @@ object GroupOps {
       val users = g.users
       log.info(s"Getting scores for ${coursesTemplates.size} course and ${users.size} user, from group ${g.title}")
       val (usersAndProblems, t) = CalcExecTime.withResult(
-       for (
-        u <- users.filter(u => !onlyStudentAnswers | u.role == Student())
-      ) yield (u.toViewData, {
         for (
-          c <- u.courses if coursesTemplates.exists(_.uniqueAlias == c.templateAlias);
-          p <- c.ownProblems
-        ) yield p.toViewData
-      }))
+          u <- users.filter(u => !onlyStudentAnswers | u.role == Student())
+        ) yield (u.toViewData, {
+          (for (
+            c <- u.courses if coursesTemplates.exists(_.uniqueAlias == c.templateAlias);
+            p <- c.ownProblems
+          ) yield try (Some(p.toViewData)) catch {//todo
+            case _: Throwable => None
+          }).flatten
+        }))
       log.info(s"Got scores for ${coursesTemplates.size} course and ${users.size} user, from group ${g.title} time ${t.dt} ms")
 
       GroupScoresSuccess(coursesTemplates.map(ct =>

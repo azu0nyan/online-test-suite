@@ -13,7 +13,7 @@ import spark.Spark._
 import viewData.UserViewData
 object HttpServer {
 
-  def initRoutesAndStart(host:String = "127.0.0.1", port_ :Int = 8080): Unit ={
+  def initRoutesAndStart(host:String = "0.0.0.0", port_ :Int = 8007): Unit ={
     log.info(s"set external static files location to ${Paths.get("").toAbsolutePath.toString}")
     threadPool(200, 2, 60 * 60 * 1000)
     staticFileLocation("/")//todo
@@ -53,19 +53,21 @@ object HttpServer {
     addRoute(clientRequests.teacher.InvalidateProblem, GradeOps.invalidateProblem, teacher)
 
     addRoute(clientRequests.admin.AdminAction, AdminOps.processAdminAction, adminOnly)
-    addRoute(clientRequests.admin.AddCourseToGroup, CustomCourseOps.addCourseToGroup, adminOnly)
-    addRoute(clientRequests.admin.AddProblemToCourse, CustomCourseOps.addProblemToCourse, adminOnly)
+    addRoute(clientRequests.admin.AddCourseToGroup, CoursesOps.addCourseToGroup, adminOnly)
     addRoute(clientRequests.admin.AddUserToGroup, GroupOps.addUserToGroup, adminOnly)
-    addRoute(clientRequests.admin.CustomCourseInfo, CustomCourseOps.customCourseInfo, adminOnly)
-    addRoute(clientRequests.admin.CourseList, CustomCourseOps.courseList, adminOnly)
+    addRoute(clientRequests.admin.AdminCourseInfo, CoursesOps.courseInfo, adminOnly)
+    addRoute(clientRequests.admin.CourseList, CoursesOps.courseList, adminOnly)
     addRoute(clientRequests.admin.GroupInfo, GroupOps.group, adminOnly)
     addRoute(clientRequests.admin.GroupList, GroupOps.groupList, adminOnly)
     addRoute(clientRequests.admin.NewGroup, GroupOps.newGroup, adminOnly)
-    addRoute(clientRequests.admin.NewCustomCourse, CustomCourseOps.newCustomCourse, adminOnly)
     addRoute(clientRequests.admin.ProblemTemplateList, ProblemOps.problemTemplateList, adminOnly)
     addRoute(clientRequests.admin.RemoveUserFromGroup, GroupOps.removeUserFromGroup, adminOnly)
-    addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
     addRoute(clientRequests.admin.UserList, UserOps.userList , adminOnly)
+    //custom course edit
+    addRoute(clientRequests.admin.RemoveProblemFromCourseTemplate, CustomCourseOps.removeProblemFromCourseTemplate, adminOnly)
+    addRoute(clientRequests.admin.AddProblemToCourseTemplate, CustomCourseOps.addProblemToCourseTemplate, adminOnly)
+    addRoute(clientRequests.admin.NewCourseTemplate, CustomCourseOps.newCustomCourse, adminOnly)
+    addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
 
 
 

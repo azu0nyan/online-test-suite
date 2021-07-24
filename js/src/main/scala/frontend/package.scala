@@ -23,7 +23,7 @@ package object frontend extends Bindings with Alerts {
   val dateFormatterDYM = DateTimeFormatter.ofPattern("dd MM yyyy").withZone(ZoneOffset.ofHours(3)) //todo new Date().getTimezoneOffset().toInt
 
 
-  var lastUpdate = 0l
+  var lastUpdate = 0L
   def triggerTexUpdate(): Unit = {
     println(System.currentTimeMillis())
     println(lastUpdate)
@@ -69,14 +69,13 @@ package object frontend extends Bindings with Alerts {
     routingRegistry, viewFactoryRegistry
   )
 
-
-  val extractToken: Regex = "token=[A-Za-z0-9_\\\\.\\\\-]*".r //todo check
+  val extractToken: Regex = "token=[A-Za-z0-9_./\\-=+]*".r //todo check
   def tokenFromCookie: String = {
     val cookie = document.cookie
     println(s"extracting cookies from : $cookie")
     extractToken.findFirstIn(cookie) match {
       case Some(t) => t.substring("token=".length)
-      case None => ""
+      case None =>""
     }
   }
 

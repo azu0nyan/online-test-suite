@@ -9,8 +9,14 @@ object UpdateCustomCourse extends Route[UpdateCustomCourseRequest, UpdateCustomC
   override val route: String = "requestUpdateCustomCourse"
 }
 
+case class CustomCourseUpdateData(
+                                    title: Option[String] = None,
+                                    description: Option[String]= None,
+                                    courseData: Option[CourseRoot]= None
+                                  )
+
 //REQ
-case class UpdateCustomCourseRequest(token:String, courseAlias: String, title: String, description:Option[String], allowedForAll:Boolean, courseData:CourseRoot) extends WithToken
+case class UpdateCustomCourseRequest(token: String, courseAlias: String, updatedData: CustomCourseUpdateData) extends WithToken
 
 //RES
 sealed trait UpdateCustomCourseResponse
