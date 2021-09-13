@@ -9,6 +9,13 @@ import otsbridge.{AnswerField, AnswerVerificationResult, CantVerify, ProblemScor
 object CustomProblemTemplate{
   sealed trait CustomProblemVerification
   case object VerifiedByTeacher extends CustomProblemVerification
+
+  def all: Seq[CustomProblemTemplate] = customProblemTemplates.all()
+
+  def byAlias(alias:String): Option[CustomProblemTemplate] = customProblemTemplates.byField("uniqueAlias")
+
+  def apply(uniqueAlias: String, staticTitle: String, staticHtml: String, staticAnswerField: AnswerField, initialScore: ProblemScore.ProblemScore, verification: CustomProblemVerification): CustomProblemTemplate =
+    new CustomProblemTemplate(new ObjectId, uniqueAlias, staticTitle, staticHtml, staticAnswerField, initialScore, verification)
 }
 
 case class CustomProblemTemplate(
@@ -33,9 +40,4 @@ case class CustomProblemTemplate(
       case VerifiedByTeacher => Verified(BinaryScore(true), None)
       case _ => CantVerify(Some("Тип верификации ответа не поддерживается"))
     }
-  /*
-  override val requireTeacherVerificationIfScoreGEQThan: Option[Int] = Some(0)
-    override final def verifyAnswer(seed: Int, answer: String): AnswerVerificationResult =
-      Verified(initialScore, None)
-   */
 }

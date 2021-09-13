@@ -73,6 +73,7 @@ package object db extends CollectionOps {
 
 
     classOf[CustomCourseTemplate],
+    classOf[CustomProblemTemplate],
 
     //todo separate
     classOf[LtiProblem],
@@ -96,6 +97,7 @@ package object db extends CollectionOps {
   implicit val coursesAvailableForUser: MongoCollection[CourseTemplateAvailableForUser] = database.getCollection("coursesAvailableForUser")
   implicit val courseTemplateForGroup: MongoCollection[CourseTemplateForGroup] = database.getCollection("CourseTemplateForGroup")
   implicit val customCourseTemplates: MongoCollection[CustomCourseTemplate] = database.getCollection("CustomCourseTemplate")
+  implicit val customProblemTemplates: MongoCollection[CustomProblemTemplate] = database.getCollection("CustomProblemTemplate")
   implicit val grades: MongoCollection[Grade] = database.getCollection("grades")
   implicit val groupGrades: MongoCollection[GroupGrade] = database.getCollection("groupGrades")
   implicit val invalidatedProblems: MongoCollection[InvalidatedProblem] = database.getCollection("invalidatedProblems")

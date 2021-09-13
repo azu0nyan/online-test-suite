@@ -8,9 +8,9 @@ import viewData.AdminCourseViewData
 
 
 object CustomCourseTemplate {
-  def all:Seq[CustomCourseTemplate] = customCourseTemplates.all()
+  def all: Seq[CustomCourseTemplate] = customCourseTemplates.all()
 
-  def byAlias(courseAlias: String) : Option[CustomCourseTemplate] = customCourseTemplates.byField("uniqueAlias", courseAlias)
+  def byAlias(courseAlias: String): Option[CustomCourseTemplate] = customCourseTemplates.byField("uniqueAlias", courseAlias)
 
   def apply(uniqueAlias: String, courseTitle: String, description: String, courseData: CourseRoot, problemAliasesToGenerate: Seq[String]): CustomCourseTemplate =
     new CustomCourseTemplate(new ObjectId(), uniqueAlias, courseTitle, description, courseData, problemAliasesToGenerate)
@@ -24,15 +24,15 @@ case class CustomCourseTemplate(
                                  override val courseData: CourseRoot,
                                  override val problemAliasesToGenerate: Seq[String],
                                ) extends MongoObject with CourseTemplate {
-  def activeInstances:Seq[Course] = Course.byTemplateAlias(uniqueAlias)
+  def activeInstances: Seq[Course] = Course.byTemplateAlias(uniqueAlias)
 
-  def addProblem(problem: ProblemTemplate) :CustomCourseTemplate = {
+  def addProblem(problem: ProblemTemplate): CustomCourseTemplate = {
     customCourseTemplates.updateField(this, "problemAliasesToGenerate",
       problemAliasesToGenerate :+ problem.uniqueAlias)
     updatedFromDb[CustomCourseTemplate]
   }
 
-  def removeProblem(alias:String):CustomCourseTemplate = {
+  def removeProblem(alias: String): CustomCourseTemplate = {
     customCourseTemplates.updateField(this, "problemAliasesToGenerate",
       problemAliasesToGenerate.filterNot(_ == alias)
     )
