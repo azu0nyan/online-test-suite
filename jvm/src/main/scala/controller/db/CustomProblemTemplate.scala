@@ -12,7 +12,7 @@ object CustomProblemTemplate{
 
   def all: Seq[CustomProblemTemplate] = customProblemTemplates.all()
 
-  def byAlias(alias:String): Option[CustomProblemTemplate] = customProblemTemplates.byField("uniqueAlias")
+  def byAlias(alias:String): Option[CustomProblemTemplate] = customProblemTemplates.byField("uniqueAlias", alias)
 
   def apply(uniqueAlias: String, staticTitle: String, staticHtml: String, staticAnswerField: AnswerField, initialScore: ProblemScore.ProblemScore, verification: CustomProblemVerification): CustomProblemTemplate =
     new CustomProblemTemplate(new ObjectId, uniqueAlias, staticTitle, staticHtml, staticAnswerField, initialScore, verification)

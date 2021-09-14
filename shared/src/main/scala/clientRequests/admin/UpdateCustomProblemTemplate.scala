@@ -11,7 +11,7 @@ object UpdateCustomProblemTemplate extends Route[UpdateCustomProblemTemplateRequ
 }
 
 
-case class CustomCourseUpdateData(
+case class CustomProblemUpdateData(
                                  title: String,
                                  html: String,
                                  answerField: AnswerField,
@@ -20,7 +20,7 @@ case class CustomCourseUpdateData(
                                  )
 
 //REQ
-case class UpdateCustomProblemTemplateRequest(token: String, problemAlias: String, data: CustomCourseUpdateData) extends WithToken
+case class UpdateCustomProblemTemplateRequest(token: String, problemAlias: String, data: CustomProblemUpdateData) extends WithToken
 
 //RES
 sealed trait UpdateCustomProblemTemplateResponse
