@@ -2,10 +2,10 @@ package controller
 
 import clientRequests.admin.{AddCustomProblemTemplateRequest, AddCustomProblemTemplateResponse, AddCustomProblemTemplateSuccess, AliasClaimed, RemoveCustomProblemTemplateRequest, RemoveCustomProblemTemplateResponse, RemoveCustomProblemTemplateSuccess, UnknownAddCustomProblemTemplateFailure, UnknownRemoveCustomProblemTemplateFailure, UnknownUpdateCustomProblemTemplateFailure, UpdateCustomProblemTemplateRequest, UpdateCustomProblemTemplateResponse, UpdateCustomProblemTemplateSuccess}
 import com.typesafe.scalalogging.Logger
+import controller.db.CustomProblemVerification.VerifiedByTeacher
 import controller.db.{CustomProblemTemplate, customProblemTemplates}
-import controller.db.CustomProblemTemplate.VerifiedByTeacher
 import otsbridge.ProblemScore.BinaryScore
-import otsbridge.{ProblemScore, TextField}
+import otsbridge.AnswerField._
 
 object CustomProblemOps {
   val log = Logger(this.getClass)
@@ -17,8 +17,9 @@ object CustomProblemOps {
         AliasClaimed()
       case None =>
         val toAdd = CustomProblemTemplate(req.problemAlias, "No Title", "<p> no html</p>",
-          TextField(""), BinaryScore(false), VerifiedByTeacher)
+          TextField(""), BinaryScore(false), VerifiedByTeacher())
         val res = customProblemTemplates.insert(toAdd)
+        TemplatesRegistry.registerProblemTemplate(res)
         log.info(s"Custom problem with alias ${req.problemAlias} added")
         AddCustomProblemTemplateSuccess(res._id.toHexString)
     }
@@ -31,6 +32,7 @@ object CustomProblemOps {
         val toRemove = db.problems.all().filter(_.templateAlias == req.problemAlias)
         log.info(s"Found ${toRemove.size} problem instances to remove alias. Removing...")
         toRemove.foreach(ProblemOps.removeProblem)
+        TemplatesRegistry.removeProblemTemplate(problem)
         RemoveCustomProblemTemplateSuccess()
       case None =>
         log.info(s"Cant remove custom problem template alias ${req.problemAlias} not found.")

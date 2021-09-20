@@ -1,6 +1,6 @@
 package app
 
-import controller.db.CustomCourseTemplate
+import controller.db.{CustomCourseTemplate, CustomProblemTemplate}
 import controller.{Maintenance, TemplatesRegistry}
 import impl.BinaryCountingOfAncientRussians
 
@@ -36,6 +36,9 @@ object App {
 
     for(c <- CustomCourseTemplate.all)
       TemplatesRegistry.registerOrUpdateCourseTemplate(c)
+
+    for(p <- CustomProblemTemplate.all)
+      TemplatesRegistry.registerProblemTemplate(p)
 
 //    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
     TemplatesRegistry.registerDataPack(courses.javaCourse.data)

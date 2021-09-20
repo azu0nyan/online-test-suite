@@ -10,7 +10,7 @@ import io.udash._
 import io.udash.bootstrap.form.UdashInputGroup
 import org.scalajs.dom.{Element, Event}
 import org.scalajs.dom.html.Input
-import otsbridge.ProgramAnswer
+import otsbridge.AnswerField._
 import scalatags.JsDom.all.{div, _}
 import scalatags.generic.Modifier
 import viewData.{AnswerViewData, ProblemViewData, UserViewData}

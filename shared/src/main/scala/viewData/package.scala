@@ -5,6 +5,7 @@ import otsbridge.{AnswerField, ProblemScore}
 import io.circe.generic.auto._
 import otsbridge.CoursePiece.{CoursePiece, CourseRoot}
 import otsbridge.ProblemScore.ProblemScore
+import otsbridge.AnswerField._
 
 /**
  * Данные которые может послать сервер клиенту

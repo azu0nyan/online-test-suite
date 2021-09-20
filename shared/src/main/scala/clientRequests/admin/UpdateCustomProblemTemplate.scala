@@ -4,7 +4,7 @@ import clientRequests.{Route, WithToken}
 import io.circe.generic.auto._
 import otsbridge.AnswerField
 import otsbridge.ProblemScore.ProblemScore
-
+import otsbridge.AnswerField._
 
 object UpdateCustomProblemTemplate extends Route[UpdateCustomProblemTemplateRequest, UpdateCustomProblemTemplateResponse] {
   override val route: String = "requestUpdateCustomProblemTemplate"

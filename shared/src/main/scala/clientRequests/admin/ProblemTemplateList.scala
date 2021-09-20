@@ -11,7 +11,7 @@ object ProblemTemplateList extends Route[ProblemTemplateListRequest, ProblemTemp
 
 sealed trait ProblemTemplateFilter
 case class AliasMatches(regex: String) extends ProblemTemplateFilter
-case class Editable(editable: Boolean)
+case class Editable(editable: Boolean) extends ProblemTemplateFilter
 //REQ
 case class ProblemTemplateListRequest(token:String, filters: Seq[ProblemTemplateFilter]) extends WithToken
 

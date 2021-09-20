@@ -7,7 +7,7 @@ import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.{Element, MutationObserver, MutationObserverInit}
 import otsbridge.ProblemScore.BinaryScore
-import otsbridge.TextField
+import otsbridge.AnswerField._
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
 import viewData.{AnswerViewData, ProblemViewData}

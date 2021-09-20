@@ -5,6 +5,7 @@ import DbViewsShared.GradeRule.{GradeRound, GradedProblem}
 import DbViewsShared.{GradeOverride, GradeRule}
 import com.typesafe.scalalogging.Logger
 import controller.db.CustomCourseTemplate
+import controller.db.CustomProblemVerification.CustomProblemVerification
 import controller.db.codecs.{DisplayMeCodecProvider, OptionCodec, SomeCodec}
 import org.bson.codecs.Codec
 import org.bson.types.ObjectId
@@ -13,10 +14,11 @@ import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromCodecs, fromProviders, fromRegistries}
 import org.slf4j.LoggerFactory
+import otsbridge.AnswerField.AnswerField
 import otsbridge.CoursePiece.CoursePiece
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.ProgramRunResult.ProgramRunResult
-import otsbridge.{DisplayMe, ProblemScore, ProgramRunResult}
+import otsbridge.{AnswerField, DisplayMe, ProblemScore, ProgramRunResult}
 
 import scala.reflect.ClassTag
 //import otsbridge.{ProblemScore, ProgramRunResult}
@@ -48,6 +50,8 @@ package object db extends CollectionOps {
     classOf[ProgramRunResult],
     classOf[ProblemScore],
     classOf[UserToGroup],
+    classOf[AnswerField],
+    classOf[CustomProblemVerification],
 
     //    mongoHelper.problemRunResultCodecProvider,
     //    mongoHelper.problemScoreCodecProvider,

@@ -13,10 +13,10 @@ object ProblemTemplateEditor {
     CustomProblemUpdateData(data.title, data.exampleHtml, data.answerField, data.initialScore)
 
   def apply(
-             template: ModelProperty[viewData.ProblemTemplateExampleViewData],
-             submit: CustomProblemUpdateData => Unit
+             template: ReadableProperty[viewData.ProblemTemplateExampleViewData],
+             submit: CustomProblemUpdateData => Unit,
            ) = {
-    val ud: ReadableProperty[CustomProblemUpdateData] = template.subProp(viewToUpdateData)
+    val ud: ReadableProperty[CustomProblemUpdateData] = template.transform(viewToUpdateData)
     val title = EditableField.forString(
       ud.transform(_.title),
       s => h1(s),
@@ -27,13 +27,24 @@ object ProblemTemplateEditor {
       s => div(raw(s)),
       newHtml => submit(ud.get.copy(html = newHtml))
     )
-    //
+    /*
+    tr(
+          td(pr.get.alias),
+          td(pr.get.title),
+          td(pr.get.answerField.toString),
+          td(raw(pr.get.exampleHtml)),
+          td(pr.get.allowedAttempts),
+          td(pr.get.initialScore.toString),
+        )
+     */
 
-    div(
-      title,
-      html,
-      bind(ud.transform(_.answerField)),
-      bind(ud.transform(_.initialScore))
+    Seq(
+      td(bind(template.transform(_.alias))),
+      td(title),
+      td(bind(ud.transform(_.answerField))),
+      td(html),
+      td(bind(template.transform(_.allowedAttempts))),
+      td(bind(ud.transform(_.initialScore)))
     )
   }
 }

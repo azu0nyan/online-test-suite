@@ -2,7 +2,8 @@ package impl
 
 import otsbridge.CoursePiece.{CourseRoot, Problem}
 import otsbridge.ProblemScore.{BinaryScore, ProblemScore}
-import otsbridge.{AnswerField, AnswerVerificationResult, CantVerify, CoursePiece, CourseTemplate, DisplayMe, DoubleNumberField, ProblemTemplate, Verified}
+import otsbridge.AnswerField._
+import otsbridge.{AnswerField, AnswerVerificationResult, CantVerify, CoursePiece, CourseTemplate, DisplayMe, ProblemTemplate, Verified}
 
 import scala.concurrent.Future
 
