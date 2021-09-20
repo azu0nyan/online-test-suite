@@ -7,11 +7,13 @@ import otsbridge.CoursePiece.{CoursePiece, CourseRoot}
 import otsbridge.ProblemScore.ProblemScore
 
 /**
-  * Данные которые может послать сервер клиенту
-  */
+ * Данные которые может послать сервер клиенту
+ */
 package object viewData {
   /** admin */
-  case class ProblemTemplateExampleViewData(title: String, initialScore: ProblemScore, alias: String, allowedAttempts: Option[Int], exampleHtml: String, answerField: AnswerField)
+  case class ProblemTemplateExampleViewData(title: String, initialScore: ProblemScore, alias: String,
+                                            allowedAttempts: Option[Int], exampleHtml: String, answerField: AnswerField,
+                                            editable: Boolean)
 
   /** admin */
   case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: String,

@@ -45,6 +45,10 @@ class AdminPageView(
       presenter.app.goTo(AdminActionsPageState)
       true // prevent default
     }))("Администрировние"),
+    button( onclick :+= ((_: Event) => {
+      presenter.app.goTo(CourseSelectionPageState)
+      true // prevent default
+    }))("Вид от пользователя"),
 
 
     childViewContainer
