@@ -17,7 +17,7 @@ object CustomProblemOps {
         AliasClaimed()
       case None =>
         val toAdd = CustomProblemTemplate(req.problemAlias, "No Title", "<p> no html</p>",
-          TextField(""), BinaryScore(false), VerifiedByTeacher())
+          TextField("", 30), BinaryScore(false), VerifiedByTeacher())
         val res = customProblemTemplates.insert(toAdd)
         TemplatesRegistry.registerProblemTemplate(res)
         log.info(s"Custom problem with alias ${req.problemAlias} added")
