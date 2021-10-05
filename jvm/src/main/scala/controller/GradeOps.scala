@@ -152,12 +152,16 @@ object GradeOps {
   def requestGroupGrades(req: GroupGradesRequest): GroupGradesResponse = {
     controller.db.Group.byIdOrTitle(req.groupIdOrTitle) match {
       case Some(g) =>
-        val res = g.users.filter(u => !req.onlyStudentGrades || u.role == Student()).map { user =>
-          val preloadedMap = user.courseAliasProblemAliasProblem(true)
-          val gradesViewDatas = user.grades.map(g => UserGradeViewData(g._id.toString, g.description, calculateGradeValue(g)(Some(user), Some(preloadedMap)), g.date))
-          val userViewData = user.toViewData
-          (userViewData, gradesViewDatas)
-        }
+        val groupGradeIds = GroupGrade.forGroup(g).map(_._id).toSet
+        val res = for (
+          user <- g.users.filter(u => !req.onlyStudentGrades || u.role == Student());
+          preloadedMap = user.courseAliasProblemAliasProblem(true);
+          grades = user.grades
+            .filter(g => (g.groupGradeId.isEmpty && req.loadPersonalGrades) ||
+              (g.groupGradeId.nonEmpty && groupGradeIds.contains(g.groupGradeId.get)))
+            .filter(g => req.from.isEmpty || g.date.isAfter(req.from.get))
+            .filter(g => req.to.isEmpty || g.date.isBefore(req.to.get))
+        ) yield (user.toViewData, grades.map(g => UserGradeViewData(g._id.toString, g.description, calculateGradeValue(g)(Some(user), Some(preloadedMap)), g.date)))
         GroupGradesSuccess(res)
       case None => UnknownGroupGradesFailure()
     }
@@ -174,13 +178,13 @@ object GradeOps {
     }
 
   /**
-    * Вычислить значение оценки
-    *
-    * @param g                        оценка
-    * @param preloadedUser            для меньшего количества запросов к БД заранее запросить полтьзователя и передать как аргумент
-    * @param preloadedUserProblemsMap для меньшего количества запросов к БД заранее запросить все курсы/задачи пользователя и предать как аргумент
-    * @return
-    */
+   * Вычислить значение оценки
+   *
+   * @param g                        оценка
+   * @param preloadedUser            для меньшего количества запросов к БД заранее запросить полтьзователя и передать как аргумент
+   * @param preloadedUserProblemsMap для меньшего количества запросов к БД заранее запросить все курсы/задачи пользователя и предать как аргумент
+   * @return
+   */
   def calculateGradeValue(g: Grade)(
     preloadedUser: Option[User] = None,
     preloadedUserProblemsMap: Option[Map[String, Map[String, Problem]]] = None): Either[GradeOverride, Int] = {

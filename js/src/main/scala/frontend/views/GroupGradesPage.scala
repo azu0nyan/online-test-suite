@@ -212,7 +212,7 @@ case class GroupGradesPagePresenter(
   val users: mutable.Map[UserViewData, Map[(Int, Int, Int), Seq[UserGradeViewData]]] = mutable.Map()
 
   val addDates = for (i <- Seq(1, 15, 29);
-                      j <- Seq(9, 10, 11, 12)) yield (i, j, 2020)
+                      j <- Seq(9, 10, 11, 12)) yield (i, j, 2021)
 
   def addPersonalGrade(user: UserViewData, rule: GradeRule, dmy: (Int, Int, Int)) = {
     val date = LocalDate.of(dmy._3, dmy._2, dmy._1).atTime(0, 0).toInstant(ZoneOffset.UTC)
@@ -232,7 +232,8 @@ case class GroupGradesPagePresenter(
 
   def requestDataUpdate(): Unit = {
     frontend
-      .sendRequest(clientRequests.watcher.GroupGrades, GroupGradesRequest(currentToken.get, groupId.get, true)) onComplete {
+      .sendRequest(clientRequests.watcher.GroupGrades,
+        GroupGradesRequest(currentToken.get, groupId.get, true, true, from = Some(LocalDate.of(2021, 9, 1).atTime(0, 0).toInstant(ZoneOffset.UTC)))) onComplete {
       case Success(GroupGradesSuccess(g)) =>
         loaded.set(false, true)
         val DMY = (g.flatMap(x => x._2).map(x => instantToDMY(x.date)).toSet.toList ++ addDates).toSet.toSeq
