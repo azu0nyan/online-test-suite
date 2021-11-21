@@ -20,7 +20,9 @@ ssh ${USER}@${HOST} "killall -9 java"
 ssh ${USER}@${HOST} "rm ~/${DIR} -r;cd ~; mkdir ${DIR}"
 cd ../jvm/target/universal || exit
 scp ${FILE} ${USER}@${HOST}:~/${DIR}/${FILE}
-ssh ${USER}@${HOST} "cd ~/${DIR};unzip ${FILE};cd online-test-suite-0.2-SNAPSHOT/bin;./online-test-suite"
+ssh ${USER}@${HOST} "cd ~/${DIR};unzip ${FILE};cd online-test-suite-0.2-SNAPSHOT/bin;
+
+# ./online-test-suite"
 
 
 
