@@ -40,7 +40,8 @@ object ToViewData {
       pt.uniqueAlias,
       pt.allowedAttempts,
       pt.problemHtml(0),
-      pt.answerField(0)
+      pt.answerField(0),
+      pt.editable
     )
 
 

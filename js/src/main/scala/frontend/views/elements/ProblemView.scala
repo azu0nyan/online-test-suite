@@ -14,7 +14,8 @@ import io.udash.bindings.modifiers.Binding
 import org.scalajs.dom.Event
 import otsbridge.ProblemScore.MultipleRunsResultScore
 import otsbridge.ProgrammingLanguage.ProgrammingLanguage
-import otsbridge.{AnswerField, DoubleNumberField, IntNumberField, ProgramAnswer, ProgramInTextField, ProgrammingLanguage, SelectManyField, SelectOneField, TextField}
+import otsbridge.AnswerField._
+import otsbridge.{AnswerField, ProgrammingLanguage}
 import scalacss.internal.Pseudo.Custom
 import scalatags.JsDom.all._
 import viewData.AnswerViewData

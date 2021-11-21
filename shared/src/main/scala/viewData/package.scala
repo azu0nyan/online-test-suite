@@ -5,13 +5,16 @@ import otsbridge.{AnswerField, ProblemScore}
 import io.circe.generic.auto._
 import otsbridge.CoursePiece.{CoursePiece, CourseRoot}
 import otsbridge.ProblemScore.ProblemScore
+import otsbridge.AnswerField._
 
 /**
-  * Данные которые может послать сервер клиенту
-  */
+ * Данные которые может послать сервер клиенту
+ */
 package object viewData {
   /** admin */
-  case class ProblemTemplateExampleViewData(title: String, initialScore: ProblemScore, alias: String, allowedAttempts: Option[Int], exampleHtml: String, answerField: AnswerField)
+  case class ProblemTemplateExampleViewData(title: String, initialScore: ProblemScore, alias: String,
+                                            allowedAttempts: Option[Int], exampleHtml: String, answerField: AnswerField,
+                                            editable: Boolean)
 
   /** admin */
   case class AdminCourseViewData(courseAlias: String, courseTitle: String, description: String,

@@ -9,8 +9,11 @@ object ProblemTemplateList extends Route[ProblemTemplateListRequest, ProblemTemp
   override val route: String = "requestProblemTemplateList"
 }
 
+sealed trait ProblemTemplateFilter
+case class AliasMatches(regex: String) extends ProblemTemplateFilter
+case class Editable(editable: Boolean) extends ProblemTemplateFilter
 //REQ
-case class ProblemTemplateListRequest(token:String) extends WithToken
+case class ProblemTemplateListRequest(token:String, filters: Seq[ProblemTemplateFilter]) extends WithToken
 
 //RES
 sealed trait ProblemTemplateListResponse

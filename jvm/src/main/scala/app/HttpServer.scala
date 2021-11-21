@@ -1,12 +1,11 @@
 package app
 import java.nio.file.Paths
-
 import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersForConfirmation, GroupGradesList, OverrideGrade, RemoveGroupGrade, RemovePersonalGrade, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
 import controller.UserRole.{Admin, LtiUser, Teacher, Watcher}
 import controller.lti.{LitController, LtiLaunch}
-import controller.{AdminOps, AnswerOps, CoursesOps, CustomCourseOps, GradeOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
+import controller.{AdminOps, AnswerOps, CoursesOps, CustomCourseOps, CustomProblemOps, GradeOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
 import spark.Spark._
@@ -68,6 +67,10 @@ object HttpServer {
     addRoute(clientRequests.admin.AddProblemToCourseTemplate, CustomCourseOps.addProblemToCourseTemplate, adminOnly)
     addRoute(clientRequests.admin.NewCourseTemplate, CustomCourseOps.newCustomCourse, adminOnly)
     addRoute(clientRequests.admin.UpdateCustomCourse, CustomCourseOps.updateCustomCourse, adminOnly)
+    //custom problem edit
+    addRoute(clientRequests.admin.AddCustomProblemTemplate, CustomProblemOps.addCustomProblem, adminOnly)
+    addRoute(clientRequests.admin.UpdateCustomProblemTemplate, CustomProblemOps.updateCustomProblem, adminOnly)
+    addRoute(clientRequests.admin.RemoveCustomProblemTemplate, CustomProblemOps.removeCustomProblem, adminOnly)
 
 
 
