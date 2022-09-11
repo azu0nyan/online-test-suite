@@ -2,10 +2,10 @@ package frontend.views
 
 import clientRequests.admin.{AddProblemToCourseTemplate, AddProblemToCourseTemplateRequest, AddProblemToCourseTemplateSuccess, AdminCourseInfo, CourseInfoRequest, CourseInfoSuccess, CustomCourseUpdateData, DuplicateAlias, RemoveProblemFromCourseRequest, UnknownAlias, UnknownCourseTemplate, UpdateCustomCourseRequest, UpdateCustomCourseSuccess}
 import frontend._
-import frontend.views.elements.{EditableField, Expandable}
+import frontend.views.elements.{CourseStructureEditor, EditableField, Expandable}
 import io.udash.core.ContainerView
 import io.udash._
-import org.scalajs.dom.{Element, Event}
+import org.scalajs.dom.{Element, Event, console}
 import otsbridge.CoursePiece.CourseRoot
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
@@ -28,7 +28,8 @@ class AdminCourseTemplateInfoPageView(
       produce(course.subProp(_.courseAlias))(alias => h4(s"Алиас: $alias").render),
       //      EditableField[CourseRoot](course.subProp(_.courseData), x => p(x.toString),
       //        _.toString, x => None, x => presenter.changeCourseData(x)),
-      Expandable(h4("Структура курса"), p(course.get.courseData.toString)),
+//      Expandable(h4("Структура курса"), p(course.get.courseData.toString)),
+      CourseStructureEditor(course, (cd:CourseRoot) => presenter.changeCourseData(cd)),
       table(styles.Custom.defaultTable ~)(
         tr(
           th(width := "50px")("№"),
