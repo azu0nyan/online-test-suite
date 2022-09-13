@@ -72,7 +72,7 @@ object CourseStructureEditor {
     def NewItemMenu(parentAlias: String) = {
       // Select[GradeRound](round, roundVariants)((x: GradeRound) => p(x.toString)).render,
       val currentItemType: Property[NewCoursePieceType] = Property(NINone)
-      div(styles.Custom.defaultBox ~)(
+      div(styles.Custom.smallBox ~)(
         div(display.flex)(
           Select[NewCoursePieceType](currentItemType, newCoursePieceTypes)({
             case NINone => p("Новая:")
@@ -105,7 +105,7 @@ object CourseStructureEditor {
                 div(
                   p("Алиас:"),
                   Select[String](selected, problemAliaces)(alias => p(alias)),
-                  MyButton("Добавить",  {
+                  MyButton("Добавить", {
                     if (selected.get != "") {
                       updateCourse(courseRoot.addChildToParent(parentAlias, Problem(selected.get, DisplayMe.OwnPage, None)).asInstanceOf[CourseRoot])
                     }
@@ -129,10 +129,12 @@ object CourseStructureEditor {
     }
     val rowsInEditors = 20
     val columnsInEditors = 40
+    val charsInPreview = 50
     def makeFor(cp: CoursePiece): JsDom.TypedTag[Div] = {
       //val isMinimized: Property[Boolean] = Property(true)
 
       def maximizedView: JsDom.TypedTag[Div] = cp match {
+
         case c: CourseRoot =>
           div(styles.Custom.defaultBox ~)(
             div("Структура курса:"),
@@ -144,85 +146,117 @@ object CourseStructureEditor {
           val textProp = Property(c.textHtml)
           val isMinimized: Property[Boolean] = Property(true)
           div(styles.Custom.smallBox ~)(
-            div("Тема:"),
-            EditableField.forString(titleProp, str => h3(str), newTitle => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(title = newTitle)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow),
-            div("Текст"),
-            showIfElse(isMinimized)(
-              div(EditableField.forString(textProp, str => div(str.take(10)), newText => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(textHtml = newText)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render,
-              div(EditableField.forString(textProp, str => div(raw(str)), newText => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(textHtml = newText)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render
-            ), div(
-              p("развернуть"),
-              Checkbox(isMinimized)()
+            div(display.flex, flexDirection.row)(
+              "Тема:",
+              EditableField.forString(titleProp, str => h3(str), newTitle => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(title = newTitle)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow)
             ),
+            div(display.flex, flexDirection.row)(
+              "Текст",
+              showIfElse(isMinimized)(
+                div(EditableField.forString(textProp, str => div(str.take(charsInPreview)), newText => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(textHtml = newText)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render,
+                div(EditableField.forString(textProp, str => div(raw(str)), newText => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(textHtml = newText)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render
+              ),
+              div(display.flex, flexDirection.row, height := "min-content")(p("развернуть"), Checkbox(isMinimized)())),
             containerItemsEditor(c)
           )
         case c: SubTheme =>
           val titleProp = Property(c.title)
           val textProp = Property(c.textHtml)
+
+          val isMinimized: Property[Boolean] = Property(true)
           div(styles.Custom.smallBox ~)(
-            div("Заголовок подтемы:"),
-            EditableField.forString(titleProp, str => h3(str), newTitle => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(title = newTitle)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow),
-            div("Текст"),
-            EditableField.forString(textProp, str => div(raw(str)), newText => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(textHtml = newText)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors), //todo raw
+            div(display.flex, flexDirection.row)(
+              "Подтема:",
+              EditableField.forString(titleProp, str => h3(str), newTitle => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(title = newTitle)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow),
+            ),
+            div(display.flex, flexDirection.row)(
+              "Текст",
+              showIfElse(isMinimized)(
+                div(EditableField.forString(textProp, str => div(str.take(charsInPreview)), newText => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(textHtml = newText)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render,
+                div(EditableField.forString(textProp, str => div(raw(str)), newText => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(textHtml = newText)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render
+              ),
+              div(display.flex, flexDirection.row, height := "min-content")(p("развернуть"), Checkbox(isMinimized)())),
             containerItemsEditor(c)
           )
+
 
         case t@TextWithHeading(alias, heading, bodyHtml, displayMe, displayInContentsHtml) =>
           val headingProp = Property(heading)
           val bodyHtmlProp = Property(bodyHtml)
+
+          val isMinimized: Property[Boolean] = Property(true)
           div(styles.Custom.smallBox ~)(
-            div("Заголовок текста:"),
-            EditableField.forString(headingProp, str => h3(str), newHeading => updateCourse(courseRoot.replaceByAlias(alias, t.copy(heading = newHeading)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow),
-            div("Текст"),
-            EditableField.forString(bodyHtmlProp, str => div(raw(str)), newHtml => updateCourse(courseRoot.replaceByAlias(alias, t.copy(bodyHtml = newHtml)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors), //todo raw
-          )
-        case par@Paragraph(alias, bodyHtml, displayMe) =>
-          val bodyHtmlProp = Property(bodyHtml)
-          div(styles.Custom.smallBox ~)(
-            div("Текст параграфа"),
-            EditableField.forString(bodyHtmlProp, str => div(raw(str)), newHtml => updateCourse(courseRoot.replaceByAlias(alias, par.copy(bodyHtml = newHtml)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors), //todo raw
+            div(display.flex, flexDirection.row)(
+              "Текст с загаловком:",
+              EditableField.forString(headingProp, str => h3(str), newHeading => updateCourse(courseRoot.replaceByAlias(alias, t.copy(heading = newHeading)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow),
+            ),
+            div(display.flex, flexDirection.row)(
+              "Текст",
+              showIfElse(isMinimized)(
+                div(EditableField.forString(bodyHtmlProp, str => div(str.take(charsInPreview)), newHtml => updateCourse(courseRoot.replaceByAlias(alias, t.copy(bodyHtml = newHtml)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render,
+                div(EditableField.forString(bodyHtmlProp, str => div(raw(str)), newHtml => updateCourse(courseRoot.replaceByAlias(alias, t.copy(bodyHtml = newHtml)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render
+              ),
+              div(display.flex, flexDirection.row, height := "min-content")(p("развернуть"), Checkbox(isMinimized)()))
+
           )
 
-        //      case HtmlToDisplay(alias, displayMe, htmlRaw) =>
-        //      case Problem(problemAlias, displayMe, displayInContentsHtml) => ???
+        case par@Paragraph(alias, bodyHtml, displayMe) =>
+          val bodyHtmlProp = Property(bodyHtml)
+          val isMinimized: Property[Boolean] = Property(true)
+          div(styles.Custom.smallBox ~)(
+            div(display.flex, flexDirection.row)(
+              "Текст",
+              showIfElse(isMinimized)(
+                div(EditableField.forString(bodyHtmlProp, str => div(str.take(charsInPreview)), newHtml => updateCourse(courseRoot.replaceByAlias(alias, par.copy(bodyHtml = newHtml)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render,
+                div(EditableField.forString(bodyHtmlProp, str => div(raw(str)), newHtml => updateCourse(courseRoot.replaceByAlias(alias, par.copy(bodyHtml = newHtml)).asInstanceOf[CourseRoot]), columns = columnsInEditors, rows_ = rowsInEditors)).render
+              ),
+              div(display.flex, flexDirection.row, height := "min-content")(p("развернуть"), Checkbox(isMinimized)())),
+          )
+        case Problem(problemAlias, displayMe, displayInContentsHtml) =>
+          div(styles.Custom.smallBox~)(
+            s"Задача: $problemAlias"
+          )
+
+        //  case HtmlToDisplay(alias, displayMe, htmlRaw) =>
         case x => div(x.toString)
       }
 
-      def showMinimizedChilds(c: Container) = for (c <- c.childs) yield div(display.flex, flexDirection.row)(
-        MyButton("▲",  updateCourse(courseRoot.moveUp(c.alias).asInstanceOf[CourseRoot])),
-        MyButton("▼",  updateCourse(courseRoot.moveDown(c.alias).asInstanceOf[CourseRoot])),
-        makeFor(c)
-      )
-
-      def minimizedView: JsDom.TypedTag[HTMLElement] = div(styles.Custom.smallBox ~)(cp match {
-        case c: CourseRoot => showMinimizedChilds(c)
-        case c: Theme => Seq[JsDom.Modifier](
-          p(s"Тема: ${c.alias} ${c.title} ${c.textHtml.take(10)}"),
-          showMinimizedChilds(c)
-        )
-        case c: SubTheme =>
-          Seq[JsDom.Modifier](
-            p(s"Подтема: ${c.alias} ${c.title} ${c.textHtml.take(10)}"),
-            showMinimizedChilds(c)
-          )
-        case HtmlToDisplay(alias, displayMe, htmlRaw) => p("Custom html")
-        case TextWithHeading(alias, heading, bodyHtml, displayMe, displayInContentsHtml) => p(s"$alias $heading ${bodyHtml.take(10)}")
-        case Paragraph(alias, bodyHtml, displayMe) => p(s"$alias ${bodyHtml.take(10)}")
-        case Problem(problemAlias, displayMe, displayInContentsHtml) => p(s"Задача $problemAlias ")
-      })
+      //      def showMinimizedChilds(c: Container) = for (c <- c.childs) yield div(display.flex, flexDirection.row)(
+      //        MyButton("▲",  updateCourse(courseRoot.moveUp(c.alias).asInstanceOf[CourseRoot])),
+      //        MyButton("▼",  updateCourse(courseRoot.moveDown(c.alias).asInstanceOf[CourseRoot])),
+      //        makeFor(c)
+      //      )
+      //
+      //      def minimizedView: JsDom.TypedTag[HTMLElement] = div(styles.Custom.smallBox ~)(cp match {
+      //        case c: CourseRoot => showMinimizedChilds(c)
+      //        case c: Theme => Seq[JsDom.Modifier](
+      //          p(s"Тема: ${c.alias} ${c.title} ${c.textHtml.take(10)}"),
+      //          showMinimizedChilds(c)
+      //        )
+      //        case c: SubTheme =>
+      //          Seq[JsDom.Modifier](
+      //            p(s"Подтема: ${c.alias} ${c.title} ${c.textHtml.take(10)}"),
+      //            showMinimizedChilds(c)
+      //          )
+      //        case HtmlToDisplay(alias, displayMe, htmlRaw) => p("Custom html")
+      //        case TextWithHeading(alias, heading, bodyHtml, displayMe, displayInContentsHtml) => p(s"$alias $heading ${bodyHtml.take(10)}")
+      //        case Paragraph(alias, bodyHtml, displayMe) => p(s"$alias ${bodyHtml.take(10)}")
+      //        case Problem(problemAlias, displayMe, displayInContentsHtml) => p(s"Задача $problemAlias ")
+      //      })
 
       //div(showIfElse(isMinimized)(minimizedView.render, maximizedView.render), Checkbox(isMinimized)())
       div(maximizedView)
 
     }
 
-    def containerItemsEditor(c: Container) = div(
+    def containerItemsEditor(c: Container) = div(styles.Custom.smallBox ~)(
 
       NewItemMenu(c.alias),
       div(
-        for (c <- c.childs) yield div(
-          MyButton("▲",  updateCourse(courseRoot.moveUp(c.alias).asInstanceOf[CourseRoot])),
-          MyButton("▼",  updateCourse(courseRoot.moveDown(c.alias).asInstanceOf[CourseRoot])),
+        for (c <- c.childs) yield div(styles.Custom.smallBox ~, display.flex, flexDirection.row)(
+          MyButton("▲", updateCourse(courseRoot.moveUp(c.alias).asInstanceOf[CourseRoot]), MyButton.SmallButton),
+          MyButton("▼", updateCourse(courseRoot.moveDown(c.alias).asInstanceOf[CourseRoot]), MyButton.SmallButton),
+          MyButton("X", updateCourse(courseRoot.delete(c.alias).asInstanceOf[CourseRoot]), MyButton.SmallButton),
           makeFor(c)
         )
       )

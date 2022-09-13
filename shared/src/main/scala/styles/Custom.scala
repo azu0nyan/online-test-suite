@@ -34,6 +34,9 @@ object Custom extends StyleSheet.Inline {
     backgroundColor(primaryButtonColor)
   )
   val smallButton = style(
+    borderStyle.none,
+    height.fitContent,
+    width.fitContent,
     backgroundColor(smallButtonColor),
     color(smallButtonTextColor)
   )
@@ -96,12 +99,17 @@ object Custom extends StyleSheet.Inline {
     editableFieldContainerMixin,
     display.flex,
     flexDirection.column,
+    width.fitContent,
+    height.fitContent,
+
   )
 
   val editableFieldContainerFlexRow = style(
     editableFieldContainerMixin,
     display.flex,
     flexDirection.row,
+    width.fitContent,
+    height.fitContent,
   )
 
 
