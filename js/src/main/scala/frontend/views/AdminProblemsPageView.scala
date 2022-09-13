@@ -35,14 +35,14 @@ class AdminProblemsPageView(
       presenter.requestProblemListUpdate()
       true // prevent default
     }))("загрузить"),
-    table(styles.Custom.defaultTable ~)(
+    table(styles.Custom.maxContentWidthTable ~)(
       tr(
-        th(width := "150px")("Alias"),
+        th(width := "150px")("Alias "),         //todo less columns in table
         th(width := "150px")("Title"),
-        th(width := "100px")("Answer field"),
-        th(width := "350px")("example"),
+        th(width := "50px")("Answer field"),
+        th(width := "550px")("example"),
         th(width := "50px")("Allowed attempts"),
-        th(width := "150px")("Initial score"),
+        th(width := "50px")("Initial score"),
         th(width := "50px")("")
       ),
       repeat(presenter.problems)(pr =>

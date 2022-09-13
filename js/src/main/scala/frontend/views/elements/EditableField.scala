@@ -1,5 +1,6 @@
 package frontend.views.elements
 
+import frontend.views.CssStyleToMod
 import io.udash.properties.single.{Property, ReadableProperty}
 import org.scalajs.dom.Element
 import scalatags.generic.Modifier
@@ -13,12 +14,19 @@ import scalatags.JsDom
 
 object EditableField {
 
+  sealed trait ContainerType
+  case object FlexColumn extends ContainerType
+  case object FlexRow extends ContainerType
+
   def forString(
-                   currentValue: ReadableProperty[String],
-                   nonEditedView: String => JsDom.TypedTag[_],
-                   submit: String => Unit
-                   ): Modifier[Element] = {
-    apply[String](currentValue, nonEditedView, x => x, x => Some(x), submit)
+                 currentValue: ReadableProperty[String],
+                 nonEditedView: String => JsDom.TypedTag[_],
+                 submit: String => Unit,
+                 columns: Int = 30,
+                 rows_ : Int = 1,
+                 containerType: ContainerType = FlexColumn
+               ): Modifier[Element] = {
+    apply[String](currentValue, nonEditedView, x => x, x => Some(x), submit, columns, rows_, containerType)
   }
 
   def apply[T](
@@ -26,41 +34,45 @@ object EditableField {
                 nonEditedView: T => JsDom.TypedTag[_],
                 toString: T => String,
                 toT: String => Option[T],
-                submit: T => Unit
+                submit: T => Unit,
+                columns: Int = 30,
+                rows_ : Int = 1,
+                containerType: ContainerType = FlexColumn
               ): Modifier[Element] = {
     val editEnabled: Property[Boolean] = Property(false)
     val editedValue: Property[String] = Property("")
     currentValue.listen(newValue => editedValue.set(toString(newValue)), true)
 
-    div(Grid.row)(
-      div(Grid.col(2))(
-        div(
-          showIfElse(editEnabled)(
-            div(TextArea(editedValue)(Form.control)).render,
-            div(produce(currentValue)(v => div(nonEditedView(v)).render)).render,
-          )
-        ),
-        div(
-          showIfElse(editEnabled)(
-            div(
-              button(onclick :+= ((_: Event) => {
-                editEnabled.set(false)
-                toT(editedValue.get).foreach(submit)
-                true // prevent default
-              }))("Сохранить"),
-              button(onclick :+= ((_: Event) => {
-                editEnabled.set(false)
-                editedValue.set(toString(currentValue.get))
-                true // prevent default
-              }))("Отмена")
-            ).render,
-            div(button(onclick :+= ((_: Event) => {
-              editEnabled.set(true)
-              true // prevent default
-            }))("Изменить")).render,
-          )
+    div(containerType match {
+      case FlexColumn => styles.Custom.editableFieldContainerFlexColumn ~
+      case FlexRow => styles.Custom.editableFieldContainerFlexRow ~
+    })(
+      div(
+        showIfElse(editEnabled)(
+          div(TextArea(editedValue)(cols := columns, rows := rows_)).render,
+          div(produce(currentValue)(v => div(nonEditedView(v)).render)).render,
         )
+      ),
+      div(
+        showIfElse(editEnabled)(
+          div(
+            MyButton("<b>Сохранить</b>", {
+              editEnabled.set(false)
+              toT(editedValue.get).foreach(submit)
+
+            }, MyButton.SmallButton),
+            MyButton("<b>Отмена</b>", {
+              editEnabled.set(false)
+              editedValue.set(toString(currentValue.get))
+            }, MyButton.SmallButton)).render,
+          MyButton("<b>Изменить</b>", {
+            editEnabled.set(true)
+          }, MyButton.SmallButton).render
+
+        )
+
       )
+
     )
 
   }

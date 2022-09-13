@@ -23,8 +23,8 @@ class AdminCourseTemplateInfoPageView(
 
   override def getTemplate: Modifier[Element] =
     div(
-      EditableField.forString(course.subProp(_.description), x => p(x), x => presenter.changeDescription(x)),
-      EditableField.forString(course.subProp(_.courseTitle), x => h1(x), x => presenter.changeTitle(x)),
+      EditableField.forString(course.subProp(_.courseTitle), x => h1(x), x => presenter.changeTitle(x), containerType = EditableField.FlexRow),
+      EditableField.forString(course.subProp(_.description), x => p(x), x => presenter.changeDescription(x), containerType = EditableField.FlexRow, columns = 30, rows_ = 7),
       produce(course.subProp(_.courseAlias))(alias => h4(s"Алиас: $alias").render),
       //      EditableField[CourseRoot](course.subProp(_.courseData), x => p(x.toString),
       //        _.toString, x => None, x => presenter.changeCourseData(x)),

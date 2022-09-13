@@ -33,6 +33,10 @@ object Custom extends StyleSheet.Inline {
   val primaryButton = style(
     backgroundColor(primaryButtonColor)
   )
+  val smallButton = style(
+    backgroundColor(smallButtonColor),
+    color(smallButtonTextColor)
+  )
 
   val inputContainerPositioner = style(
     backgroundColor.transparent,
@@ -58,6 +62,13 @@ object Custom extends StyleSheet.Inline {
     display.block
   )
 
+  val smallBox = style(
+    defaultBoxBordersPaddingsMargins,
+    borderStyle.solid,
+    borderColor(tableBordersColor),
+    borderWidth(1 px)
+  )
+
   val inputContainer = style(
     defaultBoxBordersPaddingsMargins,
 
@@ -74,7 +85,35 @@ object Custom extends StyleSheet.Inline {
     width(95 vw)
   )
 
+  val editableFieldContainerMixin = mixin(
+    defaultBoxBordersPaddingsMargins,
+    borderStyle.none,
+    overflow.auto,
+    backgroundColor(transparentBgColor)
+  )
+
+  val editableFieldContainerFlexColumn = style(
+    editableFieldContainerMixin,
+    display.flex,
+    flexDirection.column,
+  )
+
+  val editableFieldContainerFlexRow = style(
+    editableFieldContainerMixin,
+    display.flex,
+    flexDirection.row,
+  )
+
+
   //  val webkitAppearance = Attrs.real("align-items", " ")
+
+  val newThemeSelect = style(
+    defaultBoxBordersPaddingsMargins,
+    borderStyle.none,
+    fontSize(biggerFontSize),
+    width.maxContent,
+    height.maxContent
+  )
 
   val gradeSelect = style(
     paddingLeft(smallPadding),
@@ -145,8 +184,8 @@ object Custom extends StyleSheet.Inline {
 
   )
 
-  val defaultTable = style(
-    width(100 %%),
+
+  def defaultTableMixin = mixin(
     tableLayout.fixed,
     overflowX.hidden,
     color(defaultFontColor),
@@ -168,6 +207,16 @@ object Custom extends StyleSheet.Inline {
       borderStyle.solid,
       borderColor(tableBordersColor)
     )
+  )
+
+  val defaultTable = style(
+    defaultTableMixin,
+    width(100 %%),
+  )
+
+  val maxContentWidthTable = style(
+    defaultTableMixin,
+    width.maxContent,
   )
 
   val unlimitedWidthTable = style(

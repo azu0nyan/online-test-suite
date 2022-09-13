@@ -36,12 +36,17 @@ package object styles {
 //  val bordersColor = c"#fbb03b"
   val bordersColor = c"#fbb03b"
   val tableBordersColor = c"#3fa9f5"
+
+  val transparentBgColor = c"#3fa9f577"
+
 //  val buttonBorderColor = c"#a13030"
   val buttonBorderColor = c"#fbb03b"
   val bgColor = c"#EBE2E9"
   val highlightColor = c"#3fa9f5"
   val mainColor = c"#FFFFFF"
   val primaryButtonColor = c"#fbb03b"
+  val smallButtonColor = c"#085892"
+  val smallButtonTextColor = c"#ffffff"
   val defaultInputBgColor =c"#ffffff"
   val defaultFontColor = c"#000000"
   val defaultCodeBg = c"#C7D4EB"

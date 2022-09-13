@@ -25,7 +25,9 @@ object ProblemTemplateEditor {
     val html = EditableField.forString(
       ud.transform(_.html),
       s => div(raw(s)),
-      newHtml => submit(ud.get.copy(html = newHtml))
+      newHtml => submit(ud.get.copy(html = newHtml)),
+      columns = 60,
+      rows_ = 30,
     )
     /*
     tr(
