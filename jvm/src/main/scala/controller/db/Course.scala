@@ -65,7 +65,7 @@ case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed: 
       try {
         Some(p.toViewData)
       } catch {
-        case t: Throwable => log.error("Can't get view data", t)
+        case t: Throwable => log.error(s"Can't get view data for ${p.templateAlias}", t)
           None
       }
 
