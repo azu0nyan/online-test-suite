@@ -12,7 +12,7 @@ object RunResultsTable {
   val maxRunsWithoutFold: Int = 3
 
   def apply(runs: Seq[ProgramRunResult]) =
-    if (runs.size > maxRunsWithoutFold) Expandable(div(Text.pShowRuns.toString), runResultsTableRaw(runs))
+    if (runs.size > maxRunsWithoutFold) DetailsSummary(div(Text.pShowRuns.toString), runResultsTableRaw(runs))
     else runResultsTableRaw(runs)
 
   def runResultsTableRaw(runs: Seq[ProgramRunResult]): JsDom.TypedTag[Table] =

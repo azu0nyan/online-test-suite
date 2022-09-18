@@ -4,7 +4,7 @@ import org.scalajs.dom.html.Element
 import scalatags.JsDom
 import scalatags.JsDom.tags2.{details, summary}
 
-object Expandable {
+object DetailsSummary {
 
   def apply(sumary: JsDom.TypedTag[_], det: JsDom.TypedTag[_]): JsDom.TypedTag[Element] = details(
     summary(sumary),

@@ -87,4 +87,5 @@ package object frontend extends Bindings with Alerts {
   //  val appData: ModelProperty[AppViewData] = ModelProperty.blank[AppViewData]
 
 
+
 }

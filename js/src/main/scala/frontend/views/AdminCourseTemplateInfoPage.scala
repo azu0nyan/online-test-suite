@@ -2,7 +2,7 @@ package frontend.views
 
 import clientRequests.admin.{AddProblemToCourseTemplate, AddProblemToCourseTemplateRequest, AddProblemToCourseTemplateSuccess, AdminCourseInfo, CourseInfoRequest, CourseInfoSuccess, CustomCourseUpdateData, DuplicateAlias, RemoveProblemFromCourseRequest, UnknownAlias, UnknownCourseTemplate, UpdateCustomCourseRequest, UpdateCustomCourseSuccess}
 import frontend._
-import frontend.views.elements.{CourseStructureEditor, EditableField, Expandable}
+import frontend.views.elements.{CourseStructureEditor, EditableField, DetailsSummary}
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.{Element, Event, console}

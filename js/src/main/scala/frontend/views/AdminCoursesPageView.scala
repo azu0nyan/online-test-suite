@@ -2,7 +2,7 @@ package frontend.views
 
 import clientRequests.admin.{CourseListRequest, CourseListSuccess, NewCourseTemplateRequest}
 import frontend._
-import frontend.views.elements.Expandable
+import frontend.views.elements.DetailsSummary
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.{Element, Event}
@@ -40,7 +40,7 @@ class AdminCoursesPageView(
           td(pr.get.description),
           td(
             if(pr.get.problemAliasesToGenerate.size > 3)
-              Expandable(
+              DetailsSummary(
                 h4(s"Задания: ${pr.get.problemAliasesToGenerate.size}"),
                 p(pr.get.problemAliasesToGenerate.mkString(", "))
               )

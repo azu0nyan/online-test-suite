@@ -265,7 +265,9 @@ object Custom extends StyleSheet.Inline {
 
   val problemScoreText = style(
     fontSize(biggerFontSize),
-    fontWeight.bold
+    fontWeight.bold,
+    whiteSpace.nowrap,
+    margin.auto,
   )
 
   val problemStatusContainer = style(
@@ -342,19 +344,47 @@ object Custom extends StyleSheet.Inline {
   val mainContent = style(
     defaultBoxBordersPaddingsMargins
   )
+
+
   val taskList = style(
     defaultBoxBordersPaddingsMargins,
-
+    paddingRight(30 px)
   )
+
+
   val taskItem = style(
     display.flex,
-    flexFlow := "row",
+    flexDirection.row,
     justifyContent.spaceBetween,
-    alignItems.center,
     cursor.pointer,
     &.hover {
       backgroundColor(highlightColor)
-    }
+    },
+    width (100 %%),
+    borderBottom.dotted,
+    borderWidth(tableBorderWidth),
+    borderColor(tableBordersColor),
+  )
+
+  val taskChildsContainer = style(
+    display.flex,
+    flexDirection.column,
+    alignItems.start,
+    paddingLeft(smallPadding),
+    borderWidth(smallBorderWidth),
+    borderLeft.inset,
+    borderColor(tableBordersColor),
+    width (100 %%)
+
+
+  )
+  val taskContainer = style(
+    display.flex,
+    flexDirection.column,
+    width (100 %%),
+    paddingTop(verticalPadding)
+
+
   )
 
 

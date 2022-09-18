@@ -36,8 +36,12 @@ object Score {
       else if (score > 0) div(styles.Custom.problemStatusPartialSucessFontColor)(Text.pStatusYourScoreOutOf(score, max))
       else if (dontHaveAnswers) div(styles.Custom.problemStatusNoAnswerFontColor)(Text.pStatusNoAnswer)
       else div(styles.Custom.problemStatusFailureFontColor)(Text.pStatusYourScoreOutOf(score, max))
-
-
   })
+
+  def xOutOfY(score: Int, max: Int, redMaxExcluded:Double = 0.3, yellowMaxExcluded:Double = 1.0) = p(styles.Custom.problemScoreText)(
+    if(score.toDouble / max < redMaxExcluded) div(styles.Custom.problemStatusFailureFontColor)(s"$score / $max")
+    else if(score.toDouble / max < yellowMaxExcluded) div(styles.Custom.problemStatusPartialSucessFontColor)(s"$score / $max")
+    else div(styles.Custom.problemStatusSuccessFontColor)(s"$score / $max")
+  )
 
 }

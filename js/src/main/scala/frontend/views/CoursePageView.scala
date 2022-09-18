@@ -8,11 +8,11 @@ import constants.Text
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
 import frontend._
-import frontend.views.elements.{Expandable, ProblemView, RunResultsTable}
+import frontend.views.elements.{DetailsSummary, ProblemView, RunResultsTable, Score}
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom.{Element, Event, window}
-import otsbridge.CoursePiece.stringToPath
+import otsbridge.CoursePiece.{CourseRoot, Theme, stringToPath}
 import viewData.ProblemViewData
 //import org.scalajs.dom._
 import org.scalajs.dom.html.{Div, Table}
@@ -21,7 +21,7 @@ import otsbridge.ProblemScore._
 import otsbridge.ProgramRunResult.ProgramRunResult
 import otsbridge._
 import scalatags.JsDom
-import scalatags.JsDom.all.{button, _}
+import scalatags.JsDom.all._
 import scalatags.JsDom.tags2.{details, summary}
 import scalatags.generic.Modifier
 import viewData.{AnswerViewData, CourseInfoViewData, CourseTemplateViewData, UserViewData}
@@ -36,28 +36,22 @@ class CoursePageView(
                     ) extends ContainerView {
 
 
-
-  //div(seq.flatMap(pr => Seq(p(pr.toString), br)))
-
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
     div(styles.Custom.problemContainer ~)(
       ProblemView(problemData, a => presenter.submitAnswer(problemData.get.problemId, a), Some(nested))
     ).render
 
 
-
-
-
   //CONTENTS
   def shouldBeDisplayedInContents(cp: CoursePiece): Boolean =
     cp match {
-      case CoursePiece.Problem(_, _, Some(_)) | _ if cp.displayInContentsHtml.nonEmpty => return true
+      case CoursePiece.Problem(_, _, Some(_)) | _ if cp.displayInContentsHtml.nonEmpty => true
       case container: CoursePiece.Container => container.childs.exists(shouldBeDisplayedInContents)
-      case _ => return false
+      case _ => false
     }
 
 
-  def problempPath(pIdOrALias: String): String = pathToString(Seq("problem", pIdOrALias))
+  def problemPath(pIdOrALias: String): String = pathToString(Seq("problem", pIdOrALias))
 
   def buildContents(cd: CoursePiece, currentPath: Seq[String]): JsDom.TypedTag[Div] = {
     val pathToMe = currentPath :+ cd.alias
@@ -65,7 +59,7 @@ class CoursePageView(
     val me = cd match {
       case CoursePiece.Problem(problemAlias, displayMe, _) =>
         div(onclick :+= ((_: Event) => {
-          presenter.app.goTo(CoursePageState(presenter.courseId.get, problempPath(problemAlias)))
+          presenter.app.goTo(CoursePageState(presenter.courseId.get, problemPath(problemAlias)))
           true // prevent default
         }))(
           presenter.problemByAlias(problemAlias).map(_.title).getOrElse("Задача").toString
@@ -106,16 +100,88 @@ class CoursePageView(
     )
   )
 
-  def right: Modifier[Element] = div(styles.Grid.rightContent)(div(styles.Custom.taskList)(
-    h3("Задачи"),
+  //RIGHT TASK LIST
+  val unCollapsed: Property[Set[String]] = Property(Set())
 
-    repeat(presenter.course.subSeq(_.problems)) { pr =>
-      div(styles.Custom.taskItem, onclick :+= ((_: Event) => {
-        presenter.app.goTo(CoursePageState(presenter.courseId.get, problempPath(pr.get.templateAlias)))
+  def problemsInPiece(cp: CoursePiece): Int = cp.allProblems.map(_.alias).flatMap(presenter.problemByAlias).size
+  def pieceProgress(cp: CoursePiece): Int = cp.allProblems.map(_.alias).flatMap(presenter.problemByAlias).map(_.score.percentage).sum.toInt
+
+  def toggleTaskCollapse(alias: String): Unit =
+    if (unCollapsed.get.contains(alias)) unCollapsed.set(unCollapsed.get - alias)
+    else unCollapsed.set(unCollapsed.get + alias)
+
+  def buildProgressForContainer(c: CoursePiece.Container, unc: Set[String], title: String) = {
+    if (problemsInPiece(c) > 0)
+      div(styles.Custom.taskContainer)(
+        div(styles.Custom.taskItem, onclick :+= ((_: Event) => {
+          toggleTaskCollapse(c.alias)
+          true // prevent default
+        }))(
+          div(title),
+          div(Score.xOutOfY(pieceProgress(c), problemsInPiece(c)))
+        ),
+        if (unc.contains(c.alias)) div(styles.Custom.taskChildsContainer)(for (c <- c.childs) yield buildProgressFor(c, unc))
+        else div()
+      ).render
+    else div().render
+  }
+
+  def buildProgressForProblem(pr: ProblemViewData) =
+    div(styles.Custom.taskItem)(
+      div(onclick :+= ((_: Event) => {
+        presenter.app.goTo(CoursePageState(presenter.courseId.get, problemPath(pr.templateAlias)))
         true // prevent default
-      }))(pr.get.title, elements.Score(pr.get.score, pr.get.answers.isEmpty,
-        waitingForConfirm = if(pr.get.score.toInt == 0) pr.get.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation])else false)).render
-    }
+      }))(pr.title),
+      div(elements.Score(pr.score, pr.answers.isEmpty,
+        waitingForConfirm = if (pr.score.toInt == 0) pr.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation]) else false))
+    ).render
+
+  def parentlessProblems : Seq[ProblemViewData] = {
+    val withparent = course.get.courseData.allProblems.map(_.alias).flatMap(presenter.problemByAlias)
+    course.get.problems.filter(!withparent.contains(_))
+  }
+
+  def buildProgressFor(cp: CoursePiece, unc: Set[String]): Modifier[Element] = cp match {
+    case CourseRoot(_, _, childs) =>
+      div(styles.Custom.taskContainer)(
+        for (c <- childs) yield buildProgressFor(c, unc),
+        for(p <- parentlessProblems) yield buildProgressForProblem(p)
+      ).render
+    case t: CoursePiece.Theme =>
+      buildProgressForContainer(t, unc, t.title)
+    case s: CoursePiece.SubTheme =>
+      buildProgressForContainer(s, unc, s.title)
+    case c@CoursePiece.Problem(problemAlias, displayMe, displayInContentsHtml) =>
+      presenter.problemByAlias(problemAlias) match {
+        case Some(pr) =>
+          buildProgressForProblem(pr)
+        case None => div().render
+      }
+    case _ => div().render
+  }
+
+
+  def buildRightCollapsibleSection: Modifier[Element] = {
+    produceWithNested(presenter.course)((course, nested) =>
+      div(nested(
+        produce(unCollapsed)(unc =>
+          div(
+            buildProgressFor(course.courseData, unc)
+          ).render)
+      )).render)
+  }
+
+  def right: Modifier[Element] = div(styles.Grid.rightContent)(div(styles.Custom.taskList)(
+    h3("Прогресс:"),
+    buildRightCollapsibleSection
+
+    //    repeat(presenter.course.subSeq(_.problems)) { pr =>
+    //      div(styles.Custom.taskItem, onclick :+= ((_: Event) => {
+    //        presenter.app.goTo(CoursePageState(presenter.courseId.get, problemPath(pr.get.templateAlias)))
+    //        true // prevent default
+    //      }))(pr.get.title, elements.Score(pr.get.score, pr.get.answers.isEmpty,
+    //        waitingForConfirm = if(pr.get.score.toInt == 0) pr.get.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation])else false)).render
+    //    }
 
   ))
 
@@ -241,19 +307,17 @@ case class CoursePagePresenter(
     }
   }
 
-  def requestProblemUpdate(problemId: String): Option[ProblemViewData] = {
+  def requestProblemUpdate(problemId: String): Unit = {
     frontend.sendRequest(clientRequests.GetProblemData, GetProblemDataRequest(currentToken.get, problemId)) onComplete {
       case Success(GetProblemDataSuccess(pd)) =>
         val p: SeqProperty[ProblemViewData] = course.subSeq(_.problems)
         val problemWithId = p.zipWithIndex.filter { case (p, _) => p.problemId == problemId }.get.headOption
         problemWithId.foreach { case (_, id) => p.replace(id, 1, pd) }
-        Some(pd)
-      case _ => None
+      case f =>
+        println(f)
+        showErrorAlert(s"Ошибка при обновлении статуса задачи")
     }
-    None //TODO
   }
-
-  //  def checkProblemAfterSomeTime()
 
 
   def submitAnswer(problemId: String, answerRaw: String): Unit =
@@ -262,17 +326,12 @@ case class CoursePagePresenter(
         case AnswerSubmitted(avd) =>
           updateAnswerData(avd)
           requestProblemUpdate(problemId) //todo update only status
-        //          avd.status match {
-        //            case VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) =>
-        //            case CourseShared.BeingVerified() =>
-        //            case CourseShared.VerificationDelayed(systemMessage) =>
-        //          }
         case AlreadyVerifyingAnswer() =>
           println("Already verifying")
           showWarningAlert("Ответ на это задание уже проверяется, наберитесь терпения")
         case MaximumAttemptsLimitExceeded(attempts) =>
           showErrorAlert(s"Превышено максимальное колличество попыток")
-        case AnswerSubmissionClosed(cause)=>
+        case AnswerSubmissionClosed(cause) =>
           showErrorAlert(s"Прием задания закрыт." + cause.map(s => s" Прична: $s").getOrElse(""))
         case _ => showErrorAlert()
       }

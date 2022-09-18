@@ -3,6 +3,7 @@ package frontend.views.elements
 import DbViewsShared.CourseShared
 import DbViewsShared.CourseShared.{AnswerStatus, VerifiedAwaitingConfirmation}
 import constants.Text
+import frontend.Helpers.nestedOpt
 import frontend.dateFormatter
 import frontend.views.GroupGradesPage.JournalCell
 import frontend.views.elements
@@ -25,10 +26,7 @@ import scala.util.Random
 
 object ProblemView {
 
-  def nestedOpt(n: Option[NestedInterceptor], b: Binding): Binding = n match {
-    case Some(nested) => nested(b)
-    case None => b
-  }
+
 
   def apply(
              problemData: ModelProperty[viewData.ProblemViewData],
@@ -203,7 +201,7 @@ object ProblemView {
             case CourseShared.Verified(_, review, _, _, _) => pre(overflowX.auto)(review.getOrElse("").toString)
             case _ => ""
           }),
-          td(Expandable(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
+          td(DetailsSummary(h5(Text.details), pre(overflowX.auto)(ans.answerText))),
         )
       )
     )
