@@ -68,6 +68,7 @@ case class LoginPagePresenter(
     println(s"Login success $token $userViewData")
     setTokenCookie(token)
     currentToken.set(token, true)
+    currentUser.set(Some(userViewData))
     app.goTo(CourseSelectionPageState)
   }
 

@@ -8,6 +8,7 @@ import constants.Text
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
 import frontend._
+import frontend.views.elements.{MyButton, UserInfoBox}
 import org.scalajs.dom._
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
@@ -32,7 +33,7 @@ class CourseSelectionPageView(
     ).render
 
 
-  def statusHtml(st:CourseStatus) = div(styles.Custom.courseStatusContainer)(st match {
+  def statusHtml(st: CourseStatus) = div(styles.Custom.courseStatusContainer)(st match {
     case CourseShared.Passing(Some(endsAt)) => p(Text.courseStatusExpires(endsAt.toString))
     case CourseShared.Passing(None) => p(Text.courseStatusNoEnd)
     case CourseShared.Finished() => p(Text.courseStatusFinished)
@@ -52,24 +53,23 @@ class CourseSelectionPageView(
     ).render
 
 
-  override def getTemplate: Modifier[Element] = div(styles.Grid.content ~)(
-
-    button(onclick :+= ((_: Event) => {
-      presenter.app.goTo(MyGradesPageState)
-      true // prevent default
-    }))("Оценки"),
-    button(onclick :+= ((_: Event) => {
-      presenter.logOut()
-      true // prevent default
-    }))("Выйти"),
-
-
-    h2(constants.Text.existingCourses),
-    div(repeat(courses.subSeq(_.existing))(p => courseHtml(p.get))),
-//    h2(constants.Text.startNewCourse),
-//    div(repeat(courses.subSeq(_.templates))(p => courseTemplateHtml(p.get))),
-
+  def buildRightMenu: Modifier[Element] = div(styles.Custom.rightMenu)(
+    MyButton("Оценки", presenter.toGradesPage()),
+    MyButton("Выйти", presenter.logOut()),
+    if (frontend.currentUser.get.nonEmpty && frontend.currentUser.get.get.role == "Admin()") MyButton("В админку", presenter.toAdminPage()) else div(),
   )
+
+  override def getTemplate: Modifier[Element] =
+    div(styles.Grid.contentWithLeftAndRight ~)(
+      div(styles.Grid.content ~)(
+        h2(constants.Text.existingCourses),
+        div(repeat(courses.subSeq(_.existing))(p => courseHtml(p.get))),
+      ),
+      div(styles.Grid.rightContent)(
+        produce(frontend.currentUser)(cu => if (cu.nonEmpty) UserInfoBox(cu.get, () => presenter.toEditProfilePage()).render else div().render),
+        buildRightMenu
+      )
+    )
 }
 
 
@@ -115,6 +115,7 @@ case class CourseSelectionPagePresenter(
   override def handleState(state: CourseSelectionPageState.type): Unit = {
     println(s"Course selection page presenter,  handling state : $state")
     requestCoursesListUpdate()
+    updateUserDataIfNeeded()
   }
 
 }

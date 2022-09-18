@@ -1,5 +1,6 @@
 package controller
 
+import clientRequests.{GetUserDataRequest, GetUserDataResponse, GetUserDataSuccess, UnknownGetUserDataFailure}
 import clientRequests.admin.{UserListRequest, UserListResponse, UserListResponseSuccess}
 import controller.db.User
 
@@ -17,6 +18,13 @@ object UserOps {
       CoursesOps.removeCourse(c)
     }
     db.users.delete(u)
+  }
+
+  def getUserData(req: GetUserDataRequest): GetUserDataResponse = {
+    LoginUserOps.decodeAndValidateUserToken(req.token) match {
+      case Some(user) => GetUserDataSuccess(user.toViewData)
+      case None => UnknownGetUserDataFailure()
+    }
   }
 
 }

@@ -31,7 +31,9 @@ object Custom extends StyleSheet.Inline {
   )
   //misc
   val primaryButton = style(
-    backgroundColor(primaryButtonColor)
+    backgroundColor(primaryButtonColor),
+    fontSize(mediumFontSize),
+    textDecoration := "underline"
   )
   val smallButton = style(
     borderStyle.none,
@@ -72,6 +74,8 @@ object Custom extends StyleSheet.Inline {
     borderWidth(1 px)
   )
 
+
+
   val inputContainer = style(
     defaultBoxBordersPaddingsMargins,
 
@@ -110,6 +114,10 @@ object Custom extends StyleSheet.Inline {
     flexDirection.row,
     width.fitContent,
     height.fitContent,
+  )
+
+  val userInfoBox = style(
+    defaultBoxBordersPaddingsMargins
   )
 
 
@@ -349,6 +357,13 @@ object Custom extends StyleSheet.Inline {
   val taskList = style(
     defaultBoxBordersPaddingsMargins,
     paddingRight(30 px)
+  )
+
+  val rightMenu = style(
+    defaultBoxBordersPaddingsMargins,
+    display.flex,
+    flexDirection.column,
+
   )
 
 

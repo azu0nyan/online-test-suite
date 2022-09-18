@@ -8,7 +8,7 @@ import constants.Text
 import scala.concurrent.ExecutionContext.Implicits.global
 import io.udash._
 import frontend._
-import frontend.views.elements.{DetailsSummary, ProblemView, RunResultsTable, Score}
+import frontend.views.elements.{DetailsSummary, MyButton, ProblemView, RunResultsTable, Score, UserInfoBox}
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import io.udash.properties.ModelPropertyCreator
 import org.scalajs.dom.{Element, Event, window}
@@ -92,12 +92,13 @@ class CoursePageView(
 
 
   def left: Modifier[Element] = div(styles.Grid.leftContent)(
+    buildCollapsibleProgressSection,
     div(styles.Custom.contentsList)(
       h3("Оглавление"),
       produce(course.subProp(_.courseData)) { cd =>
         buildContents(cd, Seq()).render
-      }
-    )
+      },
+    ),
   )
 
   //RIGHT TASK LIST
@@ -161,9 +162,9 @@ class CoursePageView(
   }
 
 
-  def buildRightCollapsibleSection: Modifier[Element] = {
+  def buildCollapsibleProgressSection: Modifier[Element] = {
     produceWithNested(presenter.course)((course, nested) =>
-      div(nested(
+      div(styles.Custom.taskList)( h3("Прогресс:"), nested(
         produce(unCollapsed)(unc =>
           div(
             buildProgressFor(course.courseData, unc)
@@ -171,19 +172,18 @@ class CoursePageView(
       )).render)
   }
 
-  def right: Modifier[Element] = div(styles.Grid.rightContent)(div(styles.Custom.taskList)(
-    h3("Прогресс:"),
-    buildRightCollapsibleSection
+  def buildRightMenu: Modifier[Element] = div(styles.Custom.rightMenu)(
+    MyButton("К выбору курса", presenter.toCourseSelectionPage()),
+    MyButton("Выйти", presenter.logOut()),
+    MyButton("Оценки", presenter.toGradesPage()),
+    //MyButton("Редактировать профиль", presenter.toEditProfilePage()),
+    if(frontend.currentUser.get.nonEmpty && frontend.currentUser.get.get.role == "Admin()") MyButton("В админку", presenter.toAdminPage()) else div(),
+  )
 
-    //    repeat(presenter.course.subSeq(_.problems)) { pr =>
-    //      div(styles.Custom.taskItem, onclick :+= ((_: Event) => {
-    //        presenter.app.goTo(CoursePageState(presenter.courseId.get, problemPath(pr.get.templateAlias)))
-    //        true // prevent default
-    //      }))(pr.get.title, elements.Score(pr.get.score, pr.get.answers.isEmpty,
-    //        waitingForConfirm = if(pr.get.score.toInt == 0) pr.get.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation])else false)).render
-    //    }
-
-  ))
+  def right: Modifier[Element] = div(styles.Grid.rightContent)(
+    produce(frontend.currentUser)(cu => if(cu.nonEmpty) UserInfoBox(cu.get, () => presenter.toEditProfilePage()).render else div().render),
+    buildRightMenu
+  )
 
 
   def displayOnNewPageLinkText(cp: CoursePiece): String = cp.displayInContentsHtml.getOrElse(cp match {
@@ -236,14 +236,6 @@ class CoursePageView(
 
   def center: Modifier[Element] = div(styles.Grid.content ~)(div(styles.Custom.mainContent)(
     //repeatWithNested(course.subSeq(_.problems))((p, nested) => problemHtml(p.asModel, nested)),
-    button(onclick :+= ((_: Event) => {
-      presenter.toCourseSelectionPage()
-      true // prevent default
-    }))("К выбору курса"),
-    button(onclick :+= ((_: Event) => {
-      presenter.logOut()
-      true // prevent default
-    }))("Выйти"),
     produceWithNested(presenter.course.subProp(_.courseData)) { (c, oNested) =>
       div(
         oNested(produceWithNested(presenter.currentPath) { (p, nested) =>
@@ -370,6 +362,7 @@ case class CoursePagePresenter(
     }
     courseId.set(state.courseId)
     currentPath.set(state.lookAt)
+    updateUserDataIfNeeded()
     triggerTexUpdate()
   }
 }

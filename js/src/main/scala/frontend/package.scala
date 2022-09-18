@@ -2,11 +2,11 @@ import java.time.{ZoneId, ZoneOffset}
 import java.time.format.{DateTimeFormatter, FormatStyle}
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-
 import clientRequests.Route
 import io.udash._
 import org.scalajs.dom.document
 import org.scalajs.dom.ext.Ajax
+import viewData.UserViewData
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -83,6 +83,7 @@ package object frontend extends Bindings with Alerts {
 
   lazy val currentToken: Property[Token] = Property("")
 
+  val currentUser: Property[Option[UserViewData]] = Property(None)
 
   //  val appData: ModelProperty[AppViewData] = ModelProperty.blank[AppViewData]
 
