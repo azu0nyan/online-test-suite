@@ -27,6 +27,7 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState] {
     case "/course" / id / lookAt=> CoursePageState(id, lookAt)
     case "/course" / id => CoursePageState(id, "main")
     case "/grades" => MyGradesPageState
+    case "/editProfile" => EditProfileState
     //    case "/course" / id  =>  CoursePageState(id, taskId )
     case "/app" => AppPageState
 

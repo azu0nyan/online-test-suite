@@ -1,7 +1,7 @@
 package frontend.views
 
 import clientRequests.{GetUserData, GetUserDataRequest, GetUserDataSuccess}
-import frontend.{AdminPageState, CourseSelectionPageState, LandingPageState, LoginPageState, MyGradesPageState, RoutingState, currentToken, currentUser}
+import frontend.{AdminPageState, CourseSelectionPageState, EditProfileState, LandingPageState, LoginPageState, MyGradesPageState, RoutingState, currentToken, currentUser}
 import io.udash.{Application, Presenter, State}
 import org.scalajs.dom.document
 
@@ -35,7 +35,7 @@ trait GenericPresenter[T <: State] extends Presenter[T] {
 
   def toGradesPage(): Unit = app.goTo(MyGradesPageState)
 
-  def toEditProfilePage(): Unit = {}
+  def toEditProfilePage(): Unit = {app.goTo(EditProfileState)}
 
   def toAdminPage(): Unit = {app.goTo(AdminPageState)}
 
