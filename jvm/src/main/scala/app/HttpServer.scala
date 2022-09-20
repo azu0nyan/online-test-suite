@@ -4,12 +4,15 @@ import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersForConfir
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
 import controller.UserRole.{Admin, LtiUser, Teacher, Watcher}
+import controller.db.LoggedRequest
 import controller.lti.{LitController, LtiLaunch}
 import controller.{AdminOps, AnswerOps, CoursesOps, CustomCourseOps, CustomProblemOps, GradeOps, GroupOps, LoginUserOps, ProblemOps, RegisterUser, UserOps}
 import org.eclipse.jetty.security.UserAuthentication
 import spark._
 import spark.Spark._
 import viewData.UserViewData
+
+import java.time.Clock
 object HttpServer {
 
   def initRoutesAndStart(host:String = "0.0.0.0", port_ :Int = 8007): Unit ={
@@ -113,17 +116,23 @@ object HttpServer {
       try {
         val req: REQ = reqRes.decodeRequest(request.body())
         if(checkPermissions(req)) {
+          if(App.config.getProperty("logRequests") == "true")
+            controller.db.loggedRequests.insert(LoggedRequest(Clock.systemUTC().instant(), request.ip(), request.body(), request.userAgent(), 200), None)
           val res: RES = action(req)
           val resStr = reqRes.encodeResponse(res)
           resStr
         } else {
           log.error(s"!!! Someone trying to hack in, insufficient permissions for $req ")
           response.status(403)
+          if(App.config.getProperty("logRequests") == "true")
+            controller.db.loggedRequests.insert(LoggedRequest(Clock.systemUTC().instant(), request.ip(), request.body(), request.userAgent(), 403), None)
           "no no 403"
         }
       } catch {
         case t:Throwable => log.error(s"Error during request processing $request $t")
           response.status(500)
+          if(App.config.getProperty("logRequests") == "true")
+            controller.db.loggedRequests.insert(LoggedRequest(Clock.systemUTC().instant(), request.ip(), request.body(), request.userAgent(), 500), None)
           "error 500"
       }
     })

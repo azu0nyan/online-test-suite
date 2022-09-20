@@ -80,6 +80,8 @@ package object db extends CollectionOps {
     classOf[CustomCourseTemplate],
     classOf[CustomProblemTemplate],
 
+    classOf[LoggedRequest],
+
     //todo separate
     classOf[LtiProblem],
     classOf[LtiConsumerKey],
@@ -107,6 +109,7 @@ package object db extends CollectionOps {
   implicit val grades: MongoCollection[Grade] = database.getCollection("grades")
   implicit val groupGrades: MongoCollection[GroupGrade] = database.getCollection("groupGrades")
   implicit val invalidatedProblems: MongoCollection[InvalidatedProblem] = database.getCollection("invalidatedProblems")
+  implicit val loggedRequests: MongoCollection[LoggedRequest] = database.getCollection("loggedRequests")
   //todo separate
   implicit val ltiProblems: MongoCollection[LtiProblem] = database.getCollection("ltiProblem")
   implicit val ltiConsumerKeyToSharedSecrets: MongoCollection[LtiConsumerKey] = database.getCollection("consumerKeyToSharedSecret")
