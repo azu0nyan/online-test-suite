@@ -41,7 +41,7 @@ class AdminGroupListPageView(
       th(width := "150px", minWidth := "100px", maxWidth := "40%")("USERS"),
       th(width := "150px", minWidth := "100px", maxWidth := "40%")(""),
     ),
-    repeat(presenter.groupList)(g => groupRow(g))
+    repeat(presenter.groupList.reversed)(g => groupRow(g))
   )
 
   def groupRow(data: Property[GroupDetailedInfoViewData]) = tr(

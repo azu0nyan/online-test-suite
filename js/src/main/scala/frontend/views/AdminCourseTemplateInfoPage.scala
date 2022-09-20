@@ -32,7 +32,7 @@ class AdminCourseTemplateInfoPageView(
       CourseStructureEditor(course, (cd: CourseRoot) => presenter.changeCourseData(cd)),
       showIf(presenter.currentCourse.subProp(_.editable))(
         div(marginTop := "20px")(
-          TextFieldWithAutocomplete(presenter.newProblemAlias, presenter.requestProblems, "newProblemSuggestions"),
+          TextFieldWithAutocomplete(presenter.newProblemAlias, Helpers.requestProblemsSuggestions, "newProblemSuggestions"),
           MyButton("Добавить алиас", presenter.addProblem())
         ).render
       ),
@@ -64,15 +64,7 @@ class AdminCourseTemplateInfoPageView(
 case class AdminCourseTemplateInfoPagePresenter(
                                                  app: Application[RoutingState],
                                                ) extends GenericPresenter[AdminCourseTemplateInfoPageState] {
-  def requestProblems(s: String): Future[Seq[Token]] = {
-    val regex = s".*${s.toLowerCase}.*"
-    frontend.sendRequest(ProblemTemplateList, ProblemTemplateListRequest(currentToken.get, Seq(AliasOrTitleMatches(regex))))
-      .map {
-        case ProblemTemplateListSuccess(pteds) =>
-          pteds.map(p => s"${p.alias} ${p.title}")
-        case _ => Seq()
-      }
-  }
+
 
   val currentAlias: Property[String] = Property("")
   currentAlias.listen(a => loadCourseData(a))
