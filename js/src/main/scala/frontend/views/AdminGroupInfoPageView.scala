@@ -1,7 +1,8 @@
 package frontend.views
 
-import clientRequests.admin.{AddCourseToGroupRequest, AddUserToGroupRequest, GroupInfoRequest, GroupInfoResponseSuccess, RemoveUserFromGroup, RemoveUserFromGroupRequest, UserListRequest, UserListResponseSuccess}
+import clientRequests.admin.{AddCourseToGroupRequest, AddUserToGroupRequest, ByNameOrLoginOrEmailMatch, GroupInfoRequest, GroupInfoResponseSuccess, RemoveUserFromGroup, RemoveUserFromGroupRequest, UserList, UserListRequest, UserListResponseFailure, UserListResponseSuccess}
 import frontend._
+import frontend.views.elements.TextFieldWithAutocomplete
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.html.Table
@@ -11,6 +12,8 @@ import scalatags.JsDom.all._
 import scalatags.generic.Modifier
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.concurrent.impl.Promise
 import scala.util.Success
 
 class AdminGroupInfoPageView(
@@ -30,7 +33,8 @@ class AdminGroupInfoPageView(
       }))(c.title),
     div(styles.Custom.inputContainer ~)(
       label(`for` := "addUserId")("Добавить в группу:"),
-      TextInput(presenter.loginToAdd)(id := "addUserId", placeholder := "Логин или ИД"),
+      TextFieldWithAutocomplete(presenter.loginToAdd, Helpers.reqUserSuggestion, "addUserIdVars"),
+      //TextInput(presenter.loginToAdd)(id := "addUserId", placeholder := "Логин или ИД"),
       button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
         presenter.addUser()
         true // prevent default
@@ -38,7 +42,7 @@ class AdminGroupInfoPageView(
     ),
     div(styles.Custom.inputContainer ~)(
       label(`for` := "removeUserId")("Удалить из группы:"),
-      TextInput(presenter.loginToAdd)(id := "removeUserId", placeholder := "Логин или ИД"),
+      TextFieldWithAutocomplete(presenter.loginToRemove, Helpers.reqUserSuggestion, "removeUserIdVars"),
       label(`for` := "forceCourseRemovalId")("Удалить все курсы"),
       Checkbox(presenter.forceCourseRemoval)(id := "forceCourseRemovalId"),
       button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
@@ -83,28 +87,33 @@ case class AdminGroupInfoPagePresenter(
   val courseToAdd: Property[String] = Property.blank[String]
   val forceCourseRemoval: Property[Boolean] = Property.blank[Boolean]
 
+
+
+
   def addCourse() = {
-    frontend.sendRequest(clientRequests.admin.AddCourseToGroup, AddCourseToGroupRequest(currentToken.get, courseToAdd.get, groupInfo.get.groupId, true)) onComplete{
+    frontend.sendRequest(clientRequests.admin.AddCourseToGroup, AddCourseToGroupRequest(currentToken.get, courseToAdd.get, groupInfo.get.groupId, true)) onComplete {
       case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
       case resp@_ =>
-        if(debugAlerts) showErrorAlert(s"$resp")
+        if (debugAlerts) showErrorAlert(s"$resp")
     }
   }
 
   def removeUser() = {
     frontend.sendRequest(clientRequests.admin.RemoveUserFromGroup,
-      RemoveUserFromGroupRequest(currentToken.get, loginToAdd.get, groupInfo.get.groupId, forceCourseRemoval.get)) onComplete {
+      RemoveUserFromGroupRequest(currentToken.get, loginToRemove.get, groupInfo.get.groupId, forceCourseRemoval.get)) onComplete {
       case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
       case resp@_ =>
-        if(debugAlerts) showErrorAlert(s"$resp")
+        if (debugAlerts) showErrorAlert(s"$resp")
     }
   }
 
   def addUser() = {
-    frontend.sendRequest(clientRequests.admin.AddUserToGroup, AddUserToGroupRequest(currentToken.get, loginToAdd.get, groupInfo.get.groupId)) onComplete {
+    frontend.sendRequest(clientRequests.admin.AddUserToGroup, AddUserToGroupRequest(currentToken.get,
+      loginToAdd.get.split(" ").headOption.getOrElse(""),  //removes junk from autocomplete
+      groupInfo.get.groupId)) onComplete {
       case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
       case resp@_ =>
-        if(debugAlerts) showErrorAlert(s"$resp")
+        if (debugAlerts) showErrorAlert(s"$resp")
     }
   }
 
@@ -113,7 +122,7 @@ case class AdminGroupInfoPagePresenter(
     frontend.sendRequest(clientRequests.admin.GroupInfo, GroupInfoRequest(currentToken.get, groupId, onlyStudents = true)) onComplete {
       case Success(GroupInfoResponseSuccess(info)) => groupInfo.set(info, true)
       case resp@_ =>
-        if(debugAlerts) showErrorAlert(s"$resp")
+        if (debugAlerts) showErrorAlert(s"$resp")
     }
 
   }

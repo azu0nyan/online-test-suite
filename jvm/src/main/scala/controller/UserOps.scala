@@ -1,12 +1,15 @@
 package controller
 
 import clientRequests.{GetUserDataRequest, GetUserDataResponse, GetUserDataSuccess, UnknownGetUserDataFailure, UnknownUpdateUserDataFailure, UpdateUserDataRequest, UpdateUserDataResponse, UpdateUserDataSuccess, WrongPassword}
-import clientRequests.admin.{UserListRequest, UserListResponse, UserListResponseSuccess}
+import clientRequests.admin.{ByNameOrLoginOrEmailMatch, UserList, UserListFilter, UserListRequest, UserListResponse, UserListResponseSuccess}
 import controller.db.{User, users}
 
 object UserOps {
+
+
   def userList(req: UserListRequest): UserListResponse = {
-    UserListResponseSuccess(db.users.all().map(_.toViewData))
+
+    UserListResponseSuccess(db.users.all().map(_.toViewData).filter(UserList.matchesFilter(req.filters, _)).take(req.limit))
   }
 
   def deleteUser(u: User): Unit = {
