@@ -4,13 +4,25 @@ import controller.db.{CustomCourseTemplate, CustomProblemTemplate}
 import controller.{Maintenance, TemplatesRegistry}
 import impl.BinaryCountingOfAncientRussians
 
+import java.io.FileInputStream
+import java.util.Properties
+
 object App {
+
+  lazy val config: Properties = {
+    val input = new FileInputStream("appconfig.properties")
+
+    val prop = new Properties()
+    prop.load(input)
+    prop
+  }
 
   def main(args: Array[String]): Unit = {
 
+
     initAliases()
 
-    if(args.length == 1 && (args(0) == "-h" || args(0) == "-help")) {
+    if (args.length == 1 && (args(0) == "-h" || args(0) == "-help")) {
       println("-snp start new problems for course")
       println("-ruwg removeUsersWithoutGroups")
       println("-rawp removeAnswersWithoutProblems")
@@ -18,7 +30,7 @@ object App {
       println("-rpwt removeProblemsWithoutTemplates")
     }
 
-    for(a <- args) a match {
+    for (a <- args) a match {
       case "-snp" | "--startNewProblem" => Maintenance.findAndFixNonStartedProblem()
       case "-ruwg" | "--removeUsersWithoutGroups" => Maintenance.removeUsersWOGroups()
       case "-rawp" | "--removeAnswersWithoutProblems" => Maintenance.removeAnswersWoProblems()
@@ -29,18 +41,20 @@ object App {
     }
 
 
-    HttpServer.initRoutesAndStart()
+    HttpServer.initRoutesAndStart(
+      config.getProperty("host"),
+      config.getProperty("port").toInt)
   }
 
   def initAliases(): Unit = {
 
-    for(c <- CustomCourseTemplate.all)
+    for (c <- CustomCourseTemplate.all)
       TemplatesRegistry.registerOrUpdateCourseTemplate(c)
 
-    for(p <- CustomProblemTemplate.all)
+    for (p <- CustomProblemTemplate.all)
       TemplatesRegistry.registerProblemTemplate(p)
 
-//    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
+    //    TemplatesRegistry.registerOrUpdateCourseTemplate(BinaryCountingOfAncientRussians.template)
     TemplatesRegistry.registerDataPack(courses.javaCourse.data)
     TemplatesRegistry.registerDataPack(courses.datastructures.data)
     TemplatesRegistry.registerDataPack(courses.algos.data)

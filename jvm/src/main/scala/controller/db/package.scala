@@ -3,6 +3,7 @@ package controller
 import DbViewsShared.CourseShared.{AnswerStatus, CourseStatus}
 import DbViewsShared.GradeRule.{GradeRound, GradedProblem}
 import DbViewsShared.{GradeOverride, GradeRule}
+import app.App
 import com.typesafe.scalalogging.Logger
 import controller.db.CustomCourseTemplate
 import controller.db.CustomProblemVerification.CustomProblemVerification
@@ -34,7 +35,7 @@ package object db extends CollectionOps {
     def updatedFromDb[T](implicit col: MongoCollection[T], c: ClassTag[T]): T = CollectionOps(col).byId(_id).get
   }
 
-  val dbName = "myTestDb"
+  lazy val dbName = App.config.getProperty("dbName")
 
   //  import org.mongodb.scala.bson.codecs.Macros
   //  val problemScoreCodecProvider = Macros.createCodecProvider[ProblemScore]()
@@ -89,7 +90,8 @@ package object db extends CollectionOps {
 //    new OptionCodec().asInstanceOf[Codec[None.type]]
   ), DEFAULT_CODEC_REGISTRY)
 
-  val mongoClient: MongoClient = MongoClient()
+  private val dbURI: String = App.config.getProperty("dbURI")
+  val mongoClient: MongoClient = MongoClient( dbURI)
   val database: MongoDatabase = mongoClient.getDatabase(dbName).withCodecRegistry(codecRegistry)
 
   implicit val users: MongoCollection[User] = database.getCollection("users")

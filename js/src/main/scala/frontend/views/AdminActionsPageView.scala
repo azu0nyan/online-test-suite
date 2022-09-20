@@ -129,6 +129,7 @@ case class AdminActionsPagePresenter(
       .onComplete {
         case Success(AdminActionImpersonateSuccess(newToken)) =>
           currentToken.set(newToken, true)
+          updateUserData()
           showSuccessAlert("Имперсонирован")
         case _ => showErrorAlert("Ошибка при имперсонировании")
       }
