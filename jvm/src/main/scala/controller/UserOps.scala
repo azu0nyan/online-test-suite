@@ -8,7 +8,7 @@ object UserOps {
 
 
   def userList(req: UserListRequest): UserListResponse = {
-
+    log.debug(s"Loading user list ${req.filters}")
     UserListResponseSuccess(db.users.all().map(_.toViewData).filter(UserList.matchesFilter(req.filters, _)).take(req.limit))
   }
 

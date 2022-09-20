@@ -1,8 +1,8 @@
 package frontend.views
 
-import clientRequests.admin.{AddProblemToCourseTemplate, AddProblemToCourseTemplateRequest, AddProblemToCourseTemplateSuccess, AdminCourseInfo, CourseInfoRequest, CourseInfoSuccess, CustomCourseUpdateData, DuplicateAlias, RemoveProblemFromCourseRequest, UnknownAlias, UnknownCourseTemplate, UpdateCustomCourseRequest, UpdateCustomCourseSuccess}
+import clientRequests.admin.{AddProblemToCourseTemplate, AddProblemToCourseTemplateRequest, AddProblemToCourseTemplateSuccess, AdminCourseInfo, AliasOrTitleMatches, CourseInfoRequest, CourseInfoSuccess, CustomCourseUpdateData, DuplicateAlias, ProblemTemplateList, ProblemTemplateListRequest, ProblemTemplateListSuccess, RemoveProblemFromCourseRequest, UnknownAlias, UnknownCourseTemplate, UpdateCustomCourseRequest, UpdateCustomCourseSuccess}
 import frontend._
-import frontend.views.elements.{CourseStructureEditor, EditableField, DetailsSummary}
+import frontend.views.elements.{CourseStructureEditor, DetailsSummary, EditableField, MyButton, TextFieldWithAutocomplete}
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.{Element, Event, console}
@@ -28,8 +28,14 @@ class AdminCourseTemplateInfoPageView(
       produce(course.subProp(_.courseAlias))(alias => h4(s"Алиас: $alias").render),
       //      EditableField[CourseRoot](course.subProp(_.courseData), x => p(x.toString),
       //        _.toString, x => None, x => presenter.changeCourseData(x)),
-//      Expandable(h4("Структура курса"), p(course.get.courseData.toString)),
-      CourseStructureEditor(course, (cd:CourseRoot) => presenter.changeCourseData(cd)),
+      //      Expandable(h4("Структура курса"), p(course.get.courseData.toString)),
+      CourseStructureEditor(course, (cd: CourseRoot) => presenter.changeCourseData(cd)),
+      showIf(presenter.currentCourse.subProp(_.editable))(
+        div(marginTop := "20px")(
+          TextFieldWithAutocomplete(presenter.newProblemAlias, presenter.requestProblems, "newProblemSuggestions"),
+          MyButton("Добавить алиас", presenter.addProblem())
+        ).render
+      ),
       table(styles.Custom.defaultTable ~)(
         tr(
           th(width := "50px")("№"),
@@ -50,15 +56,6 @@ class AdminCourseTemplateInfoPageView(
                 ))
             ).render
         )
-      ),
-      showIf(presenter.currentCourse.subProp(_.editable))(
-        div(marginTop := "20px")(
-          TextInput(presenter.newProblemAlias)(id := "newProblemAlias", placeholder := "Alias"),
-          button(onclick :+= ((_: Event) => {
-            presenter.addProblem()
-            true // prevent default
-          }))("Добавить алиас")
-        ).render
       )
     ).render
 
@@ -67,6 +64,15 @@ class AdminCourseTemplateInfoPageView(
 case class AdminCourseTemplateInfoPagePresenter(
                                                  app: Application[RoutingState],
                                                ) extends GenericPresenter[AdminCourseTemplateInfoPageState] {
+  def requestProblems(s: String): Future[Seq[Token]] = {
+    val regex = s".*${s.toLowerCase}.*"
+    frontend.sendRequest(ProblemTemplateList, ProblemTemplateListRequest(currentToken.get, Seq(AliasOrTitleMatches(regex))))
+      .map {
+        case ProblemTemplateListSuccess(pteds) =>
+          pteds.map(p => s"${p.alias} ${p.title}")
+        case _ => Seq()
+      }
+  }
 
   val currentAlias: Property[String] = Property("")
   currentAlias.listen(a => loadCourseData(a))
@@ -103,7 +109,7 @@ case class AdminCourseTemplateInfoPagePresenter(
   }
 
   def addProblem(): Unit = {
-    val alias = newProblemAlias.get
+    val alias = newProblemAlias.get.split(" ").headOption.getOrElse("")
     frontend.sendRequest(clientRequests.admin.AddProblemToCourseTemplate, AddProblemToCourseTemplateRequest(currentToken.get, currentCourse.get.courseAlias, alias)).onComplete {
       case Success(AddProblemToCourseTemplateSuccess()) =>
         showSuccessAlert(s"Задание с алиасом ${alias} добавлено.")

@@ -1,8 +1,8 @@
 package frontend.views
 
-import clientRequests.admin.{AddCustomProblemTemplateRequest, AddCustomProblemTemplateSuccess, AliasMatches, CustomProblemUpdateData, Editable, ProblemTemplateFilter, ProblemTemplateListRequest, ProblemTemplateListSuccess, RemoveCustomProblemTemplate, RemoveCustomProblemTemplateRequest, RemoveCustomProblemTemplateSuccess, UpdateCustomProblemTemplateRequest, UpdateCustomProblemTemplateSuccess}
+import clientRequests.admin.{AddCustomProblemTemplateRequest, AddCustomProblemTemplateSuccess, AliasOrTitleMatches, CustomProblemUpdateData, Editable, ProblemTemplateFilter, ProblemTemplateListRequest, ProblemTemplateListSuccess, RemoveCustomProblemTemplate, RemoveCustomProblemTemplateRequest, RemoveCustomProblemTemplateSuccess, UpdateCustomProblemTemplateRequest, UpdateCustomProblemTemplateSuccess}
 import frontend.views.elements.ProblemTemplateEditor
-import frontend.{AdminProblemsPageState, showErrorAlert, _}
+import frontend._
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom.{Element, Event}
@@ -77,7 +77,7 @@ case class AdminProblemsPagePresenter(problems: SeqProperty[viewData.ProblemTemp
   val regexpFilter: Property[String] = Property(".*")
   val showEditable: Property[Boolean] = Property(true)
 
-  def filters: Seq[ProblemTemplateFilter] = Seq(Editable(showEditable.get), AliasMatches(regexpFilter.get))
+  def filters: Seq[ProblemTemplateFilter] = Seq(Editable(showEditable.get), AliasOrTitleMatches(regexpFilter.get))
 
   def updateCustomProblem(alias: String, updateData: CustomProblemUpdateData): Unit = {
     frontend.sendRequest(clientRequests.admin.UpdateCustomProblemTemplate,

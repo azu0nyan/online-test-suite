@@ -1,7 +1,7 @@
 package controller
 
 import clientRequests.{GetProblemDataRequest, GetProblemDataResponse, GetProblemDataSuccess, SubmitAnswerResponse, UnknownGetProblemDataFailure}
-import clientRequests.admin.{AliasMatches, Editable, ProblemTemplateFilter, ProblemTemplateListRequest, ProblemTemplateListResponse, ProblemTemplateListSuccess}
+import clientRequests.admin.{AliasOrTitleMatches, Editable, ProblemTemplateFilter, ProblemTemplateListRequest, ProblemTemplateListResponse, ProblemTemplateListSuccess}
 import controller.db.Problem
 import org.mongodb.scala.bson.ObjectId
 import otsbridge.ProblemTemplate
@@ -35,12 +35,12 @@ object ProblemOps {
 
   def matchesFilter(pt: ProblemTemplate, filter: ProblemTemplateFilter): Boolean =
     filter match {
-      case AliasMatches(regex) => pt.uniqueAlias.matches(regex)
+      case AliasOrTitleMatches(regex) => pt.uniqueAlias.toLowerCase.matches(regex.toLowerCase) || pt.title(0).toLowerCase.matches(regex.toLowerCase)
       case Editable(editable) => pt.editable == editable
     }
 
   def problemTemplateList(req: ProblemTemplateListRequest): ProblemTemplateListResponse = {
-    log.info(s"Loading problem list ${req.filters}")
+    log.debug(s"Loading problem list ${req.filters}")
     val resp = TemplatesRegistry.problemTemplates
       .filter(pt => req.filters.forall(f => matchesFilter(pt, f)))
       .map(ToViewData(_))
