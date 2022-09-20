@@ -9,3 +9,4 @@
 #fooJS / fastOptJS
 #fooJVM / universal:packageBin
 #deployUniversalToVPS.sh
+#copy appconfig to workdir

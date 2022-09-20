@@ -1,0 +1,15 @@
+[Unit]
+Description=Tester application.
+After=mongod.service
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+User=tester
+WorkingDirectory=/srv/tester/online-test-suite-0.2-SNAPSHOT/bin/
+ExecStart=/srv/tester/online-test-suite-0.2-SNAPSHOT/bin/online-test-suite
+#ExecStart=/srv/tester/online-test-suite-0.2-SNAPSHOT/bin/online-test-suite
+
+[Install]
+WantedBy=multi-user.target
