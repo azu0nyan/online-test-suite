@@ -128,16 +128,16 @@ class CoursePageView(
   }
 
   def buildProgressForProblem(pr: ProblemViewData) =
-    div(styles.Custom.taskItem)(
-      div(onclick :+= ((_: Event) => {
-        presenter.app.goTo(CoursePageState(presenter.courseId.get, problemPath(pr.templateAlias)))
-        true // prevent default
-      }))(pr.title),
+    div(styles.Custom.taskItem, onclick :+= ((_: Event) => {
+      presenter.app.goTo(CoursePageState(presenter.courseId.get, problemPath(pr.templateAlias)))
+      true // prevent default
+    }))(
+      div()(pr.title),
       div(elements.Score(pr.score, pr.answers.isEmpty,
         waitingForConfirm = if (pr.score.toInt == 0) pr.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation]) else false))
     ).render
 
-  def parentlessProblems : Seq[ProblemViewData] = {
+  def parentlessProblems: Seq[ProblemViewData] = {
     val withparent = course.get.courseData.allProblems.map(_.alias).flatMap(presenter.problemByAlias)
     course.get.problems.filter(!withparent.contains(_))
   }
@@ -146,7 +146,7 @@ class CoursePageView(
     case CourseRoot(_, _, childs) =>
       div(styles.Custom.taskContainer)(
         for (c <- childs) yield buildProgressFor(c, unc),
-        for(p <- parentlessProblems) yield buildProgressForProblem(p)
+        for (p <- parentlessProblems) yield buildProgressForProblem(p)
       ).render
     case t: CoursePiece.Theme =>
       buildProgressForContainer(t, unc, t.title)
@@ -164,7 +164,7 @@ class CoursePageView(
 
   def buildCollapsibleProgressSection: Modifier[Element] = {
     produceWithNested(presenter.course)((course, nested) =>
-      div(styles.Custom.taskList)( h3("Прогресс:"), nested(
+      div(styles.Custom.taskList)(h3("Прогресс:"), nested(
         produce(unCollapsed)(unc =>
           div(
             buildProgressFor(course.courseData, unc)
@@ -177,11 +177,11 @@ class CoursePageView(
     MyButton("Выйти", presenter.logOut()),
     MyButton("Оценки", presenter.toGradesPage()),
     //MyButton("Редактировать профиль", presenter.toEditProfilePage()),
-    if(frontend.currentUser.get.nonEmpty && frontend.currentUser.get.get.role == "Admin()") MyButton("В админку", presenter.toAdminPage()) else div(),
+    if (frontend.currentUser.get.nonEmpty && frontend.currentUser.get.get.role == "Admin()") MyButton("В админку", presenter.toAdminPage()) else div(),
   )
 
   def right: Modifier[Element] = div(styles.Grid.rightContent)(
-    produce(frontend.currentUser)(cu => if(cu.nonEmpty) UserInfoBox(cu.get, () => presenter.toEditProfilePage()).render else div().render),
+    produce(frontend.currentUser)(cu => if (cu.nonEmpty) UserInfoBox(cu.get, () => presenter.toEditProfilePage()).render else div().render),
     buildRightMenu
   )
 
