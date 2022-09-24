@@ -33,7 +33,7 @@ class AdminGroupInfoPageView(
       }))(c.title),
     div(styles.Custom.inputContainer ~)(
       label(`for` := "addUserId")("Добавить в группу:"),
-      TextFieldWithAutocomplete(presenter.loginToAdd, Helpers.reqUserSuggestion, "addUserIdVars"),
+      TextFieldWithAutocomplete(presenter.loginToAdd, Requests.reqUserSuggestion, "addUserIdVars"),
       //TextInput(presenter.loginToAdd)(id := "addUserId", placeholder := "Логин или ИД"),
       button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
         presenter.addUser()
@@ -42,7 +42,7 @@ class AdminGroupInfoPageView(
     ),
     div(styles.Custom.inputContainer ~)(
       label(`for` := "removeUserId")("Удалить из группы:"),
-      TextFieldWithAutocomplete(presenter.loginToRemove, Helpers.reqUserSuggestion, "removeUserIdVars"),
+      TextFieldWithAutocomplete(presenter.loginToRemove, Requests.reqUserSuggestion, "removeUserIdVars"),
       label(`for` := "forceCourseRemovalId")("Удалить все курсы"),
       Checkbox(presenter.forceCourseRemoval)(id := "forceCourseRemovalId"),
       button(styles.Custom.primaryButton ~, onclick :+= ((_: Event) => {
@@ -108,9 +108,7 @@ case class AdminGroupInfoPagePresenter(
   }
 
   def addUser() = {
-    frontend.sendRequest(clientRequests.admin.AddUserToGroup, AddUserToGroupRequest(currentToken.get,
-      loginToAdd.get.split(" ").headOption.getOrElse(""),  //removes junk from autocomplete
-      groupInfo.get.groupId)) onComplete {
+    Requests.addUser(loginToAdd.get.split(" ").headOption.getOrElse(""), groupInfo.get.groupId) onComplete {
       case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
       case resp@_ =>
         if (debugAlerts) showErrorAlert(s"$resp")

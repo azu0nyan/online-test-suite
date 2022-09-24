@@ -71,7 +71,7 @@ case class User(_id: ObjectId,
 
   def groups: Seq[Group] = UserToGroup.userGroups(this)
 
-  def toViewData: UserViewData = UserViewData(_id.toHexString, login, firstName, lastName, email, groups.map(_.toViewData), role.toString)
+  def toViewData: UserViewData = UserViewData(_id.toHexString, login, firstName, lastName, email, groups.map(_.toViewData), role.toString, registeredAt.getOrElse(Instant.MIN))
 
   def courses: Seq[Course] = Course.forUser(this)
 

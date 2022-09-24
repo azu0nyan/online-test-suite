@@ -32,7 +32,7 @@ class AdminCourseTemplateInfoPageView(
       CourseStructureEditor(course, (cd: CourseRoot) => presenter.changeCourseData(cd)),
       showIf(presenter.currentCourse.subProp(_.editable))(
         div(marginTop := "20px")(
-          TextFieldWithAutocomplete(presenter.newProblemAlias, Helpers.requestProblemsSuggestions, "newProblemSuggestions"),
+          TextFieldWithAutocomplete(presenter.newProblemAlias, Requests.requestProblemsSuggestions, "newProblemSuggestions"),
           MyButton("Добавить алиас", presenter.addProblem())
         ).render
       ),

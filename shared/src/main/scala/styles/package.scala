@@ -19,6 +19,10 @@ package object styles {
   val horizontalMargin = 10 px
   val verticalMargin = 15 px
 
+
+  val miniPadding = 2 px
+  val miniMargin = 2 px
+
   val smallPadding = 5 px
   val smallMargin = 5 px
   val horizontalPadding = 10 px
@@ -27,6 +31,7 @@ package object styles {
   val biggerFontSize = 18 px
   val mediumFontSize = 14 px
   val smallFontSize = 10 px
+  val miniFontSize = 6 px
 
   val inputContainerWidthLimit = 300 px
   val inputVerticalSpacingMargin = verticalMargin

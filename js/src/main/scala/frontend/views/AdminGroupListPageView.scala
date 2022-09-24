@@ -81,6 +81,9 @@ case class AdminGroupListPagePresenter(
                                         app: Application[RoutingState],
                                         groupList: SeqProperty[viewData.GroupDetailedInfoViewData]
                                       ) extends GenericPresenter[AdminGroupListPageState.type] {
+
+  def requestGroupListUpdate(): Unit = Requests.requestGroupListUpdate(groupList)
+
   def newGroup() = {
     frontend.sendRequest(clientRequests.admin.NewGroup, NewGroupRequest(currentToken.get, newGroupTitle.get)) onComplete { _ =>
       requestGroupListUpdate()
@@ -90,15 +93,8 @@ case class AdminGroupListPagePresenter(
 
   val newGroupTitle: Property[String] = Property.blank[String]
 
-  def requestGroupListUpdate(): Unit = {
-    frontend.sendRequest(clientRequests.admin.GroupList, GroupListRequest(currentToken.get)) onComplete {
-      case Success(GroupListResponseSuccess(list)) => groupList.set(list)
-        println("updated group list")
-      case resp@_ =>
-        if (debugAlerts) showErrorAlert(s"$resp")
-    }
 
-  }
+
 
   override def handleState(state: AdminGroupListPageState.type): Unit = {
     println(s"Admin groups page handling state")

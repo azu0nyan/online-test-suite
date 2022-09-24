@@ -36,11 +36,23 @@ object Custom extends StyleSheet.Inline {
     textDecoration := "underline"
   )
   val smallButton = style(
+    margin(smallMargin),
     borderStyle.none,
     height.fitContent,
     width.fitContent,
     backgroundColor(smallButtonColor),
     color(smallButtonTextColor)
+  )
+
+  val miniButton = style(
+    margin(miniMargin),
+    padding(miniPadding),
+    borderStyle.none,
+    height.fitContent,
+    width.fitContent,
+    backgroundColor(smallButtonColor),
+    color(smallButtonTextColor),
+    fontSize(smallFontSize)
   )
 
   val inputContainerPositioner = style(
@@ -274,7 +286,8 @@ object Custom extends StyleSheet.Inline {
   val problemScoreText = style(
     fontSize(biggerFontSize),
     fontWeight.bold,
-    whiteSpace.nowrap,
+    //whiteSpace.nowrap,
+    textAlign.right,
     margin.auto,
   )
 

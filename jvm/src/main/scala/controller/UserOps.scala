@@ -9,7 +9,13 @@ object UserOps {
 
   def userList(req: UserListRequest): UserListResponse = {
     log.debug(s"Loading user list ${req.filters}")
-    UserListResponseSuccess(db.users.all().map(_.toViewData).filter(UserList.matchesFilter(req.filters, _)).take(req.limit))
+    UserListResponseSuccess {
+      val f = db.users.all()
+        .map(_.toViewData)
+        .filter(UserList.matchesFilter(req.filters, _))
+      req.order.order(f)
+        .slice(req.page * req.itemsPerPage, req.page * req.itemsPerPage + req.itemsPerPage)
+    }
   }
 
   def deleteUser(u: User): Unit = {
