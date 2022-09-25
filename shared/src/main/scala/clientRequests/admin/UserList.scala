@@ -40,7 +40,7 @@ case class ByLogin(desc: Boolean) extends UserListOrder {
     else s.sortWith(Ordering.by[UserViewData, String](s => s.login).reverse.lt)
 }
 //REQ
-case class UserListRequest(token:String, filters:Seq[UserListFilter], itemsPerPage: Int = 100, page:Int = 0, order: UserListOrder = NoOrder) extends WithToken
+case class UserListRequest(token:String, filters:Seq[UserListFilter], itemsPerPage: Int = 200, page:Int = 0, order: UserListOrder = NoOrder) extends WithToken
 
 //RES
 sealed trait UserListResponse

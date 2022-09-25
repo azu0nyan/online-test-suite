@@ -111,6 +111,7 @@ object ProblemView {
         currentLanguage.listen({
           case ProgrammingLanguage.Java => editor.session.setMode("ace/mode/java")
           case ProgrammingLanguage.Scala => editor.session.setMode("ace/mode/scala")
+          case ProgrammingLanguage.Kojo => editor.session.setMode("ace/mode/scala")
           case ProgrammingLanguage.Cpp => editor.session.setMode("ace/mode/c_cpp")
           case ProgrammingLanguage.Haskell => editor.session.setMode("ace/mode/haskell")
         }, true)
@@ -140,6 +141,7 @@ object ProblemView {
             case ProgrammingLanguage.Scala => div("Scala")
             case ProgrammingLanguage.Cpp => div("C++")
             case ProgrammingLanguage.Haskell => div("Haskell")
+            case ProgrammingLanguage.Kojo => div("Kojo(scala)")
           }, styles.Custom.languageSelect ~),
           label(`for` := inputId)(questionText),
           editorDiv,

@@ -33,7 +33,8 @@ object Custom extends StyleSheet.Inline {
   val primaryButton = style(
     backgroundColor(primaryButtonColor),
     fontSize(mediumFontSize),
-    textDecoration := "underline"
+    textDecoration := "underline",
+    fontWeight.bold
   )
   val smallButton = style(
     margin(smallMargin),
@@ -41,7 +42,8 @@ object Custom extends StyleSheet.Inline {
     height.fitContent,
     width.fitContent,
     backgroundColor(smallButtonColor),
-    color(smallButtonTextColor)
+    color(smallButtonTextColor),
+    fontWeight.bold
   )
 
   val miniButton = style(
@@ -52,7 +54,8 @@ object Custom extends StyleSheet.Inline {
     width.fitContent,
     backgroundColor(smallButtonColor),
     color(smallButtonTextColor),
-    fontSize(smallFontSize)
+    fontSize(smallFontSize),
+    fontWeight.bold
   )
 
   val inputContainerPositioner = style(
@@ -85,7 +88,6 @@ object Custom extends StyleSheet.Inline {
     borderColor(tableBordersColor),
     borderWidth(1 px)
   )
-
 
 
   val inputContainer = style(
@@ -149,7 +151,7 @@ object Custom extends StyleSheet.Inline {
     background := "transparent",
     fontSize(biggerFontSize),
     height(30 px),
-    width(40 px ),
+    width(40 px),
     scalacss.internal.Attr.real("-webkit-appearance") := "none"
     //    appearance := "none"
     //
@@ -197,7 +199,7 @@ object Custom extends StyleSheet.Inline {
     borderWidth(tableBorderWidth),
     borderColor(tableBordersColor),
     borderStyle.solid,
-    fontSize( mediumFontSize),
+    fontSize(mediumFontSize),
     fontFamily :=! "monospace",
     width(100 %%),
     height(50 vh),
@@ -271,6 +273,32 @@ object Custom extends StyleSheet.Inline {
       borderColor(tableBordersColor)
     )
   )
+
+  val smallTextTable = style(
+
+    tableLayout.fixed,
+    overflowX.hidden,
+    color(defaultFontColor),
+    fontSize(smallFontSize),
+    borderCollapse.collapse,
+    unsafeChild("td")(
+      overflowX.hidden,
+      padding(miniPadding),
+      textAlign.left,
+      borderWidth(tableBorderWidth),
+      borderStyle.solid,
+      borderColor(tableBordersColor)
+    ),
+    unsafeChild("th")(
+      overflowX.hidden,
+      padding(miniPadding),
+      textAlign.left,
+      borderWidth(tableBorderWidth),
+      borderStyle.solid,
+      borderColor(tableBordersColor)
+    )
+  )
+
 
   val answerCellDiv = style(
     width(300 px),
@@ -388,7 +416,7 @@ object Custom extends StyleSheet.Inline {
     &.hover {
       backgroundColor(highlightColor)
     },
-    width (100 %%),
+    width(100 %%),
     borderBottom.dotted,
     borderWidth(tableBorderWidth),
     borderColor(tableBordersColor),
@@ -402,14 +430,14 @@ object Custom extends StyleSheet.Inline {
     borderWidth(smallBorderWidth),
     borderLeft.inset,
     borderColor(tableBordersColor),
-    width (100 %%)
+    width(100 %%)
 
 
   )
   val taskContainer = style(
     display.flex,
     flexDirection.column,
-    width (100 %%),
+    width(100 %%),
     paddingTop(verticalPadding)
 
 

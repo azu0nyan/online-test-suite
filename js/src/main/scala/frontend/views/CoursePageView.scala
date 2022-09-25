@@ -37,7 +37,7 @@ class CoursePageView(
 
 
   private def problemHtml(problemData: ModelProperty[viewData.ProblemViewData], nested: NestedInterceptor) =
-    div(styles.Custom.problemContainer ~)(
+    div(/*styles.Custom.problemContainer ~*/)(
       ProblemView(problemData, a => presenter.submitAnswer(problemData.get.problemId, a), Some(nested))
     ).render
 
