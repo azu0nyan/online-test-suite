@@ -25,7 +25,8 @@ package object frontend extends Bindings with Alerts {
 
   var lastUpdate = 0L
   def triggerTexUpdate(): Unit = {
-    js.Dynamic.global.MathJax.typeset()
+//    js.Dynamic.global.MathJax.typeset()
+    setTimeout(FiniteDuration(10, TimeUnit.MILLISECONDS))(js.Dynamic.global.MathJax.typeset())
 //    println(System.currentTimeMillis())
 //    println(lastUpdate)
 //    if (System.currentTimeMillis() > lastUpdate + 1000) {
