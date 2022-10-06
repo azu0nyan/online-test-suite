@@ -244,6 +244,17 @@ object Custom extends StyleSheet.Inline {
     width(100 %%),
   )
 
+  val groupScoresTable = style(
+    defaultTableMixin,
+    width(100 %%),
+    unsafeChild("th")(
+      overflowWrap := "anywhere",
+      fontSize := smallFontSize
+    )
+  )
+
+
+
   val maxContentWidthTable = style(
     defaultTableMixin,
     width.maxContent,
@@ -313,6 +324,13 @@ object Custom extends StyleSheet.Inline {
 
   val problemScoreText = style(
     fontSize(biggerFontSize),
+    fontWeight.bold,
+    //whiteSpace.nowrap,
+    textAlign.right,
+    margin.auto,
+  )
+  val mediumProblemScoreText = style(
+    fontSize(mediumFontSize),
     fontWeight.bold,
     //whiteSpace.nowrap,
     textAlign.right,
