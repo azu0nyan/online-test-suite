@@ -44,38 +44,16 @@ class GroupScoresPageView(
         ).render
       }
     )
-  /*showIf(presenter.loaded) {
-  table(styles.Custom.defaultTable ~, width := "100vw")(
-    tr(
-      th("Имя"),
-      for ((title, alias) <- presenter.problemsTitlesInOrder.zip(presenter.problemsAliasesInOrder)) yield th(title + " " + alias)
-    ),
-    for (u <- presenter.users.toSeq) yield tr(
-      td(s"${u.login} ${u.firstName.getOrElse("")} ${u.lastName.getOrElse("")}"),
-      for (p <- presenter.problemsAliasesInOrder.toSeq) yield td(
-        presenter.userProblems(u.id).get(p) match {
-          case Some(pvd) => Score(pvd.score, pvd.answers.nonEmpty, pvd.answers.exists(_.status.isInstanceOf[VerifiedAwaitingConfirmation]))
-          case None => ""
-        }
-      ),
-    )
-  ).render
-}*/
+
 }
 
 case class GroupScoresPagePresenter(
                                      app: Application[RoutingState]
                                    ) extends GenericPresenter[GroupScoresPageState] {
+
+
+
   val groupId: Property[String] = Property.blank
-
-  //  val loaded: Property[Boolean] = Property.blank
-
-  //  val courses: mutable.Buffer[GroupCourseInfo] = mutable.Buffer()
-  //  val users: mutable.Buffer[UserViewData] = mutable.Buffer()
-  //  val userProblems: mutable.Map[String, Map[String, ProblemViewData]] = mutable.Map()
-  //    def problemsTitlesInOrder: Seq[String] = courses.flatMap(_.problemTitleAlias.map(_.title)).toSeq
-  //  def problemsAliasesInOrder: Seq[String] = courses.flatMap(_.problemTitleAlias.map(_.alias)).toSeq
-
   val courses: SeqProperty[GroupCourseInfo] = SeqProperty(Seq())
   val users: SeqProperty[UserViewData] = SeqProperty(Seq())
   val userProblems: Property[Map[String, Map[String, ProblemViewData]]] = Property(Map())

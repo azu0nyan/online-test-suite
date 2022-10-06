@@ -1,7 +1,7 @@
 package frontend.views
 
 import DbViewsShared.GradeRule.GradeRound
-import clientRequests.teacher.{InvalidateProblem, InvalidateProblemRequest, InvalidateProblemSuccess}
+import clientRequests.teacher.{Invalide, ModifyProblemRequest, ModifyProblemSuccess}
 import clientRequests.watcher.{GroupCourseInfo, GroupProblemInfo, GroupScoresRequest, GroupScoresSuccess}
 import frontend._
 import frontend.views.elements.Score
@@ -13,6 +13,7 @@ import org.scalajs.dom.html.Input
 import otsbridge.AnswerField._
 import scalatags.JsDom.all.{div, _}
 import scalatags.generic.Modifier
+import shapeless.ops.zipper.Modify
 import viewData.{AnswerViewData, ProblemViewData, UserViewData}
 
 import scala.collection.mutable
@@ -126,8 +127,8 @@ case class GroupAnswersComparisonPagePresenter(
                                                 app: Application[RoutingState]
                                               ) extends GenericPresenter[GroupAnswersComparisonPageState] {
   def invalidate(problemId: String, answerId: Option[String]) = {
-    frontend.sendRequest(clientRequests.teacher.InvalidateProblem, InvalidateProblemRequest(currentToken.get, problemId, answerId, Some("СПИСАНО"))) onComplete {
-      case Success(InvalidateProblemSuccess()) =>
+    frontend.sendRequest(clientRequests.teacher.ModifyProblem, ModifyProblemRequest(currentToken.get, problemId, Invalide(answerId, Some("СПИСАНО")))) onComplete {
+      case Success(ModifyProblemSuccess()) =>
         showSuccessAlert(timeMs = Some(1000))
       case _ =>
         showErrorAlert()

@@ -4,7 +4,7 @@ import DbViewsShared.CourseShared.Rejected
 import DbViewsShared.GradeOverride
 import DbViewsShared.GradeOverride._
 import DbViewsShared.GradeRule.{Ceil, FixedGrade, Floor, GradedProblem, Round, SumScoresGrade}
-import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, GroupGradesListRequest, GroupGradesListResponse, GroupGradesListSuccess, InvalidateProblemRequest, InvalidateProblemResponse, InvalidateProblemSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownGroupGradesListFailure, UnknownInvalidateProblemFailure, UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure, UnknownUpdateGroupGradeFailure, UpdateGroupGradeRequest, UpdateGroupGradeResponse, UpdateGroupGradeSuccess}
+import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeResponse, AddGroupGradeSuccess, AddPersonalGradeRequest, AddPersonalGradeResponse, AddPersonalGradeSuccess, GroupGradesListRequest, GroupGradesListResponse, GroupGradesListSuccess, OverrideGradeRequest, OverrideGradeResponse, OverrideGradeSuccess, RemoveGroupGradeRequest, RemoveGroupGradeResponse, RemoveGroupGradeSuccess, RemovePersonalGradeRequest, RemovePersonalGradeResponse, RemovePersonalGradeSuccess, UnknownAddGroupGradeFailure, UnknownAddPersonalGradeFailure, UnknownGroupGradesListFailure,  UnknownOverrideGradeFailure, UnknownRemoveGroupGradeFailure, UnknownRemovePersonalGradeFailure, UnknownUpdateGroupGradeFailure, UpdateGroupGradeRequest, UpdateGroupGradeResponse, UpdateGroupGradeSuccess}
 import clientRequests.watcher.{GroupGradesRequest, GroupGradesResponse, GroupGradesSuccess, UnknownGroupGradesFailure}
 import clientRequests.{GetGradesRequest, GetGradesResponse, GetGradesSuccess, UnknownGetGradesFailure}
 import controller.UserRole.Student
@@ -16,20 +16,7 @@ import java.time.Clock
 
 object GradeOps {
 
-  def invalidateProblem(req: InvalidateProblemRequest): InvalidateProblemResponse = try {
-    problems.byId(new ObjectId(req.problemId)).foreach { p =>
-      db.invalidatedProblems.insert(InvalidatedProblem(p._id, req.answerMessage.orElse(Some("MANUAL REJECT"))))
-      req.answerId.flatMap(id => db.answers.byId(new ObjectId(id))).foreach { a =>
-        db.answers.updateField(a, "status", Rejected(req.answerMessage.orElse(Some("MANUAL REJECT")), Clock.systemUTC().instant()))
-      }
-      p.recalculateAndUpdateScoreIfNeeded()
-    }
-    InvalidateProblemSuccess()
-  } catch {
-    case t: Throwable =>
-      log.error(s"Error invalidating problem $req", t)
-      UnknownInvalidateProblemFailure()
-  }
+
 
   def updateGroupGrade(req: UpdateGroupGradeRequest): UpdateGroupGradeResponse = try {
     log.info(s"Updating group grade $req")
