@@ -330,7 +330,7 @@ object Custom extends StyleSheet.Inline {
     margin.auto,
   )
   val mediumProblemScoreText = style(
-    fontSize(mediumFontSize),
+    fontSize(smallFontSize),
     fontWeight.bold,
     //whiteSpace.nowrap,
     textAlign.right,

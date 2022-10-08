@@ -1,10 +1,12 @@
 package frontend
 
 import clientRequests.admin.{AddUserToGroupRequest, AddUserToGroupResponse, AliasOrTitleMatches, ByNameOrLoginOrEmailMatch, GroupListRequest, GroupListResponseSuccess, NoOrder, ProblemTemplateList, ProblemTemplateListRequest, ProblemTemplateListSuccess, UserList, UserListFilter, UserListOrder, UserListRequest, UserListResponseFailure, UserListResponseSuccess}
+import clientRequests.teacher.{ModifyProblemRequest, ModifyProblemResponse, SetScore}
 import frontend.views.debugAlerts
 import io.udash.SeqProperty
 import io.udash.bindings.modifiers.Binding
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
+import otsbridge.ProblemScore.ProblemScore
 import scalatags.JsDom.all.s
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -62,9 +64,13 @@ object Requests {
     }
   }
 
-  def addUser(loginToAdd: String, groupId: String):Future[AddUserToGroupResponse] = {
-    frontend.sendRequest(clientRequests.admin.AddUserToGroup, AddUserToGroupRequest(currentToken.get,      loginToAdd,      groupId))
+  def addUser(loginToAdd: String, groupId: String): Future[AddUserToGroupResponse] = {
+    frontend.sendRequest(clientRequests.admin.AddUserToGroup, AddUserToGroupRequest(currentToken.get, loginToAdd, groupId))
   }
 
+
+  def requstChangeProblemScore(problemId: String, problemScore: ProblemScore): Future[ModifyProblemResponse] = {
+    frontend.sendRequest(clientRequests.teacher.ModifyProblem, ModifyProblemRequest(currentToken.get, problemId, SetScore(problemScore)))
+  }
 
 }
