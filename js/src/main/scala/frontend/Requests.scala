@@ -1,13 +1,14 @@
 package frontend
 
-import clientRequests.admin.{AddUserToGroupRequest, AddUserToGroupResponse, AliasOrTitleMatches, ByNameOrLoginOrEmailMatch, GroupListRequest, GroupListResponseSuccess, NoOrder, ProblemTemplateList, ProblemTemplateListRequest, ProblemTemplateListSuccess, UserList, UserListFilter, UserListOrder, UserListRequest, UserListResponseFailure, UserListResponseSuccess}
+import clientRequests.admin.{AddUserToGroupRequest, AddUserToGroupResponse, AliasOrTitleMatches, ByNameOrLoginOrEmailMatch, GroupInfoRequest, GroupInfoResponseSuccess, GroupListRequest, GroupListResponseSuccess, NoOrder, ProblemTemplateList, ProblemTemplateListRequest, ProblemTemplateListSuccess, UserList, UserListFilter, UserListOrder, UserListRequest, UserListResponseFailure, UserListResponseSuccess}
 import clientRequests.teacher.{ModifyProblemRequest, ModifyProblemResponse, SetScore}
 import frontend.views.debugAlerts
-import io.udash.SeqProperty
+import io.udash.{ModelProperty, SeqProperty}
 import io.udash.bindings.modifiers.Binding
 import io.udash.bindings.modifiers.Binding.NestedInterceptor
 import otsbridge.ProblemScore.ProblemScore
 import scalatags.JsDom.all.s
+import viewData.GroupDetailedInfoViewData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -73,4 +74,13 @@ object Requests {
     frontend.sendRequest(clientRequests.teacher.ModifyProblem, ModifyProblemRequest(currentToken.get, problemId, SetScore(problemScore)))
   }
 
+
+  def requestGroupInfoUpdate(groupId: String, prop: ModelProperty[GroupDetailedInfoViewData]): Unit = {
+    frontend.sendRequest(clientRequests.admin.GroupInfo, GroupInfoRequest(currentToken.get, groupId, onlyStudents = true)) onComplete {
+      case Success(GroupInfoResponseSuccess(info)) => prop.set(info, true)
+      case resp@_ =>
+        if (debugAlerts) showErrorAlert(s"$resp")
+    }
+
+  }
 }

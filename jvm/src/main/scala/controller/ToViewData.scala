@@ -31,7 +31,7 @@ object ToViewData {
   )
 
   def apply(ct: CourseTemplate): CourseTemplateViewData =
-    CourseTemplateViewData(ct.uniqueAlias, ct.courseTitle, ct.description)
+    CourseTemplateViewData(ct.uniqueAlias, ct.courseTitle, ct.description, ct.problemAliasesToGenerate)
 
   def apply(pt: ProblemTemplate): ProblemTemplateExampleViewData =
     ProblemTemplateExampleViewData(

@@ -189,7 +189,9 @@ case class GroupGradesPagePresenter(
 
   val groupId: Property[String] = Property.blank
 
-  val groupGradesEditor = new GroupGradesEditor(groupId)
+  val groupInfo: ModelProperty[viewData.GroupDetailedInfoViewData] = ModelProperty.blank[viewData.GroupDetailedInfoViewData]
+
+  val groupGradesEditor = new GroupGradesEditor(groupId, groupInfo)
 
   def getGradeByDate(dmy:(Int, Int, Int)):Seq[GroupGradeViewData] = groupGradesEditor.groupGradesList.get.toSeq.filter(gvd =>
     instantToDMY(gvd.date) == dmy)
@@ -256,6 +258,7 @@ case class GroupGradesPagePresenter(
   override def handleState(state: GroupGradesPageState): Unit = {
     groupId.set(state.groupId)
     groupGradesEditor.updateGradesList()
+    Requests.requestGroupInfoUpdate(state.groupId, groupInfo)
     requestDataUpdate()
   }
 }

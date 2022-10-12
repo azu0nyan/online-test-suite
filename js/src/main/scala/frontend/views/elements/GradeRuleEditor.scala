@@ -8,7 +8,7 @@ import scalatags.JsDom.all._
 import frontend._
 import frontend.views.CssStyleToMod
 
-class GradeRuleEditor(rule: GradeRule) {
+class GradeRuleEditor(rule: GradeRule, groupInfo: ReadableProperty[viewData.GroupDetailedInfoViewData]) {
 
   val fixed: Property[Boolean] = Property(rule match {
     case FixedGrade(_) => true
@@ -68,6 +68,12 @@ class GradeRuleEditor(rule: GradeRule) {
           gradedProblems.append(ModelProperty(GradedProblem("", "", 1, 0.5)))
           true // prevent default
         }))("+"),
+        datalist(id := "coursesListVariants")(
+          produce(groupInfo)(gi => for(alias <- gi.courses.map(x => x.courseTemplateAlias)) yield option(value := alias).render)
+        ),
+        datalist(id := "problemListVariants")(
+          produce(groupInfo)(gi => for (alias <- gi.courses.flatMap(x => x.problems)) yield option(value := alias).render)
+        ),
         table(width := "100%", borderCollapse.collapse)(
           tr(
             th(width := "40%")("Алиас курса"),
@@ -75,10 +81,16 @@ class GradeRuleEditor(rule: GradeRule) {
             th(width := "10%")("Вес"),
             th(width := "10%")("Множитель неполных решений"),
           ),
+          /*
+          TextInput(p, 100 millis)(list := uniqueId),
+          datalist(id := uniqueId)(
+            repeat(currentSuggestions)(v => option(value := v.get).render)
+          )
+           */
           repeat(gradedProblems) { gp =>
             tr(
-              td(TextInput(gp.get.subProp(_.courseAlias))()),
-              td(TextInput(gp.get.subProp(_.problemAlias))()),
+              td(TextInput(gp.get.subProp(_.courseAlias))(list := "coursesListVariants")),
+              td(TextInput(gp.get.subProp(_.problemAlias))(list := "problemListVariants")),
               td(TextInput(gp.get.subProp(_.weight).bitransform(_.toString)(_.toDouble))(width := "50px")),
               td(TextInput(gp.get.subProp(_.ifNotMaxMultiplier).bitransform(_.toString)(_.toDouble))(width := "50px"))
             ).render

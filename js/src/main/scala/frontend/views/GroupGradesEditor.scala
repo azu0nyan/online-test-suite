@@ -2,17 +2,15 @@ package frontend.views
 
 import java.time.{Instant, ZoneOffset}
 import java.util.Date
-
 import DbViewsShared.GradeRule
 import DbViewsShared.GradeRule.{Ceil, FixedGrade, Floor, GradeRound, GradedProblem, Round, SumScoresGrade}
-import io.udash.{ModelProperty, Property, SeqProperty}
+import io.udash.{ModelProperty, Property, SeqProperty, _}
 import io.udash.bootstrap.datepicker.UdashDatePicker
 import io.udash.properties.single.CastableProperty
 import GroupGradesPage._
 import clientRequests.teacher.{AddGroupGradeRequest, AddGroupGradeSuccess, GroupGradesListRequest, GroupGradesListSuccess, RemoveGroupGradeRequest, RemoveGroupGradeSuccess, UpdateGroupGrade, UpdateGroupGradeRequest}
 import frontend.views.elements.GradeRuleEditor
 import frontend._
-import io.udash._
 import org.scalajs.dom.Event
 import scalatags.JsDom.all._
 import scalatags.JsDom.tags2._
@@ -22,7 +20,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import scala.util.Success
 
-class GroupGradesEditor(groupId: Property[String]) {
+class GroupGradesEditor(groupId: Property[String], groupInfo: ReadableProperty[viewData.GroupDetailedInfoViewData]) {
   val groupGradesList: SeqProperty[GroupGradeViewData] = SeqProperty.blank
 
 
@@ -43,7 +41,7 @@ class GroupGradesEditor(groupId: Property[String]) {
   val newHiddenUntilDate: CastableProperty[Instant] = Property[Instant](Instant.now())
   val newIsHiddenUntilDate: CastableProperty[Boolean] = Property.blank
 
-  val newGradeRuleEditor = new GradeRuleEditor(FixedGrade(2))
+  val newGradeRuleEditor = new GradeRuleEditor(FixedGrade(2), groupInfo)
 
   def newGradeTr = {
 
@@ -81,7 +79,7 @@ class GroupGradesEditor(groupId: Property[String]) {
     val date: Property[Instant] = Property(grade.date)
     val isHiddenlUntil: Property[Boolean] = Property(grade.hiddenUntil.nonEmpty)
     val hiddenUntil: Property[Instant] = Property(grade.hiddenUntil.getOrElse(Instant.now()))
-    val ruleEditor = new GradeRuleEditor(rule.get)
+    val ruleEditor = new GradeRuleEditor(rule.get, groupInfo)
 
     def removeGrade() = {
       frontend.sendRequest(clientRequests.teacher.RemoveGroupGrade, RemoveGroupGradeRequest(currentToken.get, grade.groupGradeId)) onComplete {

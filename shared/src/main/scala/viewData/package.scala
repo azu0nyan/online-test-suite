@@ -73,7 +73,7 @@ package object viewData {
   case class CourseInfoViewData(courseId: String, title: String, status: CourseStatus, description: String)
 
   /** Информация видная в списке курсов которые можно пройти */
-  case class CourseTemplateViewData(courseTemplateAlias: String, title: String, description: String)
+  case class CourseTemplateViewData(courseTemplateAlias: String, title: String, description: String, problems: Seq[String])
 
   /** Информация видная на странице выбора курса */
   case class UserCoursesInfoViewData(templates: Seq[CourseTemplateViewData], existing: Seq[CourseInfoViewData])

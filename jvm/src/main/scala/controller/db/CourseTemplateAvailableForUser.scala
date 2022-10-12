@@ -18,6 +18,6 @@ case class CourseTemplateAvailableForUser(_id:ObjectId, userId:ObjectId, templat
 
   def template:CourseTemplate = TemplatesRegistry.getCourseTemplate(templateAlias).get
 
-  def toViewData:CourseTemplateViewData = CourseTemplateViewData(templateAlias, template.courseTitle, template.description)
+  def toViewData:CourseTemplateViewData = CourseTemplateViewData(templateAlias, template.courseTitle, template.description, template.problemAliasesToGenerate)
 
 }

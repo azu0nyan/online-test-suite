@@ -10,6 +10,7 @@ import org.scalajs.dom.{Element, Event}
 import scalatags.JsDom
 import scalatags.JsDom.all._
 import scalatags.generic.Modifier
+import viewData.GroupDetailedInfoViewData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -92,7 +93,7 @@ case class AdminGroupInfoPagePresenter(
 
   def addCourse() = {
     frontend.sendRequest(clientRequests.admin.AddCourseToGroup, AddCourseToGroupRequest(currentToken.get, courseToAdd.get, groupInfo.get.groupId, true)) onComplete {
-      case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
+      case Success(_) => Requests.requestGroupInfoUpdate(groupInfo.get.groupId, groupInfo)
       case resp@_ =>
         if (debugAlerts) showErrorAlert(s"$resp")
     }
@@ -101,7 +102,7 @@ case class AdminGroupInfoPagePresenter(
   def removeUser() = {
     frontend.sendRequest(clientRequests.admin.RemoveUserFromGroup,
       RemoveUserFromGroupRequest(currentToken.get, loginToRemove.get, groupInfo.get.groupId, forceCourseRemoval.get)) onComplete {
-      case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
+      case Success(_) => Requests.requestGroupInfoUpdate(groupInfo.get.groupId, groupInfo)
       case resp@_ =>
         if (debugAlerts) showErrorAlert(s"$resp")
     }
@@ -109,25 +110,18 @@ case class AdminGroupInfoPagePresenter(
 
   def addUser() = {
     Requests.addUser(loginToAdd.get.split(" ").headOption.getOrElse(""), groupInfo.get.groupId) onComplete {
-      case Success(_) => requestGroupInfoUpdate(groupInfo.get.groupId)
+      case Success(_) => Requests.requestGroupInfoUpdate(groupInfo.get.groupId, groupInfo)
       case resp@_ =>
         if (debugAlerts) showErrorAlert(s"$resp")
     }
   }
 
 
-  def requestGroupInfoUpdate(groupId: String): Unit = {
-    frontend.sendRequest(clientRequests.admin.GroupInfo, GroupInfoRequest(currentToken.get, groupId, onlyStudents = true)) onComplete {
-      case Success(GroupInfoResponseSuccess(info)) => groupInfo.set(info, true)
-      case resp@_ =>
-        if (debugAlerts) showErrorAlert(s"$resp")
-    }
 
-  }
 
   override def handleState(state: AdminGroupInfoPageState): Unit = {
     println(s"Admin groups info page handling state")
-    requestGroupInfoUpdate(state.groupId)
+    Requests.requestGroupInfoUpdate(state.groupId, groupInfo)
   }
 
 }
