@@ -14,7 +14,7 @@ trait GenericPresenter[T <: State] extends Presenter[T] {
   def logOut():Unit = {
     currentToken.set("", true)
     document.cookie = ""
-    frontend.currentUser.set(None)
+    frontend.currentUser.set(None, true)
     app.goTo(LoginPageState)
   }
 

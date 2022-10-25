@@ -74,6 +74,18 @@ class GradeRuleEditor(rule: GradeRule, groupInfo: ReadableProperty[viewData.Grou
         datalist(id := "problemListVariants")(
           produce(groupInfo)(gi => for (alias <- gi.courses.flatMap(x => x.problems)) yield option(value := alias).render)
         ),
+        datalist(id := "weightVariants")(
+          option(value := "3.0"),
+          option(value := "2.0"),
+          option(value := "1.5"),
+          option(value := "1"),
+          option(value := "0.75"),
+          option(value := "0.6"),
+          option(value := "0.5"),
+          option(value := "0.42"),
+          option(value := "0.375"),
+          option(value := "0.333"),
+        ),
         table(width := "100%", borderCollapse.collapse)(
           tr(
             th(width := "40%")("Алиас курса"),
@@ -91,7 +103,7 @@ class GradeRuleEditor(rule: GradeRule, groupInfo: ReadableProperty[viewData.Grou
             tr(
               td(TextInput(gp.get.subProp(_.courseAlias))(list := "coursesListVariants")),
               td(TextInput(gp.get.subProp(_.problemAlias))(list := "problemListVariants")),
-              td(TextInput(gp.get.subProp(_.weight).bitransform(_.toString)(_.toDouble))(width := "50px")),
+              td(TextInput(gp.get.subProp(_.weight).bitransform(_.toString)(_.toDouble))(width := "50px", list := "weightVariants")),
               td(TextInput(gp.get.subProp(_.ifNotMaxMultiplier).bitransform(_.toString)(_.toDouble))(width := "50px"))
             ).render
           }
