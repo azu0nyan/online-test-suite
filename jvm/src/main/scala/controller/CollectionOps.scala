@@ -1,8 +1,10 @@
 package controller
 
+import com.mongodb.client.model.Sorts.{ascending, orderBy}
 import com.mongodb.client.model.{Collation, CollationStrength}
 import controller.db.MongoObject
 import org.bson.types.ObjectId
+import org.mongodb.scala.bson.conversions
 import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.result.UpdateResult
@@ -13,11 +15,12 @@ import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 import scala.util.Try
 
+
 trait CollectionOps {
 
   implicit class CollectionOps[T](col: MongoCollection[T])(implicit c: ClassTag[T]) {
 
-    def all(session: Option[ClientSession]= None): Seq[T] = {
+    def all(session: Option[ClientSession] = None): Seq[T] = {
       Await.result({
         if (session.isEmpty)
           col.find()
@@ -56,13 +59,31 @@ trait CollectionOps {
     }
 
 
-
     /** blocking */
-//    def byId(id: String, session: Option[ClientSession] = None): Option[T] = byField("_id", new ObjectId(id), session)
+    //    def byId(id: String, session: Option[ClientSession] = None): Option[T] = byField("_id", new ObjectId(id), session)
 
     /** blocking */
     def byId(id: ObjectId, session: Option[ClientSession] = None): Option[T] = byField("_id", id, session)
 
+
+    def sortFilterLimitMany(sort: conversions.Bson, filter: Option[conversions.Bson] = None, limit: Option[Int] = None, session: Option[ClientSession] = None): Seq[T] = {
+      Await.result({
+        val tmp = (if (session.isEmpty) col.find() else col.find(session.get))
+          .sort(sort)
+          .filter(filter.orNull)
+        if(limit.nonEmpty) tmp.limit(limit.get) else tmp
+      }.toFuture(), Duration.Inf)
+    }
+
+    /** untested */
+    def byFilterMany(filter: conversions.Bson, session: Option[ClientSession] = None): Seq[T] = {
+      Await.result({
+        if (session.isEmpty)
+          col.find(filter)
+        else
+          col.find(session.get, filter)
+      }.toFuture(), Duration.Inf)
+    }
 
     /** blocking */
     def byTwoFields[F1, F2](fieldName1: String, fieldValue1: F1, fieldName2: String, fieldValue2: F2, session: Option[ClientSession] = None): Option[T] =
@@ -83,7 +104,7 @@ trait CollectionOps {
       }.first().headOption(), Duration.Inf)
 
     /** blocking */
-    def byFieldCaseInsensitive(fieldName: String, fieldValue: String, locale:String ="en", session: Option[ClientSession] = None): Option[T] =
+    def byFieldCaseInsensitive(fieldName: String, fieldValue: String, locale: String = "en", session: Option[ClientSession] = None): Option[T] =
       Await.result({
         if (session.isEmpty)
           col.find(equal(fieldName, fieldValue))
@@ -102,13 +123,15 @@ trait CollectionOps {
           col.find(session.get, equal(fieldName, fieldValue))
       }.toFuture(), Duration.Inf)
 
-    def updateOptionField[F](obj: MongoObject, fieldName:String, fieldValue:Option[F]):Unit = {
-      Await.result({fieldValue match {
-        case Some(value) =>
-          col.updateOne(equal("_id", obj._id), set(fieldName, value))
-        case None =>
-          col.updateOne(equal("_id", obj._id), set(fieldName, null))
-      }}.headOption(), Duration.Inf)
+    def updateOptionField[F](obj: MongoObject, fieldName: String, fieldValue: Option[F]): Unit = {
+      Await.result({
+        fieldValue match {
+          case Some(value) =>
+            col.updateOne(equal("_id", obj._id), set(fieldName, value))
+          case None =>
+            col.updateOne(equal("_id", obj._id), set(fieldName, null))
+        }
+      }.headOption(), Duration.Inf)
     }
 
     /** blocking */

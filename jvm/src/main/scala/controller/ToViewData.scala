@@ -4,12 +4,12 @@ import DbViewsShared.CourseShared
 import controller.db.Answer
 import otsbridge.ProblemScore.BinaryScore
 import otsbridge.{CourseTemplate, ProblemTemplate}
-import viewData.{AdminCourseViewData, AnswerForConfirmationViewData, CourseTemplateViewData, ProblemTemplateExampleViewData}
+import viewData.{AdminCourseViewData, AnswerFullViewData, CourseTemplateViewData, ProblemTemplateExampleViewData}
 
 object ToViewData {
   /** allow all answers conversion with fake scores */
-  def toAnswerForConfirmation(answer: Answer): AnswerForConfirmationViewData = {
-    AnswerForConfirmationViewData(answer._id.toHexString, answer.answer, answer.status match {
+  def toAnswerForConfirmation(answer: Answer): AnswerFullViewData = {
+    AnswerFullViewData(answer._id.toHexString, answer.answer, answer.status match {
       case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) => score
       case CourseShared.Verified(score, review, systemMessage, verifiedAt, confirmedAt) => score
       case CourseShared.Rejected(systemMessage, rejectedAt) => BinaryScore(false)

@@ -37,7 +37,7 @@ case class GroupAnswersComparisonPageState(groupId: String) extends FinalRouting
 case class GroupScoresPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
 case class GroupGradesPageState(groupId: String) extends FinalRoutingState(Some(AdminPageState))
 
-case class TeacherConfirmAnswersPageState(problemId: Option[String], groupId: Option[String]) extends FinalRoutingState(Some(AdminPageState))
+case class AnswersListPageState(problemTemplate: Option[String], groupId: Option[String]) extends FinalRoutingState(Some(AdminPageState))
 
 case object AdminPageState extends ContainerRoutingState(Some(RootState))
 case object AdminGroupListPageState extends FinalRoutingState(Some(AdminPageState))

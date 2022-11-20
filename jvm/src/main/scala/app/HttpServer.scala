@@ -1,6 +1,6 @@
 package app
 import java.nio.file.Paths
-import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersForConfirmation, GroupGradesList, OverrideGrade, RemoveGroupGrade, RemovePersonalGrade, TeacherConfirmAnswer}
+import clientRequests.teacher.{AddGroupGrade, AddPersonalGrade, AnswersList, GroupGradesList, OverrideGrade, RemoveGroupGrade, RemovePersonalGrade, TeacherConfirmAnswer}
 import clientRequests.{LoginRequest, LoginSuccessResponse, WithToken}
 import constants.Skeleton
 import controller.UserRole.{Admin, LtiUser, Teacher, Watcher}
@@ -45,7 +45,7 @@ object HttpServer {
     addRoute(clientRequests.watcher.GroupGrades, GradeOps.requestGroupGrades, gradesWatcher)
 
     addRoute(clientRequests.teacher.TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
-    addRoute(clientRequests.teacher.AnswersForConfirmation, AnswerOps.answersForConfirmation, teacher)
+    addRoute(clientRequests.teacher.AnswersList, AnswerOps.answersListRequest, teacher)
 
     addRoute(clientRequests.teacher.AddGroupGrade, GradeOps.addGroupGrade, teacher)
     addRoute(clientRequests.teacher.RemoveGroupGrade, GradeOps.removeGroupGrade, teacher)

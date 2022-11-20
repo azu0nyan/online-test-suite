@@ -3,10 +3,11 @@ package controller
 import java.time.Clock
 import java.util.concurrent.TimeUnit
 import DbViewsShared.CourseShared._
-import clientRequests.teacher.{AnswersForConfirmationRequest, AnswersForConfirmationResponse, AnswersForConfirmationSuccess, TeacherConfirmAnswerRequest, TeacherConfirmAnswerResponse, TeacherConfirmAnswerSuccess, UnknownAnswersForConfirmationFailure, UnknownTeacherConfirmAnswerFailure}
+import clientRequests.teacher.{AnswersListFilter, AnswersListRequest, AnswersListResponse, AnswersListSuccess, AwaitingConfirmation, ByGroupId, ByProblemTemplate, TeacherConfirmAnswerRequest, TeacherConfirmAnswerResponse, TeacherConfirmAnswerSuccess, UnknownAnswersListFailure, UnknownTeacherConfirmAnswerFailure, WithScoreGEqThan, WithScoreLessThan}
 import controller.db._
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.{AnswerVerificationResult, ProblemTemplate}
+import utils.system.CalcExecTime
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -85,21 +86,59 @@ object AnswerOps {
   }
 
 
-  def answersForConfirmation(req: AnswersForConfirmationRequest): AnswersForConfirmationResponse =
+  def checkFilter(a: Answer, filter: AnswersListFilter): Boolean = {
     try {
-
-      val (good, bad) = Answer.answersForConfirmation(req.groupId, req.problemId)
-        .map(x => Try(ToViewData.toAnswerForConfirmation(x))).partition(_.isSuccess)
-
-      log.error(s"Found ${bad.size} bad answers, cant generate confirmation data.")
-      bad.foreach(e => log.error("", e))
-
-      AnswersForConfirmationSuccess(good.flatMap(_.toOption))
-
+      filter match {
+        case ByGroupId(id) => a.user.groups.exists(_._id.toString == id)
+        case ByProblemTemplate(templateAlias) => a.problem.templateAlias == templateAlias
+        case AwaitingConfirmation => a.status.isInstanceOf[VerifiedAwaitingConfirmation]
+        case WithScoreGEqThan(x) => a.status match {
+          case VerifiedAwaitingConfirmation(score, _, _) => score.percentage >= x
+          case Verified(score, _, _, _, _) => score.percentage >= x
+          case _ => false
+        }
+        case WithScoreLessThan(x) => a.status match {
+          case VerifiedAwaitingConfirmation(score, _, _) => score.percentage < x
+          case Verified(score, _, _, _, _) => score.percentage < x
+          case _ => false
+        }
+      }
     } catch {
       case t: Throwable =>
         log.error(t.getMessage)
-        UnknownAnswersForConfirmationFailure()
+        false
+    }
+  }
+
+  def answersListRequest(req: AnswersListRequest): AnswersListResponse =
+    try {
+      val (res, s) = CalcExecTime.withResult {
+        import org.mongodb.scala.model.Sorts
+        import org.mongodb.scala.model.Sorts._
+        val sort =
+          if (req.orderByDateAsc) Sorts.orderBy(ascending("answeredAt"))
+          else Sorts.orderBy(descending("answeredAt"))
+
+
+        val requsted = db.answers.sortFilterLimitMany(sort, None, req.limit)
+          .filter(a => req.filters.forall(checkFilter(a, _)))
+
+        val (good, bad) = requsted
+          .map(x => Try(ToViewData.toAnswerForConfirmation(x))).partition(_.isSuccess)
+
+        log.error(s"Found ${bad.size} bad answers, cant generate confirmation data.")
+        bad.foreach(e => log.error("", e))
+
+        AnswersListSuccess(good.flatMap(_.toOption))
+      }
+
+      log.info(s"${req.toStringWOToken} results found: ${res.answers.size} time: ${s.msStr}")
+
+      res
+    } catch {
+      case t: Throwable =>
+        log.error(t.getMessage)
+        UnknownAnswersListFailure()
     }
 
   def teacherConfirmAnswer(req: TeacherConfirmAnswerRequest): TeacherConfirmAnswerResponse =

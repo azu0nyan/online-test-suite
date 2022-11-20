@@ -13,8 +13,11 @@ object Answer {
   def apply(problemId: ObjectId, answer: String, status: AnswerStatus, answeredAt: Instant): Answer = new Answer(new ObjectId(), problemId, answer, status, answeredAt)
 
   //todo faster request
-  def answersForConfirmation(groupId:Option[String], problemId:Option[String]):Seq[Answer] =
-    answers.all().filter(_.status.isInstanceOf[VerifiedAwaitingConfirmation])
+//  def answersForConfirmation(groupId:Option[String], problemId:Option[String]):Seq[Answer] =
+//    answers.all().filter(_.status.isInstanceOf[VerifiedAwaitingConfirmation])
+
+
+
 }
 
 

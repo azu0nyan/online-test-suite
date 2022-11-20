@@ -3,7 +3,7 @@ package frontend.views
 import com.sun.net.httpserver.Authenticator.Success
 import constants.Text
 import frontend._
-import frontend.{AdminCoursesPageState, AdminGroupListPageState, AdminPageState, AdminProblemsPageState, AdminUserListPageState, RoutingState, TeacherConfirmAnswersPageState}
+import frontend.{AdminCoursesPageState, AdminGroupListPageState, AdminPageState, AdminProblemsPageState, AdminUserListPageState, RoutingState, AnswersListPageState}
 import io.udash.core.ContainerView
 import io.udash._
 import org.scalajs.dom._
@@ -38,7 +38,7 @@ class AdminPageView(
       true // prevent default
     }))("Пользователи"),
     button( onclick :+= ((_: Event) => {
-      presenter.app.goTo(TeacherConfirmAnswersPageState(None, None))
+      presenter.app.goTo(AnswersListPageState(None, None))
       true // prevent default
     }))("Проверка работ"),
     button( onclick :+= ((_: Event) => {

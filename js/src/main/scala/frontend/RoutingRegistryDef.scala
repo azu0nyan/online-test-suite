@@ -31,10 +31,10 @@ class RoutingRegistryDef extends RoutingRegistry[RoutingState] {
     //    case "/course" / id  =>  CoursePageState(id, taskId )
     case "/app" => AppPageState
 
-    case "/teacher" / "confirm" / "pId" / p / "gId" / g => TeacherConfirmAnswersPageState(Some(p), Some(g))
-    case "/teacher" / "confirm" / "pId" / p => TeacherConfirmAnswersPageState(Some(p), None)
-    case "/teacher" / "confirm" / "gId" / g => TeacherConfirmAnswersPageState(None,Some(g))
-    case "/teacher" / "confirm" => TeacherConfirmAnswersPageState(None, None)
+    case "/teacher" / "confirm" / "pId" / p / "gId" / g => AnswersListPageState(Some(p), Some(g))
+    case "/teacher" / "confirm" / "pId" / p => AnswersListPageState(Some(p), None)
+    case "/teacher" / "confirm" / "gId" / g => AnswersListPageState(None,Some(g))
+    case "/teacher" / "confirm" => AnswersListPageState(None, None)
 
     case "/watcher" / "groupAnswersCompare" /  gId => GroupAnswersComparisonPageState(gId)
     case "/watcher" / "groupScores" /  gId => GroupScoresPageState(gId)

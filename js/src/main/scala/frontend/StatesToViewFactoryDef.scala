@@ -1,6 +1,6 @@
 package frontend
 
-import frontend.views.{AdminActionsPageViewFactory, AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, EditProfileViewFactory, ErrorPageViewFactory, GroupAnswersComparisonPageViewFactory, GroupGradesPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, LtiProblemPageViewFactory, MyGradesPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, TeacherConfirmAnswersPageViewFactory}
+import frontend.views.{AdminActionsPageViewFactory, AdminCourseTemplateInfoPageViewFactory, AdminCoursesPageViewFactory, AdminGroupInfoPageViewFactory, AdminGroupListPageViewFactory, AdminPageViewFactory, AdminProblemsPageViewFactory, AdminUserListPageViewFactory, CoursePageViewFactory, CourseSelectionPageViewFactory, EditProfileViewFactory, ErrorPageViewFactory, GroupAnswersComparisonPageViewFactory, GroupGradesPageViewFactory, GroupScoresPageViewFactory, LandingPageViewFactory, LoginPageViewFactory, LtiProblemPageViewFactory, MyGradesPageViewFactory, RegistrationPageViewFactory, RootPageViewFactory, ConfirmAnswersPageViewFactory}
 import io.udash.core.{ViewFactory, ViewFactoryRegistry}
 
 class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
@@ -20,7 +20,7 @@ class StatesToViewFactoryDef extends ViewFactoryRegistry[RoutingState] {
       case LoginPageState => LoginPageViewFactory
       case RegistrationPageState => RegistrationPageViewFactory
       case RootState => RootPageViewFactory
-      case TeacherConfirmAnswersPageState(_, _) => TeacherConfirmAnswersPageViewFactory
+      case AnswersListPageState(_, _) => ConfirmAnswersPageViewFactory
       case GroupGradesPageState(_) => GroupGradesPageViewFactory
       case GroupScoresPageState(_) => GroupScoresPageViewFactory
       case GroupAnswersComparisonPageState(_) => GroupAnswersComparisonPageViewFactory

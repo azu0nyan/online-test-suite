@@ -21,7 +21,7 @@ trait Bindings {
   implicit val f: ModelPropertyCreator[viewData.UserCoursesInfoViewData] = ModelPropertyCreator.materialize[viewData.UserCoursesInfoViewData]
   implicit val g: ModelPropertyCreator[viewData.GroupDetailedInfoViewData] = ModelPropertyCreator.materialize[viewData.GroupDetailedInfoViewData]
   implicit val h: ModelPropertyCreator[viewData.AdminCourseViewData] = ModelPropertyCreator.materialize[viewData.AdminCourseViewData]
-  implicit val j: ModelPropertyCreator[viewData.AnswerForConfirmationViewData] = ModelPropertyCreator.materialize[viewData.AnswerForConfirmationViewData]
+  implicit val j: ModelPropertyCreator[viewData.AnswerFullViewData] = ModelPropertyCreator.materialize[viewData.AnswerFullViewData]
   implicit val k: ModelPropertyCreator[CourseRoot] = ModelPropertyCreator.materialize[CourseRoot]
   implicit val l: ModelPropertyCreator[viewData.GroupGradeViewData] = ModelPropertyCreator.materialize[viewData.GroupGradeViewData]
 
