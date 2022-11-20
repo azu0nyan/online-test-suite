@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit
 import DbViewsShared.CourseShared._
 import clientRequests.teacher.{AnswersListFilter, AnswersListRequest, AnswersListResponse, AnswersListSuccess, AwaitingConfirmation, ByGroupId, ByProblemTemplate, TeacherConfirmAnswerRequest, TeacherConfirmAnswerResponse, TeacherConfirmAnswerSuccess, UnknownAnswersListFailure, UnknownTeacherConfirmAnswerFailure, WithScoreGEqThan, WithScoreLessThan}
 import controller.db._
+import org.mongodb.scala.bson.conversions
+import org.mongodb.scala.model.Aggregates
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.{AnswerVerificationResult, ProblemTemplate}
 import utils.system.CalcExecTime
@@ -91,7 +93,7 @@ object AnswerOps {
       filter match {
         case ByGroupId(id) => a.user.groups.exists(_._id.toString == id)
         case ByProblemTemplate(templateAlias) => a.problem.templateAlias == templateAlias
-        case AwaitingConfirmation => a.status.isInstanceOf[VerifiedAwaitingConfirmation]
+        case AwaitingConfirmation => true //a.status.isInstanceOf[VerifiedAwaitingConfirmation]
         case WithScoreGEqThan(x) => a.status match {
           case VerifiedAwaitingConfirmation(score, _, _) => score.percentage >= x
           case Verified(score, _, _, _, _) => score.percentage >= x
@@ -110,6 +112,19 @@ object AnswerOps {
     }
   }
 
+
+  //todo all filters from DB
+  def filter(filter: AnswersListFilter): conversions.Bson = {
+    import org.mongodb.scala.model.Filters._
+    filter match {
+      case ByGroupId(id) => ???
+      case ByProblemTemplate(templateAlias) => ??? ///Aggregates.lookup()
+      case AwaitingConfirmation => equal("status._t", "VerifiedAwaitingConfirmation")
+      case WithScoreGEqThan(x) => ???
+      case WithScoreLessThan(x) => ???
+    }
+  }
+
   def answersListRequest(req: AnswersListRequest): AnswersListResponse =
     try {
       val (res, s) = CalcExecTime.withResult {
@@ -120,13 +135,19 @@ object AnswerOps {
           else Sorts.orderBy(descending("answeredAt"))
 
 
-        val requsted = db.answers.sortFilterLimitMany(sort, None, req.limit)
+        //todo all filters from DB
+        import org.mongodb.scala.model.Filters.equal
+        val filter = Option.when(req.filters.exists(_.isInstanceOf[AwaitingConfirmation.type]))(
+          equal("status._t", "VerifiedAwaitingConfirmation"))
+
+        val requsted = db.answers.sortFilterLimitMany(sort, filter, req.limit)
           .filter(a => req.filters.forall(checkFilter(a, _)))
 
         val (good, bad) = requsted
           .map(x => Try(ToViewData.toAnswerForConfirmation(x))).partition(_.isSuccess)
 
-        log.error(s"Found ${bad.size} bad answers, cant generate confirmation data.")
+        if (bad.nonEmpty) log.error(s"Found ${bad.size} bad answers, cant generate confirmation data.")
+
         bad.foreach(e => log.error("", e))
 
         AnswersListSuccess(good.flatMap(_.toOption))

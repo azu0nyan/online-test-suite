@@ -40,7 +40,7 @@ class AdminPageView(
     button( onclick :+= ((_: Event) => {
       presenter.app.goTo(AnswersListPageState(None, None))
       true // prevent default
-    }))("Проверка работ"),
+    }))("Ответы"),
     button( onclick :+= ((_: Event) => {
       presenter.app.goTo(AdminActionsPageState)
       true // prevent default

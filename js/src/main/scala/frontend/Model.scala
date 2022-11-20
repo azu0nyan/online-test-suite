@@ -7,6 +7,8 @@ import io.udash.properties.{Blank, ModelPropertyCreator}
 import otsbridge.CoursePiece
 import otsbridge.CoursePiece.CourseRoot
 import otsbridge.ProblemScore.{BinaryScore, ProblemScore}
+
+import java.time.Instant
 //import viewData.{AvailableCourseViewData, CourseViewData, ProblemViewData, UserViewData}
 
 //bindings of data sent from backend
@@ -33,6 +35,9 @@ trait Bindings {
   implicit val blank4: Blank[viewData.AdminCourseViewData] = Blank.Simple(viewData.AdminCourseViewData("Loading course..", "NO TITLE", "",  CoursePiece.emptyCourse , Seq(), false))
   implicit val blank3: Blank[viewData.GroupDetailedInfoViewData] =
     Blank.Simple(viewData.GroupDetailedInfoViewData("Loading..", "Loading..", "Loading..", Seq(), Seq() ))
+  implicit val blank6: Blank[viewData.AnswerFullViewData] =
+    Blank.Simple(viewData.AnswerFullViewData("Loading..", "Loading..", Instant.now(),BinaryScore(false), null, null, None))
+
 }
 
 

@@ -21,7 +21,7 @@ package object viewData {
                                  courseData: CourseRoot, problemAliasesToGenerate: Seq[String], editable: Boolean)
 
   /** teacher */
-  case class AnswerFullViewData(answerId: String, answer: String, score: ProblemScore, user: UserViewData, problemViewData: ProblemViewData, review: Option[String])
+  case class AnswerFullViewData(answerId: String, answer: String, answeredAt: Instant,score: ProblemScore, user: UserViewData, problemViewData: ProblemViewData, review: Option[String])
 
   /** информация об оценках доступная пользователю */
   case class UserGradeViewData(gradeId: String, description: String, value: Either[GradeOverride, Int], date: Instant)

@@ -77,7 +77,7 @@ class AnswersListPageView(
         tr(
           td(answ.get.answerId + " " + answ.get.problemViewData.templateAlias + " " + answ.get.problemViewData.title),
           td(answ.get.user.id + " " + answ.get.user.login + " " + answ.get.user.lastName + " " + answ.get.user.firstName),
-          td(toCorrectView(answ.get.answer)),
+          td(answ.get.answeredAt.toString, toCorrectView(answ.get.answer)),
           td {
             val alias = answ.get.answerId
             val prop = presenter.scores(alias)
@@ -197,7 +197,7 @@ class AnswersListPagePresenter(
   def pollAfterTimeoutIfNeeded(): Unit = {
     val currentPr = pollRate.get
 
-    if (currentPr.toIntOption.nonEmpty && currentPr.toInt > 0 && !currentluPooling.get) {
+    if (currentPr.toIntOption.nonEmpty && currentPr.toInt > 0 && !currentluPooling.get && app.currentState.isInstanceOf[AnswersListPageState]) {
       for (_ <- Helpers.delay(currentPr.toInt)) yield update()
     }
   }

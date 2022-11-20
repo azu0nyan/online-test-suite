@@ -5,6 +5,7 @@ import com.mongodb.client.model.{Collation, CollationStrength}
 import controller.db.MongoObject
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions
+import org.mongodb.scala.model.Aggregates
 import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.result.UpdateResult

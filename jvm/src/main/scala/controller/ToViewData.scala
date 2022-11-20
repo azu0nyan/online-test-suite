@@ -9,13 +9,14 @@ import viewData.{AdminCourseViewData, AnswerFullViewData, CourseTemplateViewData
 object ToViewData {
   /** allow all answers conversion with fake scores */
   def toAnswerForConfirmation(answer: Answer): AnswerFullViewData = {
-    AnswerFullViewData(answer._id.toHexString, answer.answer, answer.status match {
-      case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) => score
-      case CourseShared.Verified(score, review, systemMessage, verifiedAt, confirmedAt) => score
-      case CourseShared.Rejected(systemMessage, rejectedAt) => BinaryScore(false)
-      case CourseShared.BeingVerified() => BinaryScore(false)
-      case CourseShared.VerificationDelayed(systemMessage) => BinaryScore(false)
-    },
+    AnswerFullViewData(answer._id.toHexString, answer.answer, answer.answeredAt,
+      answer.status match {
+        case CourseShared.VerifiedAwaitingConfirmation(score, systemMessage, verifiedAt) => score
+        case CourseShared.Verified(score, review, systemMessage, verifiedAt, confirmedAt) => score
+        case CourseShared.Rejected(systemMessage, rejectedAt) => BinaryScore(false)
+        case CourseShared.BeingVerified() => BinaryScore(false)
+        case CourseShared.VerificationDelayed(systemMessage) => BinaryScore(false)
+      },
       answer.user.toViewData,
       answer.problem.toViewData,
       answer.status match {
@@ -43,7 +44,6 @@ object ToViewData {
       pt.answerField(0),
       pt.editable
     )
-
 
 
 }
