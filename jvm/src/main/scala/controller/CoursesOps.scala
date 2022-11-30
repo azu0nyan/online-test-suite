@@ -30,16 +30,22 @@ object CoursesOps {
   def addCourseToGroup(req: AddCourseToGroupRequest): AddCourseToGroupResponse = {
     val gr = groups.byId(new ObjectId(req.groupId))
     val course = TemplatesRegistry.getCourseTemplate(req.courseAlias)
-    if (gr.nonEmpty && course.nonEmpty &&
-      !gr.get.templatesForGroup.exists(_.templateAlias == course.get.uniqueAlias)) {
+    if(gr.isEmpty){
+      log.error(s"Adding course to empty group $req")
+      UnknownAddCourseToGroupFailure()
+    } else if(course.isEmpty){
+      log.error(s"Adding empty course to group $req")
+      UnknownAddCourseToGroupFailure()
+    } else if(gr.get.templatesForGroup.exists(_.templateAlias == course.get.uniqueAlias)){
+      log.error(s"Adding existing course to group $req")
+      UnknownAddCourseToGroupFailure()
+    } else  {
       val courseForGroup = CourseTemplateForGroup(gr.get._id, course.get.uniqueAlias, req.forceToGroupMembers)
       courseTemplateForGroup.insert(courseForGroup)
 
       //start course for group members if needed
       gr.get.users.foreach(GroupOps.ensureGroupCoursesStarted(_, gr.get))
       AddCourseToGroupSuccess()
-    } else {
-      UnknownAddCourseToGroupFailure()
     }
   }
 
