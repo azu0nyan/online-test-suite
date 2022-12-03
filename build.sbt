@@ -37,10 +37,6 @@ val cssDir = settingKey[File]("Target for 'compileCss'  Dtask")
 val compileCss = taskKey[Unit]("Compile CSS files")
 
 
-
-
-
-
 lazy val root = project.in(file(".")).
   aggregate(foo.js, foo.jvm).
   settings(
@@ -159,4 +155,6 @@ lazy val fooJS = foo.js.settings(
 //libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "1.0.0"
 
 
-
+addCommandAlias("bt", "fooJS / fullOptJS; fooJVM / universal:packageBin")
+addCommandAlias("tt", "fooJS / fastOptJS; fooJVM / reStart")
+addCommandAlias("rt", "fooJVM / reStart ")
