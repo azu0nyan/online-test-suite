@@ -1,5 +1,5 @@
 
-FROM sbtscala/scala-sbt:latest
+FROM sbtscala/scala-sbt
 
 RUN mkdir /build
 WORKDIR /build
