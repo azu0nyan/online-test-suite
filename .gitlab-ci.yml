@@ -1,0 +1,31 @@
+
+stages:
+  - tools
+  - build
+  - test
+  - push
+  - deploy
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+
+after_script:
+  - docker logout $CI_REGISTRY || true
+
+build-image:
+  stage: build
+  tags: 
+    - bare
+  script:
+    - docker build -t git.lnmo.ru/lcme/lcme-tester/online-test-suite:latest .
+
+deploy-2-production:
+  stage: deploy
+  tags:
+    - bare
+  script:
+    - true
+  environment:
+    name: production
+    url: https://edu.lnmo.ru
+  when: manual
