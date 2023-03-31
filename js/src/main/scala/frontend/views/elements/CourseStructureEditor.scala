@@ -136,7 +136,18 @@ object CourseStructureEditor {
       def maximizedView: JsDom.TypedTag[Div] = cp match {
 
         case c: CourseRoot =>
+          val courseNameProp = Property(c.title)
+          val annProp = Property(c.annotation)
+
           div(styles.Custom.defaultBox ~)(
+            div(display.flex, flexDirection.row)(
+              "Название курса:",
+              EditableField.forString(courseNameProp, str => h3(str), newTitle => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(title = newTitle)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow)
+            ),
+            div(display.flex, flexDirection.row)(
+              "Аннотация курса:",
+              EditableField.forString(annProp, str => h3(str), newAnnotation => updateCourse(courseRoot.replaceByAlias(c.alias, c.copy(annotation = newAnnotation)).asInstanceOf[CourseRoot]), containerType = EditableField.FlexRow)
+            ),
             div("Структура курса:"),
             containerItemsEditor(c),
             MyButton("Сохранить", submitCourseData.apply(editedCourseRootProp.get))
