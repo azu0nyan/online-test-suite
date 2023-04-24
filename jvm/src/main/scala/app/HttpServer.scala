@@ -50,6 +50,7 @@ object HttpServer {
     addRoute(clientRequests.Registration, RegisterUser.registerUser, all)
     addRoute(clientRequests.GetCoursesList, CoursesOps.requestCoursesList, user)
     addRoute(clientRequests.GetCourseData, CoursesOps.requestCourse, user)
+    addRoute(clientRequests.GetPartialCourseData, CoursesOps.requestPartialCourse, user)
     addRoute(clientRequests.StartCourse, CoursesOps.requestStartCourse, user)
     addRoute(clientRequests.SubmitAnswer, AnswerOps.submitAnswer, user)
     addRoute(clientRequests.GetProblemData, ProblemOps.getProblemForUser, user)

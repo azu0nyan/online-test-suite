@@ -143,6 +143,22 @@ object CoursesOps {
     }
   }
 
+  def requestPartialCourse(req: GetPartialCourseDataRequest): GetPartialCourseDataResponse = {
+    LoginUserOps.decodeAndValidateUserToken(req.token) match {
+      case Some(user) =>
+        db.courses.byId(new ObjectId(req.courseId)) match {
+          case Some(course) =>
+            if (course.userId.equals(user._id)) {
+              GetPartialCourseDataSuccess(course.toPartialViewData)
+            } else {
+              GetPartialCourseNotOwnedByYou()
+            }
+          case None => GetPartialCourseNotFound()
+        }
+      case None => GetPartialCourseDataFailure(BadToken())
+    }
+  }
+
 
   def requestCoursesList(req: RequestCoursesList): GetCoursesListResponse = {
     LoginUserOps.decodeAndValidateUserToken(req.token) match {

@@ -121,7 +121,8 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform).in(file("."))
     libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.4.0",
     (compile in Compile) := ((compile in Compile) dependsOn compileCss).value,
     Compile / fastOptJS / artifactPath := file(workdir) / "main.js", //baseDirectory.value / "workdir" / "main.js"
-    Compile / fullOptJS / artifactPath := file(workdir) / "main.js" //baseDirectory.value / "workdir" / "main.js"
+    Compile / fullOptJS / artifactPath := file(workdir) / "main.js", //baseDirectory.value / "workdir" / "main.js"
+    mainClass := Some("JsMain")
   )
 
 
@@ -156,5 +157,6 @@ lazy val fooJS = foo.js.settings(
 
 
 addCommandAlias("bt", "fooJS / fullOptJS; fooJVM / universal:packageBin")
+addCommandAlias("pt", "fooJVM / universal:packageBin")
 addCommandAlias("tt", "fooJS / fastOptJS; fooJVM / reStart")
 addCommandAlias("rt", "fooJVM / reStart ")

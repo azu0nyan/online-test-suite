@@ -66,8 +66,9 @@ package object viewData {
                              answers: Seq[AnswerViewData]
                             )
 
+
   /** Вся информация о курсе, отображаемая во время его выполнения */
-  case class CourseViewData(courseId: String, title: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemViewData], description: String)
+  @deprecated case class CourseViewData(courseId: String, title: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemViewData], description: String)
 
   /** Информация видная в списке активных курсов */
   case class CourseInfoViewData(courseId: String, title: String, status: CourseStatus, description: String)
@@ -77,4 +78,11 @@ package object viewData {
 
   /** Информация видная на странице выбора курса */
   case class UserCoursesInfoViewData(templates: Seq[CourseTemplateViewData], existing: Seq[CourseInfoViewData])
+
+  /** Краткая информация о задаче в списках задач */
+  case class ProblemRefViewData(problemId: String, templateAlias: String, score: ProblemScore)
+  /** Вся информация о курсе, отображаемая во время его выполнения */
+  case class PartialCourseViewData(courseId: String, title: String, description: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemRefViewData])
+
+
 }

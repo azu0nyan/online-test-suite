@@ -6,7 +6,7 @@ import controller.TemplatesRegistry
 import otsbridge.CourseTemplate
 import org.mongodb.scala.bson.ObjectId
 import otsbridge.ProblemTemplate.ProblemTemplateAlias
-import viewData.{CourseInfoViewData, CourseTemplateViewData, CourseViewData}
+import viewData.{PartialCourseViewData, CourseInfoViewData, CourseTemplateViewData, CourseViewData}
 
 import scala.util.Try
 
@@ -72,6 +72,8 @@ case class Course(_id: ObjectId, userId: ObjectId, templateAlias: String, seed: 
     }
     CourseViewData(_id.toHexString, template.courseTitle, status, template.courseData, problems, template.description)
   }
+
+  def toPartialViewData: PartialCourseViewData = PartialCourseViewData(_id.toHexString, template.courseTitle, template.description(), status, template.courseData, ownProblems.map(_.toProblemRefViewData))
 
   def ownProblems: Seq[Problem] = problemIds.flatMap(problems.byId(_))
 }

@@ -7,7 +7,7 @@ import otsbridge._
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Updates._
 import otsbridge.ProblemScore.ProblemScore
-import viewData.ProblemViewData
+import viewData.{ProblemRefViewData, ProblemViewData}
 
 import scala.concurrent.Await
 
@@ -75,7 +75,8 @@ case class Problem(
 
   def idAlias = s"[${_id.toHexString} $templateAlias]"
 
-  def toViewData:ProblemViewData =
+  def toViewData:ProblemViewData = {
+    
     ProblemViewData(_id.toHexString,
       templateAlias,
       template.title(seed),
@@ -83,7 +84,9 @@ case class Problem(
       template.answerField(seed),
       score,
       lastAnswer.map(_.answer).getOrElse(""), answers.map(_.toViewData) )
+  }
 
+  def toProblemRefViewData: ProblemRefViewData = ProblemRefViewData(_id.toHexString, templateAlias, score)
 //  def changeStatus(newStatus: ProblemStatus): Problem = {
 //    problems.updateField(this, "status", newStatus)
 //    this.copy(status = newStatus)

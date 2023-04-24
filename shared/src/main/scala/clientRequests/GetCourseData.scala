@@ -2,7 +2,7 @@ package clientRequests
 
 import viewData.CourseViewData
 import io.circe.generic.auto._
-
+/*for full data*/
 object GetCourseData extends Route[CourseDataRequest, CourseDataResponse] {
   override val route: String = "courseData"
 }
