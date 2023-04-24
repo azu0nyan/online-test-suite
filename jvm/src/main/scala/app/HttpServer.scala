@@ -27,6 +27,22 @@ object HttpServer {
     ipAddress(host)
     port(port_)
 
+
+    options("/*",
+      (request: Request, response: Response) => {
+        val accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+        if (accessControlRequestHeaders != null) {
+          response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+        }
+        val accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+        if (accessControlRequestMethod != null) {
+          response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+        }
+        "OK";
+      })
+
+    before((req, res) => res.header("Access-Control-Allow-Origin", "*"))
+
     get("/", (request: Request, response: Response) => {  Skeleton()})
 
 
