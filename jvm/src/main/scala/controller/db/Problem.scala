@@ -86,7 +86,7 @@ case class Problem(
       lastAnswer.map(_.answer).getOrElse(""), answers.map(_.toViewData) )
   }
 
-  def toProblemRefViewData: ProblemRefViewData = ProblemRefViewData(_id.toHexString, templateAlias, score)
+  def toProblemRefViewData: ProblemRefViewData = ProblemRefViewData(_id.toHexString, templateAlias, template.title(seed), score)
 //  def changeStatus(newStatus: ProblemStatus): Problem = {
 //    problems.updateField(this, "status", newStatus)
 //    this.copy(status = newStatus)

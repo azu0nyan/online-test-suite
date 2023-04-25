@@ -80,7 +80,7 @@ package object viewData {
   case class UserCoursesInfoViewData(templates: Seq[CourseTemplateViewData], existing: Seq[CourseInfoViewData])
 
   /** Краткая информация о задаче в списках задач */
-  case class ProblemRefViewData(problemId: String, templateAlias: String, score: ProblemScore)
+  case class ProblemRefViewData(problemId: String, templateAlias: String, title: String,  score: ProblemScore)
   /** Вся информация о курсе, отображаемая во время его выполнения */
   case class PartialCourseViewData(courseId: String, title: String, description: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemRefViewData])
 
