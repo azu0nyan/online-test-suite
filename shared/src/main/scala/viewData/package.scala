@@ -82,7 +82,9 @@ package object viewData {
   /** Краткая информация о задаче в списках задач */
   case class ProblemRefViewData(problemId: String, templateAlias: String, title: String,  score: ProblemScore)
   /** Вся информация о курсе, отображаемая во время его выполнения */
-  case class PartialCourseViewData(courseId: String, title: String, description: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemRefViewData])
+  case class PartialCourseViewData(courseId: String, title: String, description: String, status: CourseStatus, courseData: CourseRoot, problems: Seq[ProblemRefViewData]){
+    def refByAlias(alias: String): Option[ProblemRefViewData] = problems.find(_.templateAlias == alias) 
+  }
 
 
 }
