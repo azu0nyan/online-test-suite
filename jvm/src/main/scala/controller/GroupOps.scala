@@ -1,7 +1,7 @@
 package controller
 
 import clientRequests.admin.{AddUserToGroupFailure, AddUserToGroupRequest, AddUserToGroupResponse, AddUserToGroupSuccess, GroupInfoRequest, GroupInfoResponse, GroupInfoResponseFailure, GroupInfoResponseSuccess, GroupListRequest, GroupListResponse, GroupListResponseFailure, GroupListResponseSuccess, NewGroupRequest, NewGroupResponse, NewGroupSuccess, RemoveUserFromGroupFailure, RemoveUserFromGroupRequest, RemoveUserFromGroupResponse, RemoveUserFromGroupSuccess, TitleAlreadyClaimed, UnknownNewGroupFailure}
-import clientRequests.watcher.{GroupCourseInfo, GroupProblemInfo, GroupScoresRequest, GroupScoresResponse, GroupScoresSuccess}
+import clientRequests.watcher.{GroupCourseInfo, GroupProblemInfo, GroupScoresRequest, GroupScoresResponse, GroupScoresSuccess, LightGroupScoresRequest, LightGroupScoresResponse, LightGroupScoresSuccess}
 import controller.UserRole.Student
 import controller.db._
 import org.mongodb.scala.bson.ObjectId
@@ -102,6 +102,43 @@ object GroupOps {
   }
 
 
+  def requestLightGroupScores(req: LightGroupScoresRequest): LightGroupScoresResponse = req match {
+    case LightGroupScoresRequest(token, groupId, courseAliases, userIds) =>
+      //      val coursesTemplates = courseAliases.flatMap(TemplatesRegistry.getCourseTemplate)
+
+
+      log.info(req.toString)
+      log.info(courses.byFieldInMany("userId", userIds.map(new ObjectId(_))).mkString(", "))
+      log.info(courses.byFieldInMany("templateAlias", courseAliases).mkString(", "))
+      val coursesToLoad = courses.byTwoFieldsInMany("userId", userIds.map(new ObjectId(_)), "templateAlias", courseAliases)
+      log.info(coursesToLoad.mkString(","))
+      val problemsToLoad = coursesToLoad.flatMap(_.problemIds.map(_.toHexString))
+      log.info(problemsToLoad.mkString(","))
+
+
+      val problems = controller.db.problems.byFieldInMany("_id", problemsToLoad)
+
+      val aliasToTitle = problems.map(_.templateAlias).toSet
+        .map((a: String) => (a, TemplatesRegistry.getProblemTemplate(a)))
+        .collect { case (a, Some(pt)) => (a, pt.title(0)) }
+
+      val map =
+        userIds.map { uid =>
+          val cs = coursesToLoad.filter(_.userId.toHexString == uid)
+
+          (uid, cs.map { course =>
+            (course.templateAlias,
+              problems
+                .filter(problem => course.problemIds.contains(problem._id))
+                .map(p => (p._id.toHexString, p.score)).toMap
+            )
+          }.toMap)
+        }.toMap
+
+      LightGroupScoresSuccess(aliasToTitle.toMap, map)
+  }
+
+
   def requestGroupScores(req: GroupScoresRequest): GroupScoresResponse = req match {
     case GroupScoresRequest(token, groupId, courseAliases, onlyStudentAnswers) =>
       val g = db.groups.byId(new ObjectId(groupId)).get
@@ -117,7 +154,7 @@ object GroupOps {
           (for (
             c <- u.courses if coursesTemplates.exists(_.uniqueAlias == c.templateAlias);
             p <- c.ownProblems
-          ) yield try (Some(p.toViewData)) catch {//todo
+          ) yield try (Some(p.toViewData)) catch { //todo
             case _: Throwable => None
           }).flatten
         }))

@@ -6,7 +6,7 @@ import controller.db.MongoObject
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions
 import org.mongodb.scala.model.Aggregates
-import org.mongodb.scala.model.Filters.{and, equal}
+import org.mongodb.scala.model.Filters.{and, equal, in}
 import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.{ClientSession, MongoCollection}
@@ -103,6 +103,24 @@ trait CollectionOps {
         else
           col.find(session.get, equal(fieldName, fieldValue))
       }.first().headOption(), Duration.Inf)
+
+    /** blocking */
+    def byFieldInMany[F](fieldName: String, fieldValues: Seq[F], session: Option[ClientSession] = None): Seq[T] =
+      Await.result({
+        if (session.isEmpty)
+          col.find(in(fieldName, fieldValues: _ *))
+        else
+          col.find(in(fieldName, fieldValues: _ *))
+      }.toFuture(), Duration.Inf)
+
+    /** blocking */
+    def byTwoFieldsInMany[F1, F2](fieldName1: String, fieldValue1: Seq[F1], fieldName2: String, fieldValue2: Seq[F2], session: Option[ClientSession] = None): Seq[T] =
+      Await.result({
+        if (session.isEmpty)
+          col.find(and(in(fieldName1, fieldValue1: _ *), in(fieldName2, fieldValue2: _ *)))
+        else
+          col.find(session.get, and(in(fieldName1, fieldValue1: _ *), in(fieldName2, fieldValue2: _ *)))
+      }.toFuture(), Duration.Inf)
 
     /** blocking */
     def byFieldCaseInsensitive(fieldName: String, fieldValue: String, locale: String = "en", session: Option[ClientSession] = None): Option[T] =

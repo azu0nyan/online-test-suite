@@ -10,6 +10,7 @@ object CourseTemplateForGroup{
     new CourseTemplateForGroup(new ObjectId, groupId, templateAlias, forceStartForGroupMembers)
 
   def byGroup(g:Group):Seq[CourseTemplateForGroup] = courseTemplateForGroup.byFieldMany("groupId", g._id)
+  def byGroupId(id: String):Seq[CourseTemplateForGroup] = courseTemplateForGroup.byFieldMany("groupId", id)
 }
 
 /*Курсы которые проходятся каждым из группы*/

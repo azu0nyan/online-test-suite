@@ -58,6 +58,7 @@ object HttpServer {
     addRoute(clientRequests.GetUserData, UserOps.getUserData, user)
     addRoute(clientRequests.UpdateUserData, UserOps.updateUserData, user)
 
+    addRoute(clientRequests.watcher.LightGroupScores, GroupOps.requestLightGroupScores, gradesWatcher)
     addRoute(clientRequests.watcher.GroupScores, GroupOps.requestGroupScores, gradesWatcher)
     addRoute(clientRequests.watcher.GroupGrades, GradeOps.requestGroupGrades, gradesWatcher)
 
