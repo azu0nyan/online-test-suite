@@ -16,5 +16,5 @@ case class GroupListRequest(token:String) extends WithToken
 
 //RES
 sealed trait GroupListResponse
-case class GroupListResponseSuccess(groups:Seq[GroupDetailedInfoViewData]) extends GroupListResponse
+case class GroupListResponseSuccess(groups: Seq[GroupDetailedInfoViewData]) extends GroupListResponse
 case class GroupListResponseFailure() extends GroupListResponse
