@@ -107,16 +107,16 @@ object GroupOps {
       //      val coursesTemplates = courseAliases.flatMap(TemplatesRegistry.getCourseTemplate)
 
 
-      log.info(req.toString)
-      log.info(courses.byFieldInMany("userId", userIds.map(new ObjectId(_))).mkString(", "))
-      log.info(courses.byFieldInMany("templateAlias", courseAliases).mkString(", "))
+//      log.info(req.toString)
+//      log.info(courses.byFieldInMany("userId", userIds.map(new ObjectId(_))).mkString(", "))
+//      log.info(courses.byFieldInMany("templateAlias", courseAliases).mkString(", "))
       val coursesToLoad = courses.byTwoFieldsInMany("userId", userIds.map(new ObjectId(_)), "templateAlias", courseAliases)
-      log.info(coursesToLoad.mkString(","))
-      val problemsToLoad = coursesToLoad.flatMap(_.problemIds.map(_.toHexString))
-      log.info(problemsToLoad.mkString(","))
+//      log.info(coursesToLoad.mkString(","))
+      val problemsToLoad = coursesToLoad.flatMap(_.problemIds)
+//      log.info(problemsToLoad.mkString(","))
 
 
-      val problems = controller.db.problems.byFieldInMany("_id", problemsToLoad)
+      val problems = controller.db.problems.byFieldInMany("_id", problemsToLoad)     
 
       val aliasToTitle = problems.map(_.templateAlias).toSet
         .map((a: String) => (a, TemplatesRegistry.getProblemTemplate(a)))
@@ -130,7 +130,7 @@ object GroupOps {
             (course.templateAlias,
               problems
                 .filter(problem => course.problemIds.contains(problem._id))
-                .map(p => (p._id.toHexString, p.score)).toMap
+                .map(p => (p.templateAlias, p.score)).toMap
             )
           }.toMap)
         }.toMap
