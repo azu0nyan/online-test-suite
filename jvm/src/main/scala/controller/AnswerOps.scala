@@ -3,13 +3,23 @@ package controller
 import java.time.Clock
 import java.util.concurrent.TimeUnit
 import DbViewsShared.CourseShared._
-import clientRequests.teacher.{AnswersListFilter, AnswersListRequest, AnswersListResponse, AnswersListSuccess, AwaitingConfirmation, ByGroupId, ByProblemTemplate, TeacherConfirmAnswerRequest, TeacherConfirmAnswerResponse, TeacherConfirmAnswerSuccess, UnknownAnswersListFailure, UnknownTeacherConfirmAnswerFailure, WithScoreGEqThan, WithScoreLessThan}
+import clientRequests.teacher.{AnswerForConfirmationListSuccess, UnknownAnswerForConfirmationListListFailure, ShortCourseInfo, CourseAnswersConfirmationInfo,  AnswerForConfirmationListRequest, AnswerForConfirmationListResponse, AnswersListFilter, AnswersListRequest, AnswersListResponse, AnswersListSuccess, AwaitingConfirmation, ByGroupId, ByProblemTemplate, TeacherConfirmAnswerRequest, TeacherConfirmAnswerResponse, TeacherConfirmAnswerSuccess, UnknownAnswersListFailure, UnknownTeacherConfirmAnswerFailure, UserConfirmationInfo, WithScoreGEqThan, WithScoreLessThan}
 import controller.db._
-import org.mongodb.scala.bson.conversions
+import org.mongodb.scala.bson.{BsonArray, BsonObjectId, conversions}
 import org.mongodb.scala.model.Aggregates
 import otsbridge.ProblemScore.ProblemScore
 import otsbridge.{AnswerVerificationResult, ProblemTemplate}
 import utils.system.CalcExecTime
+import controller.db.MongoObject
+import org.bson.BsonDocumentReader
+import org.bson.codecs.DecoderContext
+import org.bson.types.ObjectId
+import org.mongodb.scala.{ClientSession, MongoCollection}
+import org.mongodb.scala.model.Accumulators._
+import org.mongodb.scala.model.Filters
+import org.mongodb.scala.model.Projections
+import org.mongodb.scala.Document
+import org.mongodb.scala.model.Variable
 
 import scala.concurrent.Await
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -125,6 +135,86 @@ object AnswerOps {
     }
   }
 
+  def requestAnswersForConfirmation(req: AnswerForConfirmationListRequest): AnswerForConfirmationListResponse = try{
+    //todo
+    //TEACHER->GROUPS->USERS->COURSES->PROBLEMS->ANSWERS
+
+    val groups: Seq[ObjectId] = controller.db.groups.all().map(_._id)
+
+    val selectUsers = Aggregates.`match`(Filters.in("groupId", groups: _ *))
+    val projectUID = Aggregates.project(
+      Projections.fields(
+        Projections.excludeId(),
+        Projections.include("userId"),
+      )
+    )
+
+    //Это не работает(возвращает все курсы для кажлого юзера)
+    //val selectUserCourses = Aggregates.`match`(Filters.expr(Filters.eq("$userId", "$$uidToFind")))
+
+    val problemIDVars = new Variable("pidToFind", "$problemIds")
+    //    val selectAnswersAggr = Aggregates.`match`(Document("$expr" -> Document("$in" -> Seq("$problemId"  , "$$pidToFind"))))
+    val selectAnswersAggr = Aggregates.`match`(Document("$expr" ->
+      Document("$and" -> Seq(
+        Document("$eq" -> Seq("$status._t", "VerifiedAwaitingConfirmation")),
+        Document("$in" -> Seq("$problemId", "$$pidToFind"))))
+    ))
+    val selectAnswers = Aggregates.lookup("answers", Seq(problemIDVars), Seq(selectAnswersAggr), "userAnswers")
+
+    val uidVars = new Variable("uidToFind", "$userId")
+    val selectUserCourses = Aggregates.`match`(Document("$expr" -> Document("$eq" -> Seq("$userId", "$$uidToFind"))))
+    val addCourses = Aggregates.lookup("courses", Seq(uidVars), Seq(selectUserCourses, selectAnswers), "userCourses")
+
+    val pipeline = Seq(selectUsers, projectUID, addCourses)
+
+    //val documentCollection: MongoCollection[Document] = controller.db.userToGroup.asInstanceOf[MongoCollection[Document]]
+    val documentCollection: MongoCollection[Document] = database.getCollection("userToGroup")
+    val res = Await.result(documentCollection.aggregate(pipeline).toFuture(), Duration.Inf)
+
+
+    val ansCodec = controller.db.codecRegistry.get(classOf[Answer])
+    val courseCodec = controller.db.codecRegistry.get(classOf[Course])
+
+    val userInfos: Seq[UserConfirmationInfo] = for (u <- res) yield {
+      val (uJsonIndex, cJsonIndex) = if (u.toSeq(0)._1 == "userId") (0, 1) else (1, 0)
+      val userId = u.toSeq(uJsonIndex)._2.asInstanceOf[BsonObjectId].getValue.toHexString
+      val courses = u.toSeq(cJsonIndex)._2.asInstanceOf[BsonArray]
+
+      val decodedCoursesAnswers = for {
+        courseIndex <- 0 until courses.size()
+        course = courses.get(courseIndex)} yield {
+
+        val courseBsonReader = new BsonDocumentReader(course.asDocument())
+        val decoderContext = DecoderContext.builder.build
+        val decodedCourse = courseCodec.decode(courseBsonReader, decoderContext)
+        val shortCourseInfo = ShortCourseInfo(decodedCourse._id.toHexString, decodedCourse.templateAlias, decodedCourse.problemIds.map(_.toHexString))
+
+        val bsonAnswers = course.asDocument().get("userAnswers").asInstanceOf[BsonArray]
+        val decodedAnswers = for {
+          ansId <- 0 until bsonAnswers.size()
+          ans = bsonAnswers.get(ansId)
+        } yield {
+          val answerBsonReader = new BsonDocumentReader(ans.asDocument())
+          val decodedAnswer = ansCodec.decode(answerBsonReader, decoderContext)
+          decodedAnswer.toViewData
+        }
+
+
+        CourseAnswersConfirmationInfo(shortCourseInfo, decodedAnswers)
+      }
+
+      UserConfirmationInfo(userId, decodedCoursesAnswers)
+    }
+
+    AnswerForConfirmationListSuccess(userInfos)
+
+  } catch {
+    case t: Throwable =>
+      log.error("Exception while retrieving answers for confirmation",t)
+      UnknownAnswerForConfirmationListListFailure()
+  }
+
+  @deprecated
   def answersListRequest(req: AnswersListRequest): AnswersListResponse =
     try {
       val (res, s) = CalcExecTime.withResult {
@@ -133,7 +223,6 @@ object AnswerOps {
         val sort =
           if (req.orderByDateAsc) Sorts.orderBy(ascending("answeredAt"))
           else Sorts.orderBy(descending("answeredAt"))
-
 
         //todo all filters from DB
         import org.mongodb.scala.model.Filters.equal
