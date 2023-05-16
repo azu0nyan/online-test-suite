@@ -6,7 +6,7 @@ import io.circe.generic.auto._
 import viewData.{AnswerFullViewData, AnswerViewData}
 
 
-object AnswerForConfirmationList extends Route[AnswersListRequest, AnswersListResponse] {
+object AnswerForConfirmationList extends Route[AnswerForConfirmationListRequest, AnswerForConfirmationListResponse] {
   override val route: String = "requestAnswerForConfirmationList"
 }
 

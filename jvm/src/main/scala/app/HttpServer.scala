@@ -64,6 +64,7 @@ object HttpServer {
 
     addRoute(clientRequests.teacher.TeacherConfirmAnswer, AnswerOps.teacherConfirmAnswer, teacher)
     addRoute(clientRequests.teacher.AnswersList, AnswerOps.answersListRequest, teacher)
+    addRoute(clientRequests.teacher.AnswerForConfirmationList, AnswerOps.requestAnswersForConfirmation, teacher)
 
     addRoute(clientRequests.teacher.AddGroupGrade, GradeOps.addGroupGrade, teacher)
     addRoute(clientRequests.teacher.RemoveGroupGrade, GradeOps.removeGroupGrade, teacher)
